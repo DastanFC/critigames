@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRITIFLIX - Comentarios de Películas</title>
+    <!-- Librería de Supabase (la correcta) -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
     <style>
         * {
             margin: 0;
@@ -54,7 +56,7 @@
             background: #e50914;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
@@ -64,7 +66,7 @@
             background: #333;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 30px;
             cursor: pointer;
         }
@@ -131,7 +133,7 @@
 
         .movies-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
         }
 
@@ -149,7 +151,7 @@
 
         .movie-card img {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
         }
 
@@ -175,7 +177,7 @@
         }
 
         .featured-movie img {
-            width: 180px;
+            width: 160px;
             border-radius: 12px;
         }
 
@@ -184,28 +186,20 @@
         }
 
         .featured-details h3 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin-bottom: 10px;
         }
 
         .stars {
             color: #ffd700;
-            font-size: 1.2rem;
             margin: 10px 0;
         }
 
         .sinopsis {
             margin: 15px 0;
-            line-height: 1.6;
+            line-height: 1.5;
             color: #ccc;
-        }
-
-        .btn {
-            padding: 8px 20px;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .comment-input {
@@ -270,9 +264,6 @@
         .review-user {
             font-weight: bold;
             color: #e50914;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .review-stars {
@@ -281,12 +272,13 @@
 
         .review-date {
             color: #888;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .review-content {
             margin-top: 10px;
-            line-height: 1.5;
+            line-height: 1.4;
+            font-size: 0.9rem;
         }
 
         .review-actions {
@@ -297,12 +289,13 @@
 
         .spoiler-warning {
             background: #332700;
-            padding: 8px;
+            padding: 6px;
             border-radius: 8px;
             color: #ffd700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             margin-top: 8px;
             cursor: pointer;
+            text-align: center;
         }
 
         .modal {
@@ -312,7 +305,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -322,7 +315,7 @@
             background: #14141e;
             border-radius: 20px;
             padding: 30px;
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
             border: 1px solid #e50914;
         }
@@ -345,20 +338,15 @@
         .password-tip {
             background: #1a2a1a;
             border-left: 3px solid #4caf50;
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .password-tip h4 {
             color: #4caf50;
-            margin-bottom: 8px;
-        }
-
-        .password-tip ul {
-            margin-left: 20px;
-            color: #ccc;
+            margin-bottom: 5px;
         }
 
         .sidebar {
@@ -372,8 +360,27 @@
         }
 
         .latest-list li, .best-list li {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #2a2a3a;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .search-results {
+            background: #14141e;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #2a2a3a;
+        }
+
+        .close-results {
+            float: right;
+            background: #333;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
             cursor: pointer;
         }
 
@@ -391,6 +398,10 @@
             text-align: center;
             padding: 40px;
             color: #888;
+        }
+
+        button {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -410,14 +421,10 @@
 
     <div class="container">
         <div class="main">
-            <div id="announcementsContainer"></div>
-
             <div id="searchResultsSection" class="search-results" style="display: none;">
-                <button class="close-results" id="closeResultsBtn" style="float:right; background:#333; border:none; color:white; padding:5px 12px; border-radius:20px; cursor:pointer;">✕ Cerrar</button>
+                <button class="close-results" id="closeResultsBtn">✕ Cerrar</button>
                 <h2>🔍 RESULTADOS DE BÚSQUEDA</h2>
-                <div id="searchResultsGrid" class="movies-grid">
-                    <div class="loading">Buscando...</div>
-                </div>
+                <div id="searchResultsGrid" class="movies-grid"></div>
             </div>
 
             <div class="section">
@@ -438,7 +445,7 @@
                 <div class="comment-input" id="commentInputSection" style="display: none;">
                     <textarea id="commentText" rows="3" placeholder="Escribe tu crítica..."></textarea>
                     <div class="comment-actions">
-                        <button class="btn btn-primary" id="publishBtn">📝 Publicar</button>
+                        <button class="btn-primary" id="publishBtn">📝 Publicar</button>
                         <label style="display: flex; align-items: center; gap: 8px;">
                             <input type="checkbox" id="spoilerCheckbox"> ⚠️ Con Spoilers
                         </label>
@@ -484,7 +491,7 @@
         </div>
     </div>
 
-    <!-- Modal de Login/Registro -->
+    <!-- Modal Login/Registro -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle">🔐 Iniciar Sesión</h3>
@@ -496,16 +503,14 @@
             <div id="registerFields" style="display: none;">
                 <div class="password-tip">
                     <h4>🔒 Consejos para tu contraseña</h4>
-                    <ul>
+                    <ul style="margin-left: 20px;">
                         <li>No uses la misma que en otros sitios</li>
-                        <li>No uses datos personales (nombre, fecha de nacimiento)</li>
-                        <li>Usa una frase fácil de recordar para ti</li>
-                        <li>Ejemplo: <strong>"GatoSaltador2024!"</strong> o <strong>"MiPeliFavoritaEsInception"</strong></li>
+                        <li>No uses datos personales</li>
+                        <li>Usa una frase fácil de recordar</li>
                     </ul>
                 </div>
                 <input type="password" id="registerPassword" placeholder="Elige una contraseña">
                 <input type="text" id="registerSecret" placeholder="Palabra secreta (para recuperar tu cuenta)">
-                <p style="font-size:0.7rem; color:#888; margin-top:5px;">📌 Guarda tu palabra secreta en un lugar seguro</p>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button class="btn-primary" id="modalActionBtn">Iniciar Sesión</button>
@@ -525,22 +530,18 @@
         const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
         const ADMIN_USERNAME = 'sliink27';
 
-        let supabase;
+        // Inicializar Supabase (forma correcta)
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let currentUser = null;
         let currentMovie = null;
         let currentReviews = [];
-        let currentSearchResults = [];
-
-        // Inicializar Supabase
-        supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let modalMode = 'login';
 
         // ==================== AUTENTICACIÓN ====================
-        let modalMode = 'login'; // login, register, recover
-
         function openLoginModal() {
             modalMode = 'login';
             document.getElementById('modalTitle').innerText = '🔐 Iniciar Sesión';
-            document.getElementById('loginUsername').style.display = 'block';
             document.getElementById('loginPassword').style.display = 'block';
             document.getElementById('recoverFields').style.display = 'none';
             document.getElementById('registerFields').style.display = 'none';
@@ -552,7 +553,6 @@
         function openRegisterModal() {
             modalMode = 'register';
             document.getElementById('modalTitle').innerText = '📝 Registrarse';
-            document.getElementById('loginUsername').style.display = 'block';
             document.getElementById('loginPassword').style.display = 'none';
             document.getElementById('recoverFields').style.display = 'none';
             document.getElementById('registerFields').style.display = 'block';
@@ -564,7 +564,6 @@
         function openRecoverModal() {
             modalMode = 'recover';
             document.getElementById('modalTitle').innerText = '🆘 Recuperar Contraseña';
-            document.getElementById('loginUsername').style.display = 'block';
             document.getElementById('loginPassword').style.display = 'none';
             document.getElementById('recoverFields').style.display = 'block';
             document.getElementById('registerFields').style.display = 'none';
@@ -576,11 +575,7 @@
         async function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-
-            if (!username || !password) {
-                alert('Completa todos los campos');
-                return;
-            }
+            if (!username || !password) { alert('Completa todos los campos'); return; }
 
             const { data, error } = await supabase
                 .from('simple_users')
@@ -590,11 +585,7 @@
                 .single();
 
             if (data) {
-                currentUser = {
-                    id: data.id,
-                    username: data.username,
-                    isAdmin: data.is_admin
-                };
+                currentUser = { id: data.id, username: data.username, isAdmin: data.is_admin };
                 localStorage.setItem('critiflix_user', JSON.stringify(currentUser));
                 closeModal();
                 updateAuthUI();
@@ -609,35 +600,24 @@
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('registerPassword').value;
             const secret = document.getElementById('registerSecret').value.trim();
+            if (!username || !password || !secret) { alert('Completa todos los campos'); return; }
+            if (password.length < 4) { alert('La contraseña debe tener al menos 4 caracteres'); return; }
 
-            if (!username || !password || !secret) {
-                alert('Completa todos los campos');
-                return;
-            }
-
-            if (password.length < 4) {
-                alert('La contraseña debe tener al menos 4 caracteres');
-                return;
-            }
-
-            // Verificar si el usuario existe
             const { data: existing } = await supabase
                 .from('simple_users')
                 .select('username')
                 .eq('username', username)
                 .single();
 
-            if (existing) {
-                alert('El nombre de usuario ya existe. Elige otro.');
-                return;
-            }
+            if (existing) { alert('El usuario ya existe'); return; }
 
+            const isAdmin = (username === ADMIN_USERNAME);
             const { error } = await supabase
                 .from('simple_users')
-                .insert({ username, password, secret_word: secret, is_admin: username === ADMIN_USERNAME });
+                .insert({ username, password, secret_word: secret, is_admin: isAdmin });
 
             if (!error) {
-                alert('¡Registro exitoso! Ahora inicia sesión.');
+                alert(isAdmin ? '¡Registro exitoso! Eres administrador.' : '¡Registro exitoso! Ahora inicia sesión.');
                 openLoginModal();
             } else {
                 alert('Error al registrar: ' + error.message);
@@ -647,13 +627,9 @@
         async function handleRecover() {
             const username = document.getElementById('loginUsername').value.trim();
             const secret = document.getElementById('recoverSecret').value.trim();
+            if (!username || !secret) { alert('Completa todos los campos'); return; }
 
-            if (!username || !secret) {
-                alert('Completa todos los campos');
-                return;
-            }
-
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('simple_users')
                 .select('password')
                 .eq('username', username)
@@ -668,7 +644,7 @@
             }
         }
 
-        async function logout() {
+        function logout() {
             currentUser = null;
             localStorage.removeItem('critiflix_user');
             updateAuthUI();
@@ -709,27 +685,20 @@
         // ==================== CRÍTICAS ====================
         async function loadReviewsFromDB() {
             if (!currentMovie) return;
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('reviews')
                 .select('*')
                 .eq('movie_id', currentMovie.id)
                 .order('created_at', { ascending: false });
-            if (!error && data) {
+            if (data) {
                 currentReviews = data;
                 renderReviews('all');
-                loadLatestReviews();
             }
         }
 
         async function addReview(content, rating, spoiler) {
-            if (!currentUser) {
-                alert('Inicia sesión para publicar críticas');
-                return false;
-            }
-            if (!content.trim()) {
-                alert('Escribe una crítica');
-                return false;
-            }
+            if (!currentUser) { alert('Inicia sesión primero'); return false; }
+            if (!content.trim()) { alert('Escribe una crítica'); return false; }
 
             const { error } = await supabase.from('reviews').insert({
                 movie_id: currentMovie.id,
@@ -747,9 +716,12 @@
                 document.getElementById('spoilerCheckbox').checked = false;
                 document.getElementById('ratingSelect').value = '5';
                 alert('¡Crítica publicada!');
+                loadLatestReviews();
                 return true;
+            } else {
+                alert('Error al publicar: ' + error.message);
+                return false;
             }
-            return false;
         }
 
         async function editReview(reviewId, newContent) {
@@ -757,17 +729,28 @@
                 .from('reviews')
                 .update({ content: newContent })
                 .eq('id', reviewId);
-            if (!error) await loadReviewsFromDB();
+            if (!error) {
+                await loadReviewsFromDB();
+                alert('Crítica editada');
+            } else {
+                alert('Error al editar');
+            }
         }
 
         async function deleteReview(reviewId) {
             if (!confirm('¿Eliminar esta crítica?')) return;
             const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
-            if (!error) await loadReviewsFromDB();
+            if (!error) {
+                await loadReviewsFromDB();
+                loadLatestReviews();
+                alert('Crítica eliminada');
+            } else {
+                alert('Error al eliminar');
+            }
         }
 
         async function loadLatestReviews() {
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('reviews')
                 .select('*')
                 .order('created_at', { ascending: false })
@@ -775,17 +758,17 @@
             const container = document.getElementById('latestReviewsList');
             if (data && data.length > 0) {
                 container.innerHTML = data.map(r => `
-                    <li onclick="selectMovie(${r.movie_id})">
+                    <li onclick="window.selectMovie(${r.movie_id})">
                         <div style="display:flex; justify-content:space-between;">
                             <span style="color:#e50914;">🎬 ${r.movie_title}</span>
                             <span style="color:#ffd700;">⭐ ${r.rating} ★</span>
                         </div>
-                        <div style="font-size:0.75rem; color:#aaa;">✍️ ${r.user_name}</div>
+                        <div style="font-size:0.7rem; color:#aaa;">✍️ ${r.user_name}</div>
                         ${r.has_spoilers ? '<span style="color:#ffa500; font-size:0.7rem;">⚠️ CONTIENE SPOILERS</span>' : ''}
                     </li>
                 `).join('');
             } else {
-                container.innerHTML = '<li>Aún no hay críticas</li>';
+                container.innerHTML = '<li style="color:#888;">Aún no hay críticas</li>';
             }
         }
 
@@ -811,10 +794,9 @@
             if (!query.trim()) return;
             const data = await fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`);
             if (data && data.results && data.results.length > 0) {
-                currentSearchResults = data.results;
-                displaySearchResults(currentSearchResults);
+                displaySearchResults(data.results);
             } else {
-                alert('No se encontraron películas');
+                alert('No se encontraron películas para: ' + query);
             }
         }
 
@@ -822,8 +804,8 @@
             const container = document.getElementById('searchResultsGrid');
             const section = document.getElementById('searchResultsSection');
             container.innerHTML = movies.map(movie => `
-                <div class="movie-card" onclick="selectMovieFromSearch(${movie.id})">
-                    <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x220'}" alt="${movie.title}">
+                <div class="movie-card" onclick="window.selectMovieFromSearch(${movie.id})">
+                    <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/150x220?text=No+Poster'}" alt="${movie.title}">
                     <div class="info">
                         <div class="title">${movie.title}</div>
                         <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★</div>
@@ -831,6 +813,7 @@
                 </div>
             `).join('');
             section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth' });
         }
 
         window.selectMovieFromSearch = async function(movieId) {
@@ -847,16 +830,14 @@
         async function displayFeaturedMovie(movie) {
             const rating = movie.vote_average;
             const starsCount = Math.floor(rating / 2);
-            const stars = '⭐'.repeat(starsCount);
+            const halfStar = (rating % 2) >= 0.5 ? '½' : '';
+            const stars = '⭐'.repeat(starsCount) + halfStar;
             document.getElementById('featuredMovie').innerHTML = `
-                <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/180x270'}" alt="${movie.title}">
+                <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x240?text=No+Poster'}" alt="${movie.title}">
                 <div class="featured-details">
                     <h3>${movie.title}</h3>
-                    <div class="stars">${stars} ${(rating/2).toFixed(1)} ★</div>
-                    <div class="sinopsis">${movie.overview || 'Sin sinopsis disponible.'}</div>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" onclick="document.querySelector('.comment-input').scrollIntoView({behavior:'smooth'})">📝 Escribir crítica</button>
-                    </div>
+                    <div class="stars">${stars} ${(rating/2).toFixed(1)} ★ (${movie.vote_count?.toLocaleString() || 0} reseñas)</div>
+                    <div class="sinopsis"><strong>Sinopsis</strong><br>${movie.overview || 'Sin sinopsis disponible.'}</div>
                 </div>
             `;
         }
@@ -866,14 +847,16 @@
             if (data && data.results) {
                 const container = document.getElementById('recommendationsGrid');
                 container.innerHTML = data.results.slice(0, 8).map(movie => `
-                    <div class="movie-card" onclick="selectMovie(${movie.id})">
-                        <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x220'}" alt="${movie.title}">
+                    <div class="movie-card" onclick="window.selectMovie(${movie.id})">
+                        <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/150x220?text=No+Poster'}" alt="${movie.title}">
                         <div class="info">
                             <div class="title">${movie.title}</div>
                             <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★</div>
                         </div>
                     </div>
                 `).join('');
+            } else {
+                document.getElementById('recommendationsGrid').innerHTML = '<div class="error">Error al cargar</div>';
             }
         }
 
@@ -882,8 +865,10 @@
             const container = document.getElementById('best2025List');
             if (data && data.results) {
                 container.innerHTML = data.results.slice(0, 5).map(movie => `
-                    <li onclick="selectMovie(${movie.id})">🏆 ${movie.title} <span style="color:#ffd700;">★ ${(movie.vote_average/2).toFixed(1)}</span></li>
+                    <li onclick="window.selectMovie(${movie.id})">🏆 ${movie.title} <span style="color:#ffd700;">★ ${(movie.vote_average/2).toFixed(1)}</span></li>
                 `).join('');
+            } else {
+                container.innerHTML = '<li>Error al cargar</li>';
             }
         }
 
@@ -898,12 +883,20 @@
 
         function renderReviews(filter) {
             let filtered = [...currentReviews];
-            if (filter === 'best') filtered.sort((a,b) => b.rating - a.rating);
+            if (filter === 'recent') {
+                filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            } else if (filter === 'best') {
+                filtered.sort((a,b) => b.rating - a.rating);
+            } else if (filter === 'no-spoiler') {
+                filtered = filtered.filter(r => !r.has_spoilers);
+            }
+            
             const container = document.getElementById('reviewsList');
             if (filtered.length === 0) {
                 container.innerHTML = '<div class="loading">No hay críticas aún. ¡Sé el primero!</div>';
                 return;
             }
+            
             container.innerHTML = filtered.map(review => {
                 const isAuthor = currentUser && review.user_id === currentUser.id;
                 const isAdmin = currentUser && currentUser.isAdmin;
@@ -921,8 +914,8 @@
                         </div>
                         ${canEdit ? `
                             <div class="review-actions">
-                                <button class="btn btn-primary" onclick="enableEditMode(${review.id}, \`${review.content.replace(/`/g, '\\`')}\`)">✏️ Editar</button>
-                                <button class="btn btn-secondary" onclick="deleteReview(${review.id})">🗑️ Eliminar</button>
+                                <button class="btn-primary" onclick="enableEditMode(${review.id}, \`${review.content.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">✏️ Editar</button>
+                                <button class="btn-secondary" onclick="deleteReview(${review.id})">🗑️ Eliminar</button>
                             </div>
                         ` : ''}
                     </div>
@@ -935,8 +928,8 @@
             contentDiv.innerHTML = `
                 <textarea id="edit-textarea-${reviewId}" rows="3" style="width:100%; background:#2a2a3a; color:white; border-radius:8px; padding:8px;">${oldContent}</textarea>
                 <div style="margin-top:8px;">
-                    <button class="btn btn-primary" onclick="saveEdit(${reviewId})">💾 Guardar</button>
-                    <button class="btn btn-secondary" onclick="location.reload()">❌ Cancelar</button>
+                    <button class="btn-primary" onclick="saveEdit(${reviewId})">💾 Guardar</button>
+                    <button class="btn-secondary" onclick="location.reload()">❌ Cancelar</button>
                 </div>
             `;
         };
@@ -948,16 +941,21 @@
 
         // ==================== INICIALIZACIÓN ====================
         async function init() {
+            console.log('Iniciando CRITIFLIX...');
+            
+            // Cargar usuario guardado
             const savedUser = localStorage.getItem('critiflix_user');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
-                updateAuthUI();
-            } else {
-                updateAuthUI();
             }
+            updateAuthUI();
 
+            // Cargar datos de TMDB
             await loadRecommendations();
             await loadBestOf2025();
+            await loadLatestReviews();
+
+            // Cargar película por defecto (Oppenheimer)
             const defaultMovie = await fetchFromTMDB('/movie/872585');
             if (defaultMovie) {
                 displayFeaturedMovie(defaultMovie);
@@ -965,6 +963,7 @@
                 await loadReviewsFromDB();
             }
 
+            // Eventos
             document.getElementById('searchBtn').onclick = () => searchMovie(document.getElementById('searchInput').value);
             document.getElementById('closeResultsBtn').onclick = () => document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('publishBtn').onclick = () => {
@@ -973,10 +972,12 @@
                 const spoiler = document.getElementById('spoilerCheckbox').checked;
                 addReview(content, rating, spoiler);
             };
+            
+            // Modal eventos
             document.getElementById('modalActionBtn').onclick = () => {
                 if (modalMode === 'login') handleLogin();
                 else if (modalMode === 'register') handleRegister();
-                else if (modalMode === 'recover') handleRecover();
+                else handleRecover();
             };
             document.getElementById('modalSwitchBtn').onclick = () => {
                 if (modalMode === 'login') openRegisterModal();
@@ -985,6 +986,7 @@
             document.getElementById('modalRecoverBtn').onclick = () => openRecoverModal();
             document.getElementById('closeModalBtn').onclick = closeModal;
 
+            // Filtros
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.onclick = () => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -994,7 +996,8 @@
             });
         }
 
-        init();
+        // Iniciar cuando la página cargue
+        window.onload = init;
     </script>
 </body>
 </html>
