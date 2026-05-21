@@ -615,7 +615,7 @@
         async function loadRecommendations() {
             const data = await fetchFromTMDB('/movie/popular');
             if (data && data.results) {
-                displayMovies(data.results.slice(0, 6), 'recommendationsGrid');
+                displayMovies(data.results.slice(0, 8), 'recommendationsGrid');
             } else {
                 document.getElementById('recommendationsGrid').innerHTML = '<div class="error">No se pudieron cargar recomendaciones</div>';
             }
