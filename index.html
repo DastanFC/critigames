@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRITIFLIX - Comunidad de Cine</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
     <style>
@@ -20,7 +20,6 @@
         .search-bar input { flex: 1; padding: 12px 20px; border-radius: 30px; border: none; background: #2a2a3a; color: white; }
         .search-bar button { padding: 12px 25px; border-radius: 30px; border: none; background: #e50914; color: white; cursor: pointer; }
         .container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; padding: 20px; } .header { padding: 15px 20px; } }
         .section { background: #14141e; border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid #2a2a3a; }
         .section h2 { font-size: 1.3rem; margin-bottom: 15px; color: #e50914; border-left: 4px solid #e50914; padding-left: 12px; }
         .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
@@ -50,12 +49,13 @@
         .review-content { margin-top: 10px; line-height: 1.4; font-size: 0.9rem; }
         .review-actions { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
         .vote-buttons { display: flex; gap: 15px; align-items: center; margin-top: 8px; }
-        .vote-btn { background: #2a2a3a; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; }
+        .vote-btn { background: #2a2a3a; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .vote-btn.voted { background: #e50914; }
+        .spoiler-warning { background: #332700; padding: 6px; border-radius: 8px; color: #ffd700; font-size: 0.75rem; margin-top: 8px; cursor: pointer; text-align: center; }
         .spoiler-hidden { filter: blur(5px); cursor: pointer; transition: filter 0.2s; }
         .spoiler-hidden:hover { filter: blur(2px); }
-        .reply-thread { margin-left: 30px; padding-left: 15px; border-left: 2px solid #e50914; margin-top: 10px; }
         .modal, .admin-modal, .profile-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content, .admin-modal-content, .profile-modal-content { background: #14141e; border-radius: 20px; padding: 30px; max-width: 400px; width: 90%; border: 1px solid #e50914; box-shadow: 0 0 20px rgba(229, 9, 20, 0.3); }
+        .modal-content, .admin-modal-content, .profile-modal-content { background: #14141e; border-radius: 20px; padding: 30px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid #e50914; }
         .user-table { width: 100%; border-collapse: collapse; }
         .user-table th, .user-table td { padding: 10px; text-align: left; border-bottom: 1px solid #2a2a3a; }
         .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
@@ -64,8 +64,8 @@
         .rank-confiable { background: #1565c0; }
         .rank-experto { background: #6a1b9a; }
         .rank-top { background: #ff8f00; }
-        .banner-global { background: linear-gradient(135deg, #FFF59D, #FFF59D); border-left: 4px solid #f4d907; padding: 12px 20px; margin-bottom: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; color: #000000; font-weight: 500; }
-        .close-banner { background: none; border: none; color: rgb(0, 0, 0); font-size: 1.2rem; cursor: pointer; }
+        .banner-global { background: linear-gradient(135deg, #1a472a, #0d2818); border-left: 4px solid #ffd700; padding: 12px 20px; margin-bottom: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .close-banner { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
         .notification { position: fixed; bottom: 20px; right: 20px; background: #e50914; padding: 12px 20px; border-radius: 30px; z-index: 1000; animation: fadeOut 3s ease-in-out; }
         @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
         .sidebar { position: sticky; top: 120px; height: fit-content; }
@@ -73,23 +73,12 @@
         .latest-list li, .best-list li, .ranking-list li { padding: 10px 0; border-bottom: 1px solid #2a2a3a; cursor: pointer; font-size: 0.85rem; }
         .search-results { background: #14141e; border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid #2a2a3a; }
         .close-results { float: right; background: #333; border: none; color: white; padding: 5px 12px; border-radius: 20px; cursor: pointer; }
+        .reply-btn { background: #2a2a3a; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; }
+        .thread-line { border-left: 2px solid #e50914; margin-left: 20px; padding-left: 15px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; padding: 20px; } .header { padding: 15px 20px; } }
         .loading { text-align: center; padding: 40px; color: #888; }
-
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.5; }
-    .header { background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%); padding: 15px 40px; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
-    /* ... todo tu CSS existente ... */
-    
-    /* ===== ESTILOS NUEVOS DEL MODAL ===== */
-    .modal-content input { width: 100%; padding: 12px; margin-bottom: 15px; background: #1e1e2a; border: 1px solid #e50914; border-radius: 30px; color: white; font-size: 1rem; outline: none; text-align: center; }
-    .modal-content input::placeholder { color: #888; text-align: center; }
-    .modal-content input:focus { border-color: #e50914; box-shadow: 0 0 5px rgba(229, 9, 20, 0.5); }
-    .modal-content h3 { color: #e50914; font-size: 1.5rem; margin-bottom: 20px; text-align: center; }
-    .modal-content .btn-primary { background: #e50914; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-    .modal-content .btn-secondary { background: #2a2a3a; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-</style>
-
+        .bell-icon { position: relative; cursor: pointer; font-size: 1.2rem; }
+        .bell-icon.has-notification::after { content: '●'; position: absolute; top: -5px; right: -5px; color: #e50914; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -204,13 +193,16 @@
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        let currentUser = null;
-        let currentMovie = null;
-        let currentReviews = [];
-        let modalMode = 'login';
+        // Estado global
+        let currentUserObj = null;
+        let currentMovieObj = null;
+        let currentReviewsArray = [];
+        let modalModeVar = 'login';
+        let userVotesMap = {};
 
+        // ==================== RANGOS ====================
         function getRank(points) {
             if (points >= 100) return { name: 'Colaborador TOP', class: 'rank-top' };
             if (points >= 80) return { name: 'Experto', class: 'rank-experto' };
@@ -232,11 +224,11 @@
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
             if (!username || !password) return alert('Completa campos');
-            const { data, error } = await supabase.from('simple_users').select('*').eq('username', username).eq('password', password).single();
+            const { data, error } = await supabaseClient.from('simple_users').select('*').eq('username', username).eq('password', password).single();
             if (data && !data.is_banned) {
-                currentUser = { id: data.id, username: data.username, isAdmin: data.is_admin, points: data.points || 0 };
-                localStorage.setItem('critiflix_user', JSON.stringify(currentUser));
-                closeModal(); updateAuthUI(); if (currentMovie) loadReviews(); loadRanking();
+                currentUserObj = { id: data.id, username: data.username, isAdmin: data.is_admin, points: data.points || 0, secret_word: data.secret_word };
+                localStorage.setItem('critiflix_user', JSON.stringify(currentUserObj));
+                closeModal(); updateAuthUI(); if (currentMovieObj) loadReviews(); loadRanking();
                 showNotification(`¡Bienvenido, ${username}!`);
             } else if (data && data.is_banned) alert('Usuario baneado');
             else alert('Usuario o contraseña incorrectos');
@@ -247,9 +239,9 @@
             const password = document.getElementById('registerPassword').value;
             const secret = document.getElementById('registerSecret').value.trim();
             if (!username || !password || !secret) return alert('Completa campos');
-            const { data: existing } = await supabase.from('simple_users').select('username').eq('username', username).single();
+            const { data: existing } = await supabaseClient.from('simple_users').select('username').eq('username', username).single();
             if (existing) return alert('Usuario ya existe');
-            const { error } = await supabase.from('simple_users').insert({ username, password, secret_word: secret, is_admin: username === 'dastan', points: 0 });
+            const { error } = await supabaseClient.from('simple_users').insert({ username, password, secret_word: secret, is_admin: username === 'dastan', points: 0 });
             if (!error) { alert('Registro exitoso'); openLoginModal(); }
             else alert('Error');
         }
@@ -258,42 +250,39 @@
             const username = document.getElementById('loginUsername').value.trim();
             const secret = document.getElementById('recoverSecret').value.trim();
             if (!username || !secret) return alert('Completa campos');
-            const { data } = await supabase.from('simple_users').select('password').eq('username', username).eq('secret_word', secret).single();
+            const { data } = await supabaseClient.from('simple_users').select('password').eq('username', username).eq('secret_word', secret).single();
             if (data) alert(`Tu contraseña es: ${data.password}`);
             else alert('Usuario o palabra secreta incorrectos');
         }
 
-        function logout() { currentUser = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); if (currentMovie) loadReviews(); }
-
-        function openLoginModal() { modalMode = 'login'; document.getElementById('modalTitle').innerText = 'Iniciar Sesión'; document.getElementById('loginPassword').style.display = 'block'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Iniciar Sesión'; document.getElementById('modalSwitchBtn').innerText = 'Registrarse'; document.getElementById('authModal').style.display = 'flex'; }
-        function openRegisterModal() { modalMode = 'register'; document.getElementById('modalTitle').innerText = 'Registrarse'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'block'; document.getElementById('modalActionBtn').innerText = 'Registrarse'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
-        function openRecoverModal() { modalMode = 'recover'; document.getElementById('modalTitle').innerText = 'Recuperar'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'block'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Recuperar'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('authModal').style.display = 'none'; }
-
-        function updateAuthUI() {
-            const authSection = document.getElementById('authSection');
-            const commentSection = document.getElementById('commentInputSection');
-            const loginMsg = document.getElementById('loginToCommentMsg');
-            if (currentUser) {
-                const rank = getRank(currentUser.points || 0);
-                authSection.innerHTML = `<div class="user-info"><span>🎬 ${currentUser.username}</span><span class="rank-badge ${rank.class}">${rank.name}</span>${currentUser.isAdmin ? '<span style="background:#e50914; padding:2px 8px; border-radius:12px;">ADMIN</span>' : ''}<button class="btn-secondary" onclick="openProfileModal()">👤 Perfil</button><button class="btn-secondary" onclick="logout()">Salir</button>${currentUser.isAdmin ? '<button class="btn-admin" onclick="openAdminModal()">🔧 Admin</button>' : ''}</div>`;
-                commentSection.style.display = 'block'; loginMsg.style.display = 'none';
-            } else { authSection.innerHTML = `<button class="btn-primary" onclick="openLoginModal()">Iniciar Sesión</button>`; commentSection.style.display = 'none'; loginMsg.style.display = 'block'; }
+        async function changePassword(oldPassword, newPassword) {
+            if (!currentUserObj) return false;
+            const { data } = await supabaseClient.from('simple_users').select('password').eq('id', currentUserObj.id).single();
+            if (data.password !== oldPassword) { alert('Contraseña actual incorrecta'); return false; }
+            await supabaseClient.from('simple_users').update({ password: newPassword }).eq('id', currentUserObj.id);
+            alert('Contraseña cambiada con éxito');
+            return true;
         }
 
-        // ==================== PERFIL ====================
+        function logout() { currentUserObj = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); if (currentMovieObj) loadReviews(); }
+
+        function openLoginModal() { modalModeVar = 'login'; document.getElementById('modalTitle').innerText = 'Iniciar Sesión'; document.getElementById('loginPassword').style.display = 'block'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Iniciar Sesión'; document.getElementById('modalSwitchBtn').innerText = 'Registrarse'; document.getElementById('authModal').style.display = 'flex'; }
+        function openRegisterModal() { modalModeVar = 'register'; document.getElementById('modalTitle').innerText = 'Registrarse'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'block'; document.getElementById('modalActionBtn').innerText = 'Registrarse'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
+        function openRecoverModal() { modalModeVar = 'recover'; document.getElementById('modalTitle').innerText = 'Recuperar'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'block'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Recuperar'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('authModal').style.display = 'none'; }
+
         async function openProfileModal() {
-            if (!currentUser) return;
-            const { data: userReviews } = await supabase.from('reviews').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+            if (!currentUserObj) return;
+            const { data: userReviews } = await supabaseClient.from('reviews').select('*').eq('user_id', currentUserObj.id).order('created_at', { ascending: false });
             const profileHtml = `
-                <p><strong>Usuario:</strong> ${currentUser.username}</p>
-                <p><strong>Puntos:</strong> ${currentUser.points || 0}</p>
-                <p><strong>Rango:</strong> <span class="rank-badge ${getRank(currentUser.points || 0).class}">${getRank(currentUser.points || 0).name}</span></p>
+                <p><strong>Usuario:</strong> ${currentUserObj.username}</p>
+                <p><strong>Puntos:</strong> ${currentUserObj.points || 0}</p>
+                <p><strong>Rango:</strong> <span class="rank-badge ${getRank(currentUserObj.points || 0).class}">${getRank(currentUserObj.points || 0).name}</span></p>
                 <hr style="margin:15px 0; border-color:#333;">
                 <h4>Cambiar Contraseña</h4>
                 <input type="password" id="oldPassword" placeholder="Contraseña actual" style="width:100%; padding:8px; margin-bottom:10px; background:#2a2a3a; color:white; border-radius:8px;">
                 <input type="password" id="newPassword" placeholder="Nueva contraseña" style="width:100%; padding:8px; margin-bottom:10px; background:#2a2a3a; color:white; border-radius:8px;">
-                <button class="btn-primary" onclick="changePassword()">Actualizar Contraseña</button>
+                <button class="btn-primary" onclick="changePassword(document.getElementById('oldPassword').value, document.getElementById('newPassword').value)">Actualizar Contraseña</button>
                 <hr style="margin:15px 0; border-color:#333;">
                 <h4>Mis Críticas</h4>
                 ${userReviews.length === 0 ? '<p>No has escrito ninguna crítica</p>' : userReviews.map(r => `
@@ -308,203 +297,114 @@
             document.getElementById('profileModal').style.display = 'flex';
         }
 
-        window.changePassword = async function() {
-            const oldPwd = document.getElementById('oldPassword').value;
-            const newPwd = document.getElementById('newPassword').value;
-            const { data } = await supabase.from('simple_users').select('password').eq('id', currentUser.id).single();
-            if (data.password !== oldPwd) { alert('Contraseña actual incorrecta'); return; }
-            await supabase.from('simple_users').update({ password: newPwd }).eq('id', currentUser.id);
-            alert('Contraseña cambiada con éxito');
-            document.getElementById('profileModal').style.display = 'none';
-        };
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            const commentSection = document.getElementById('commentInputSection');
+            const loginMsg = document.getElementById('loginToCommentMsg');
+            if (currentUserObj) {
+                const rank = getRank(currentUserObj.points || 0);
+                authSection.innerHTML = `<div class="user-info"><span>🎬 ${currentUserObj.username}</span><span class="rank-badge ${rank.class}">${rank.name}</span>${currentUserObj.isAdmin ? '<span style="background:#e50914; padding:2px 8px; border-radius:12px;">ADMIN</span>' : ''}<button class="btn-secondary" onclick="openProfileModal()">👤 Perfil</button><button class="btn-secondary" onclick="logout()">Salir</button>${currentUserObj.isAdmin ? '<button class="btn-admin" onclick="openAdminModal()">🔧 Admin</button>' : ''}</div>`;
+                commentSection.style.display = 'block'; loginMsg.style.display = 'none';
+            } else { authSection.innerHTML = `<button class="btn-primary" onclick="openLoginModal()">Iniciar Sesión</button>`; commentSection.style.display = 'none'; loginMsg.style.display = 'block'; }
+        }
 
-        // ==================== VOTOS Y RESPUESTAS ====================
+        // ==================== VOTOS ====================
         async function vote(reviewId, authorId) {
-            if (!currentUser) return alert('Inicia sesión para votar');
-            const { data: existing } = await supabase.from('review_votes').select('*').eq('review_id', reviewId).eq('user_id', currentUser.id).single();
+            if (!currentUserObj) return alert('Inicia sesión para votar');
+            const { data: existing } = await supabaseClient.from('review_votes').select('*').eq('review_id', reviewId).eq('user_id', currentUserObj.id).single();
             if (existing) return alert('Ya votaste esta crítica');
-            await supabase.from('review_votes').insert({ review_id: reviewId, user_id: currentUser.id, vote_type: 'up' });
-            await supabase.from('simple_users').update({ points: supabase.raw('points + 3') }).eq('id', authorId);
-            if (currentUser.id === authorId) currentUser.points += 3;
+            await supabaseClient.from('review_votes').insert({ review_id: reviewId, user_id: currentUserObj.id, vote_type: 'up' });
+            await supabaseClient.from('simple_users').update({ points: supabaseClient.raw('points + 3') }).eq('id', authorId);
+            if (currentUserObj.id === authorId) currentUserObj.points += 3;
             loadReviews(); loadRanking();
             showNotification('+3 puntos para el autor');
         }
 
         // ==================== CRÍTICAS ====================
         async function loadReviews() {
-            if (!currentMovie) return;
-            const { data } = await supabase.from('reviews').select('*').eq('movie_id', currentMovie.id).order('created_at', { ascending: true });
-            if (data) { currentReviews = data; renderReviews('all'); }
+            if (!currentMovieObj) return;
+            const { data } = await supabaseClient.from('reviews').select('*').eq('movie_id', currentMovieObj.id).order('created_at', { ascending: false });
+            if (data) { currentReviewsArray = data; renderReviews('all'); }
         }
 
-async function addReview(content, rating, spoiler) {
-    if (!currentUser) return alert('Inicia sesión');
-    if (!content.trim()) return alert('Escribe algo');
-    
-    let parentId = null;
-    let replyTo = null;
-    
-    const mentionMatch = content.match(/^@(\w+)/);
-    if (mentionMatch) {
-        replyTo = mentionMatch[1];
-        const { data: parentReview } = await supabase
-            .from('reviews')
-            .select('id')
-            .eq('user_name', replyTo)
-            .eq('movie_id', currentMovie.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
-        if (parentReview) parentId = parentReview.id;
-    }
-    
-    const { error } = await supabase.from('reviews').insert({
-        movie_id: currentMovie.id,
-        movie_title: currentMovie.title,
-        user_id: currentUser.id,
-        user_name: currentUser.username,
-        rating: parseInt(rating),
-        content: content,
-        has_spoilers: spoiler,
-        parent_review_id: parentId,
-        reply_to_user: replyTo
-    });
-    
-    if (!error) {
-        // Recargar datos desde la base de datos
-        const { data: newReviews } = await supabase
-            .from('reviews')
-            .select('*')
-            .eq('movie_id', currentMovie.id)
-            .order('created_at', { ascending: true });
-        
-        if (newReviews) {
-            currentReviews = newReviews;
-            renderReviews(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+        async function addReview(content, rating, spoiler) {
+            if (!currentUserObj) return alert('Inicia sesión');
+            if (!content.trim()) return alert('Escribe algo');
+            let parentId = null, replyTo = null;
+            const mentionMatch = content.match(/@(\w+)/);
+            if (mentionMatch) replyTo = mentionMatch[1];
+            const { error } = await supabaseClient.from('reviews').insert({
+                movie_id: currentMovieObj.id, movie_title: currentMovieObj.title, user_id: currentUserObj.id,
+                user_name: currentUserObj.username, rating: parseInt(rating), content: content,
+                has_spoilers: spoiler, parent_review_id: parentId, reply_to_user: replyTo
+            });
+            if (!error) {
+                await supabaseClient.from('simple_users').update({ points: supabaseClient.raw('points + 1') }).eq('id', currentUserObj.id);
+                currentUserObj.points += 1;
+                if (replyTo) {
+                    const { data: repliedUser } = await supabaseClient.from('simple_users').select('id').eq('username', replyTo).single();
+                    if (repliedUser && repliedUser.id !== currentUserObj.id) {
+                        await supabaseClient.from('simple_users').update({ points: supabaseClient.raw('points + 1') }).eq('id', repliedUser.id);
+                        showNotification(`📢 @${replyTo} ha recibido +1 punto por tu mención`);
+                    }
+                }
+                await loadReviews(); 
+                document.getElementById('commentText').value = '';
+                document.getElementById('spoilerCheckbox').checked = false;
+                loadLatestReviews(); loadRanking();
+                showNotification('Crítica publicada +1 punto');
+            } else alert('Error: ' + error.message);
         }
-        
-        // Actualizar puntos
-        await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', currentUser.id);
-        currentUser.points += 1;
-        
-        if (replyTo && replyTo !== currentUser.username) {
-            const { data: repliedUser } = await supabase.from('simple_users').select('id').eq('username', replyTo).single();
-            if (repliedUser) {
-                await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', repliedUser.id);
-            }
-        }
-        
-        // Limpiar formulario
-        document.getElementById('commentText').value = '';
-        document.getElementById('spoilerCheckbox').checked = false;
-        document.getElementById('ratingSelect').value = '5';
-        
-        // Actualizar ranking y últimas críticas
-        await loadRanking();
-        await loadLatestReviews();
-        
-        showNotification('✅ Crítica publicada +1 punto');
-    } else {
-        alert('Error: ' + error.message);
-    }
-}
 
-async function editReview(id, newContent) {
-    const { error } = await supabase
-        .from('reviews')
-        .update({ content: newContent })
-        .eq('id', id);
-    
-    if (!error) {
-        // Recargar las críticas desde la base de datos
-        const { data: newReviews } = await supabase
-            .from('reviews')
-            .select('*')
-            .eq('movie_id', currentMovie.id)
-            .order('created_at', { ascending: true });
-        
-        if (newReviews) {
-            currentReviews = newReviews;
-            renderReviews(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+        async function editReview(id, content) {
+            await supabaseClient.from('reviews').update({ content }).eq('id', id);
+            loadReviews();
+            showNotification('Crítica editada');
         }
-        
-        showNotification('✏️ Crítica editada');
-    } else {
-        alert('Error al editar: ' + error.message);
-    }
-}
 
-async function deleteReview(id, userId) {
-    if (!confirm('¿Eliminar esta crítica?')) return;
-    
-    const { error } = await supabase
-        .from('reviews')
-        .delete()
-        .eq('id', id);
-    
-    if (!error) {
-        // Recargar las críticas desde la base de datos
-        const { data: newReviews } = await supabase
-            .from('reviews')
-            .select('*')
-            .eq('movie_id', currentMovie.id)
-            .order('created_at', { ascending: true });
-        
-        if (newReviews) {
-            currentReviews = newReviews;
-            renderReviews(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+        async function deleteReview(id, rating, userId) {
+            if (!confirm('¿Eliminar esta crítica?')) return;
+            await supabaseClient.from('reviews').delete().eq('id', id);
+            await supabaseClient.from('simple_users').update({ points: supabaseClient.raw(`points - 1`) }).eq('id', userId);
+            if (currentUserObj.id === userId) currentUserObj.points = Math.max(0, (currentUserObj.points || 0) - 1);
+            loadReviews(); loadLatestReviews(); loadRanking();
+            showNotification('Crítica eliminada -1 punto');
         }
-        
-        // Actualizar puntos (restar 1)
-        await supabase.from('simple_users').update({ points: supabase.raw('points - 1') }).eq('id', userId);
-        if (currentUser.id === userId) {
-            currentUser.points = Math.max(0, (currentUser.points || 0) - 1);
-        }
-        
-        // Actualizar ranking y últimas críticas
-        await loadRanking();
-        await loadLatestReviews();
-        
-        showNotification('🗑️ Crítica eliminada -1 punto');
-    } else {
-        alert('Error al eliminar: ' + error.message);
-    }
-}
 
         // ==================== ADMIN ====================
-        async function resetUserCode(userId) { const newCode = Math.random().toString(36).substring(2, 8).toUpperCase(); await supabase.from('simple_users').update({ password: newCode }).eq('id', userId); alert(`Nuevo código: ${newCode}`); loadAdminUsers(); }
-        async function banUser(userId) { await supabase.from('simple_users').update({ is_banned: true }).eq('id', userId); loadAdminUsers(); }
-        async function unbanUser(userId) { await supabase.from('simple_users').update({ is_banned: false }).eq('id', userId); loadAdminUsers(); }
-        async function setAdmin(userId, isAdmin) { await supabase.from('simple_users').update({ is_admin: isAdmin }).eq('id', userId); loadAdminUsers(); }
+        async function resetUserCode(userId) { const newCode = Math.random().toString(36).substring(2, 8).toUpperCase(); await supabaseClient.from('simple_users').update({ password: newCode }).eq('id', userId); alert(`Nuevo código: ${newCode}`); loadAdminUsers(); }
+        async function banUser(userId) { await supabaseClient.from('simple_users').update({ is_banned: true }).eq('id', userId); loadAdminUsers(); }
+        async function unbanUser(userId) { await supabaseClient.from('simple_users').update({ is_banned: false }).eq('id', userId); loadAdminUsers(); }
+        async function setAdmin(userId, isAdmin) { await supabaseClient.from('simple_users').update({ is_admin: isAdmin }).eq('id', userId); loadAdminUsers(); }
 
         async function loadAdminUsers() {
-            const { data } = await supabase.from('simple_users').select('*').order('points', { ascending: false });
-            if (data) document.getElementById('adminPanelContent').innerHTML = `<table class="user-table"><tr><th>Usuario</th><th>Puntos</th><th>Rango</th><th>Estado</th><th>Acciones</th></tr>${data.map(u => `<tr><td>${u.username}${u.id === currentUser?.id ? ' (tú)' : ''}</td><td>${u.points || 0}</td><td><span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></td><td>${u.is_banned ? '🚫 Baneado' : '✅ Activo'}${u.is_admin ? ' 👑 Admin' : ''}</td><td>${u.id !== currentUser?.id ? `<button class="btn-secondary" onclick="resetUserCode(${u.id})">Reset código</button> ${u.is_banned ? `<button class="btn-primary" onclick="unbanUser(${u.id})">Desbanear</button>` : `<button class="btn-secondary" onclick="banUser(${u.id})">Banear</button>`} <button class="btn-secondary" onclick="setAdmin(${u.id}, ${!u.is_admin})">${u.is_admin ? 'Quitar admin' : 'Hacer admin'}</button>` : '— eres tú —'}</td></tr>`).join('')}</table>`;
+            const { data } = await supabaseClient.from('simple_users').select('*').order('points', { ascending: false });
+            if (data) document.getElementById('adminPanelContent').innerHTML = `<table class="user-table"><tr><th>Usuario</th><th>Puntos</th><th>Rango</th><th>Estado</th><th>Acciones</th></tr>${data.map(u => `<tr><td>${u.username}${u.id === currentUserObj?.id ? ' (tú)' : ''}</td><td>${u.points || 0}</td><td><span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></td><td>${u.is_banned ? '🚫 Baneado' : '✅ Activo'}${u.is_admin ? ' 👑 Admin' : ''}</td><td>${u.id !== currentUserObj?.id ? `<button class="btn-secondary" onclick="resetUserCode(${u.id})">Reset código</button> ${u.is_banned ? `<button class="btn-primary" onclick="unbanUser(${u.id})">Desbanear</button>` : `<button class="btn-secondary" onclick="banUser(${u.id})">Banear</button>`} <button class="btn-secondary" onclick="setAdmin(${u.id}, ${!u.is_admin})">${u.is_admin ? 'Quitar admin' : 'Hacer admin'}</button>` : '— eres tú —'}</td></tr>`).join('')}</table>`;
         }
 
         async function loadBanner() {
-            const { data } = await supabase.from('global_banner').select('*').eq('is_active', true).single();
+            const { data } = await supabaseClient.from('global_banner').select('*').eq('is_active', true).single();
             const container = document.getElementById('bannerContainer');
             if (data && data.message && data.message.trim()) container.innerHTML = `<div class="banner-global"><span>📢 ${data.message}</span><button class="close-banner" onclick="this.parentElement.remove()">✕</button></div>`;
             else container.innerHTML = '';
         }
 
         async function saveBanner(message) {
-            const { data: existing } = await supabase.from('global_banner').select('id').limit(1).single();
-            if (existing) await supabase.from('global_banner').update({ message, is_active: !!message.trim() }).eq('id', existing.id);
-            else await supabase.from('global_banner').insert({ message, is_active: !!message.trim() });
+            const { data: existing } = await supabaseClient.from('global_banner').select('id').limit(1).single();
+            if (existing) await supabaseClient.from('global_banner').update({ message, is_active: !!message.trim(), updated_at: new Date() }).eq('id', existing.id);
+            else await supabaseClient.from('global_banner').insert({ message, is_active: !!message.trim() });
             loadBanner();
             alert('Banner guardado');
         }
 
-        function exportJSON() { supabase.from('simple_users').select('*').then(r => { const users = r.data; supabase.from('reviews').select('*').then(r2 => { const data = { users, reviews: r2.data }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_backup.json'; a.click(); }); }); }
-        function exportCSV() { supabase.from('simple_users').select('*').then(r => { let csv = 'id,username,points,is_admin,is_banned\n'; r.data.forEach(u => csv += `${u.id},${u.username},${u.points || 0},${u.is_admin},${u.is_banned}\n`); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_users.csv'; a.click(); }); }
+        function exportJSON() { supabaseClient.from('simple_users').select('*').then(r => { const users = r.data; supabaseClient.from('reviews').select('*').then(r2 => { const data = { users, reviews: r2.data }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_backup.json'; a.click(); }); }); }
+        function exportCSV() { supabaseClient.from('simple_users').select('*').then(r => { let csv = 'id,username,points,is_admin,is_banned\n'; r.data.forEach(u => csv += `${u.id},${u.username},${u.points || 0},${u.is_admin},${u.is_banned}\n`); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_users.csv'; a.click(); }); }
 
-        function openAdminModal() { if (currentUser?.isAdmin) { loadAdminUsers(); document.getElementById('adminModal').style.display = 'flex'; } else alert('No eres admin'); }
+        function openAdminModal() { if (currentUserObj?.isAdmin) { loadAdminUsers(); document.getElementById('adminModal').style.display = 'flex'; } else alert('No eres admin'); }
 
         // ==================== RANKING ====================
         async function loadRanking() {
-            const { data } = await supabase.from('simple_users').select('username, points').order('points', { ascending: false }).limit(10);
+            const { data } = await supabaseClient.from('simple_users').select('username, points').order('points', { ascending: false }).limit(10);
             if (data) document.getElementById('rankingList').innerHTML = data.map((u, i) => `<li>${i+1}. ${u.username} - ${u.points || 0} pts <span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></li>`).join('');
         }
 
@@ -528,7 +428,7 @@ async function deleteReview(id, userId) {
         }
 
         async function loadLatestReviews() {
-            const { data } = await supabase.from('reviews').select('*').order('created_at', { ascending: false }).limit(5);
+            const { data } = await supabaseClient.from('reviews').select('*').order('created_at', { ascending: false }).limit(5);
             if (data) document.getElementById('latestReviewsList').innerHTML = data.map(r => `<li onclick="selectMovie(${r.movie_id})"><div style="display:flex; justify-content:space-between;"><span style="color:#e50914;">🎬 ${r.movie_title}</span><span style="color:#ffd700;">⭐ ${r.rating} ★</span></div><div style="font-size:0.7rem;">✍️ ${r.user_name}</div>${r.has_spoilers ? '<span style="color:#ffa500;">⚠️ SPOILER</span>' : ''}</li>`).join('');
         }
 
@@ -542,7 +442,7 @@ async function deleteReview(id, userId) {
 
         window.selectMovieFromSearch = async function(id) {
             const data = await fetchFromTMDB(`/movie/${id}`);
-            if (data) { displayFeaturedMovie(data); currentMovie = data; await loadReviews(); document.getElementById('searchResultsSection').style.display = 'none'; document.getElementById('searchInput').value = ''; }
+            if (data) { displayFeaturedMovie(data); currentMovieObj = data; await loadReviews(); document.getElementById('searchResultsSection').style.display = 'none'; document.getElementById('searchInput').value = ''; }
         };
 
         async function displayFeaturedMovie(m) {
@@ -553,89 +453,26 @@ async function deleteReview(id, userId) {
 
         window.selectMovie = async function(id) {
             const data = await fetchFromTMDB(`/movie/${id}`);
-            if (data) { displayFeaturedMovie(data); currentMovie = data; await loadReviews(); }
+            if (data) { displayFeaturedMovie(data); currentMovieObj = data; await loadReviews(); }
         };
 
-        // Función para renderizar respuestas anidadas
-        function renderReviews(filter) {
-            let filtered = [...currentReviews];
-            if (filter === 'best') filtered.sort((a,b) => b.rating - a.rating);
-            else if (filter === 'recent') filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-            else if (filter === 'no-spoiler') filtered = filtered.filter(r => !r.has_spoilers);
-            
-            // Separar respuestas principales de las anidadas
-            const mainReviews = filtered.filter(r => !r.parent_review_id);
-            const replies = filtered.filter(r => r.parent_review_id);
-            
-            function buildReplyTree(reviewId, level = 0) {
-                const children = replies.filter(r => r.parent_review_id === reviewId);
-                if (children.length === 0) return '';
-                return children.map(child => `
-                    <div class="reply-thread" style="margin-left: ${Math.min(level * 20, 60)}px">
-                        <div class="review-card" style="background: #252535;">
-                            <div class="review-header">
-                                <span class="review-user" onclick="replyToUser('${child.user_name}')">✍️ ${child.user_name}</span>
-                                <span class="review-stars">${'⭐'.repeat(child.rating)}</span>
-                                <span class="review-date">📅 ${new Date(child.created_at).toLocaleDateString()}</span>
-                            </div>
-                            <div class="review-content ${child.has_spoilers ? 'spoiler-hidden' : ''}" onclick="if(this.classList) this.classList.toggle('spoiler-hidden')">
-                                ${child.content}
-                                ${child.has_spoilers ? '<div class="spoiler-warning" onclick="event.stopPropagation(); this.parentElement.classList.toggle(\'spoiler-hidden\')">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}
-                            </div>
-                            <div class="vote-buttons">
-                                <button class="vote-btn" onclick="vote(${child.id}, ${child.user_id})">👍 ${child.votes_up || 0}</button>
-                                <button class="btn-secondary" style="font-size:0.7rem; padding:2px 8px;" onclick="replyToUser('${child.user_name}')">💬 Responder</button>
-                            </div>
-                            ${(currentUser && (child.user_id === currentUser.id || currentUser?.isAdmin)) ? `
-                                <div class="review-actions">
-                                    <button class="btn-secondary" onclick="editReviewPrompt(${child.id})">✏️ Editar</button>
-                                    <button class="btn-secondary" onclick="deleteReview(${child.id}, ${child.user_id})">🗑️ Eliminar</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                        ${buildReplyTree(child.id, level + 1)}
-                    </div>
-                `).join('');
-            }
-            
-            const container = document.getElementById('reviewsList');
-            if (mainReviews.length === 0) {
-                container.innerHTML = '<div class="loading">No hay críticas aún</div>';
-                return;
-            }
-            
-            container.innerHTML = mainReviews.map(r => `
-                <div class="review-card">
-                    <div class="review-header">
-                        <span class="review-user" onclick="replyToUser('${r.user_name}')">✍️ ${r.user_name}</span>
-                        <span class="review-stars">${'⭐'.repeat(r.rating)}</span>
-                        <span class="review-date">📅 ${new Date(r.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <div class="review-content ${r.has_spoilers ? 'spoiler-hidden' : ''}" onclick="if(this.classList) this.classList.toggle('spoiler-hidden')">
-                        ${r.content}
-                        ${r.has_spoilers ? '<div class="spoiler-warning" onclick="event.stopPropagation(); this.parentElement.classList.toggle(\'spoiler-hidden\')">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}
-                    </div>
-                    <div class="vote-buttons">
-                        <button class="vote-btn" onclick="vote(${r.id}, ${r.user_id})">👍 ${r.votes_up || 0}</button>
-                        <button class="btn-secondary" style="font-size:0.7rem; padding:2px 8px;" onclick="replyToUser('${r.user_name}')">💬 Responder</button>
-                    </div>
-                    ${(currentUser && (r.user_id === currentUser.id || currentUser?.isAdmin)) ? `
-                        <div class="review-actions">
-                            <button class="btn-secondary" onclick="editReviewPrompt(${r.id})">✏️ Editar</button>
-                            <button class="btn-secondary" onclick="deleteReview(${r.id}, ${r.user_id})">🗑️ Eliminar</button>
-                        </div>
-                    ` : ''}
-                    ${buildReplyTree(r.id, 1)}
-                </div>
-            `).join('');
-        }
-
-        window.replyToUser = function(username) {
-            const textarea = document.getElementById('commentText');
-            textarea.value = `@${username} `;
-            textarea.focus();
-        };
-
+function renderReviews(filter) {
+    let filtered = [...currentReviewsArray];
+    if (filter === 'best') filtered.sort((a,b) => b.rating - a.rating);
+    else if (filter === 'recent') filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    else if (filter === 'no-spoiler') filtered = filtered.filter(r => !r.has_spoilers);
+    const container = document.getElementById('reviewsList');
+    if (!filtered.length) { container.innerHTML = '<div class="loading">No hay críticas aún</div>'; return; }
+    container.innerHTML = filtered.map(r => {
+        const isAuthor = currentUserObj && r.user_id === currentUserObj.id;
+        const isAdmin = currentUserObj?.isAdmin;
+        const canEdit = isAuthor || isAdmin;
+        const fecha = new Date(r.created_at);
+        const fechaStr = fecha.toLocaleDateString();
+        const horaStr = fecha.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', hour12: false});
+        return `<div class="review-card" id="review-${r.id}"><div class="review-header"><span class="review-user" onclick="document.getElementById('commentText').value = '@${r.user_name} '">✍️ ${r.user_name}</span><span class="review-stars">${'⭐'.repeat(r.rating)}</span><span class="review-date">📅 ${horaStr} (${fechaStr})</span></div><div class="review-content ${r.has_spoilers ? 'spoiler-hidden' : ''}" onclick="if(this.classList) this.classList.toggle('spoiler-hidden')">${r.content}${r.has_spoilers ? '<div class="spoiler-warning" onclick="event.stopPropagation(); this.parentElement.classList.toggle(\'spoiler-hidden\')">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}</div><div class="vote-buttons"><button class="vote-btn" onclick="vote(${r.id}, ${r.user_id})">👍 ${r.votes_up || 0}</button></div>${canEdit ? `<div class="review-actions"><button class="btn-secondary" onclick="editReviewPrompt(${r.id})">✏️ Editar</button><button class="btn-secondary" onclick="deleteReview(${r.id}, ${r.rating}, ${r.user_id})">🗑️ Eliminar</button></div>` : ''}</div>`;
+    }).join('');
+}
         window.editReviewPrompt = async function(id) {
             const newContent = prompt('Editar crítica:');
             if (newContent) await editReview(id, newContent);
@@ -645,21 +482,19 @@ async function deleteReview(id, userId) {
         async function init() {
             const saved = localStorage.getItem('critiflix_user');
             if (saved) {
-                currentUser = JSON.parse(saved);
-                const { data } = await supabase.from('simple_users').select('points, is_banned, is_admin').eq('id', currentUser.id).single();
-                if (data && !data.is_banned) { currentUser.points = data.points || 0; currentUser.isAdmin = data.is_admin; updateAuthUI(); }
-                else { currentUser = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); }
+                currentUserObj = JSON.parse(saved);
+                const { data } = await supabaseClient.from('simple_users').select('points, is_banned, is_admin').eq('id', currentUserObj.id).single();
+                if (data && !data.is_banned) { currentUserObj.points = data.points || 0; currentUserObj.isAdmin = data.is_admin; updateAuthUI(); }
+                else { currentUserObj = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); }
             } else updateAuthUI();
-            
             await loadRecommendations(); await loadBestOf2025(); await loadLatestReviews(); await loadRanking(); await loadBanner();
             const defaultMovie = await fetchFromTMDB('/movie/872585');
-            if (defaultMovie) { displayFeaturedMovie(defaultMovie); currentMovie = defaultMovie; await loadReviews(); }
-            
+            if (defaultMovie) { displayFeaturedMovie(defaultMovie); currentMovieObj = defaultMovie; await loadReviews(); }
             document.getElementById('searchBtn').onclick = () => searchMovie(document.getElementById('searchInput').value);
             document.getElementById('closeResultsBtn').onclick = () => document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('publishBtn').onclick = () => addReview(document.getElementById('commentText').value, document.getElementById('ratingSelect').value, document.getElementById('spoilerCheckbox').checked);
-            document.getElementById('modalActionBtn').onclick = () => { if (modalMode === 'login') handleLogin(); else if (modalMode === 'register') handleRegister(); else handleRecover(); };
-            document.getElementById('modalSwitchBtn').onclick = () => modalMode === 'login' ? openRegisterModal() : openLoginModal();
+            document.getElementById('modalActionBtn').onclick = () => { if (modalModeVar === 'login') handleLogin(); else if (modalModeVar === 'register') handleRegister(); else handleRecover(); };
+            document.getElementById('modalSwitchBtn').onclick = () => modalModeVar === 'login' ? openRegisterModal() : openLoginModal();
             document.getElementById('modalRecoverBtn').onclick = openRecoverModal;
             document.getElementById('closeModalBtn').onclick = closeModal;
             document.getElementById('closeProfileBtn').onclick = () => document.getElementById('profileModal').style.display = 'none';
@@ -667,14 +502,7 @@ async function deleteReview(id, userId) {
             document.getElementById('adminBannerBtn').onclick = () => document.getElementById('adminPanelContent').innerHTML = `<textarea id="bannerMsg" rows="3" style="width:100%; background:#2a2a3a; color:white; padding:10px; border-radius:8px;" placeholder="Mensaje del banner..."></textarea><button class="btn-primary" onclick="saveBanner(document.getElementById('bannerMsg').value)">Guardar Banner</button>`;
             document.getElementById('adminBackupBtn').onclick = () => document.getElementById('adminPanelContent').innerHTML = `<button class="btn-primary" onclick="exportJSON()">📄 Exportar JSON</button><button class="btn-primary" onclick="exportCSV()">📊 Exportar CSV</button>`;
             document.getElementById('closeAdminBtn').onclick = () => document.getElementById('adminModal').style.display = 'none';
-            
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.onclick = () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderReviews(btn.dataset.filter);
-                };
-            });
+            document.querySelectorAll('.filter-btn').forEach(btn => { btn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderReviews(btn.dataset.filter); }; });
         }
         init();
     </script>
