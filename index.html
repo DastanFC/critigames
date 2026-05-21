@@ -321,75 +321,139 @@
             if (data) { currentReviews = data; renderReviews('all'); }
         }
 
-        async function addReview(content, rating, spoiler) {
-            if (!currentUser) return alert('Inicia sesión');
-            if (!content.trim()) return alert('Escribe algo');
-            
-            let parentId = null;
-            let replyTo = null;
-            
-            // Detectar si es una respuesta (clic en @nombre)
-            const mentionMatch = content.match(/^@(\w+)/);
-            if (mentionMatch) {
-                replyTo = mentionMatch[1];
-                // Buscar el ID de la crítica original a la que responde
-                const { data: parentReview } = await supabase
-                    .from('reviews')
-                    .select('id')
-                    .eq('user_name', replyTo)
-                    .eq('movie_id', currentMovie.id)
-                    .order('created_at', { ascending: false })
-                    .limit(1)
-                    .single();
-                if (parentReview) parentId = parentReview.id;
+async function addReview(content, rating, spoiler) {
+    if (!currentUser) return alert('Inicia sesión');
+    if (!content.trim()) return alert('Escribe algo');
+    
+    let parentId = null;
+    let replyTo = null;
+    
+    const mentionMatch = content.match(/^@(\w+)/);
+    if (mentionMatch) {
+        replyTo = mentionMatch[1];
+        const { data: parentReview } = await supabase
+            .from('reviews')
+            .select('id')
+            .eq('user_name', replyTo)
+            .eq('movie_id', currentMovie.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+        if (parentReview) parentId = parentReview.id;
+    }
+    
+    const { error } = await supabase.from('reviews').insert({
+        movie_id: currentMovie.id,
+        movie_title: currentMovie.title,
+        user_id: currentUser.id,
+        user_name: currentUser.username,
+        rating: parseInt(rating),
+        content: content,
+        has_spoilers: spoiler,
+        parent_review_id: parentId,
+        reply_to_user: replyTo
+    });
+    
+    if (!error) {
+        // Recargar datos desde la base de datos
+        const { data: newReviews } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('movie_id', currentMovie.id)
+            .order('created_at', { ascending: true });
+        
+        if (newReviews) {
+            currentReviews = newReviews;
+            renderReviews(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
+        }
+        
+        // Actualizar puntos
+        await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', currentUser.id);
+        currentUser.points += 1;
+        
+        if (replyTo && replyTo !== currentUser.username) {
+            const { data: repliedUser } = await supabase.from('simple_users').select('id').eq('username', replyTo).single();
+            if (repliedUser) {
+                await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', repliedUser.id);
             }
-            
-            const { error } = await supabase.from('reviews').insert({
-                movie_id: currentMovie.id,
-                movie_title: currentMovie.title,
-                user_id: currentUser.id,
-                user_name: currentUser.username,
-                rating: parseInt(rating),
-                content: content,
-                has_spoilers: spoiler,
-                parent_review_id: parentId,
-                reply_to_user: replyTo
-            });
-            
-            if (!error) {
-                await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', currentUser.id);
-                currentUser.points += 1;
-                if (replyTo && replyTo !== currentUser.username) {
-                    const { data: repliedUser } = await supabase.from('simple_users').select('id').eq('username', replyTo).single();
-                    if (repliedUser) {
-                        await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', repliedUser.id);
-                        showNotification(`📢 @${replyTo} ha recibido +1 punto por tu mención`);
-                    }
-                }
-                await loadReviews();
-                document.getElementById('commentText').value = '';
-                document.getElementById('spoilerCheckbox').checked = false;
-                loadLatestReviews(); loadRanking();
-                showNotification('Crítica publicada +1 punto');
-            } else {
-                alert('Error al publicar: ' + error.message);
-            }
         }
+        
+        // Limpiar formulario
+        document.getElementById('commentText').value = '';
+        document.getElementById('spoilerCheckbox').checked = false;
+        document.getElementById('ratingSelect').value = '5';
+        
+        // Actualizar ranking y últimas críticas
+        await loadRanking();
+        await loadLatestReviews();
+        
+        showNotification('✅ Crítica publicada +1 punto');
+    } else {
+        alert('Error: ' + error.message);
+    }
+}
 
-        async function editReview(id, content) {
-            await supabase.from('reviews').update({ content }).eq('id', id);
-            loadReviews();
-            showNotification('Crítica editada');
+async function editReview(id, newContent) {
+    const { error } = await supabase
+        .from('reviews')
+        .update({ content: newContent })
+        .eq('id', id);
+    
+    if (!error) {
+        // Recargar las críticas desde la base de datos
+        const { data: newReviews } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('movie_id', currentMovie.id)
+            .order('created_at', { ascending: true });
+        
+        if (newReviews) {
+            currentReviews = newReviews;
+            renderReviews(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
         }
+        
+        showNotification('✏️ Crítica editada');
+    } else {
+        alert('Error al editar: ' + error.message);
+    }
+}
 
-        async function deleteReview(id, userId) {
-            if (!confirm('¿Eliminar esta crítica?')) return;
-            await supabase.from('reviews').delete().eq('id', id);
-            await supabase.from('simple_users').update({ points: supabase.raw('points - 1') }).eq('id', userId);
-            if (currentUser.id === userId) currentUser.points = Math.max(0, (currentUser.points || 0) - 1);
-            loadReviews(); loadLatestReviews(); loadRanking();
-            showNotification('Crítica eliminada -1 punto');
+async function deleteReview(id, userId) {
+    if (!confirm('¿Eliminar esta crítica?')) return;
+    
+    const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', id);
+    
+    if (!error) {
+        // Recargar las críticas desde la base de datos
+        const { data: newReviews } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('movie_id', currentMovie.id)
+            .order('created_at', { ascending: true });
+        
+        if (newReviews) {
+            currentReviews = newReviews;
+            renderReviews(document.querySelector('.filter-btn.active')?.dataset.filter || 'all');
         }
+        
+        // Actualizar puntos (restar 1)
+        await supabase.from('simple_users').update({ points: supabase.raw('points - 1') }).eq('id', userId);
+        if (currentUser.id === userId) {
+            currentUser.points = Math.max(0, (currentUser.points || 0) - 1);
+        }
+        
+        // Actualizar ranking y últimas críticas
+        await loadRanking();
+        await loadLatestReviews();
+        
+        showNotification('🗑️ Crítica eliminada -1 punto');
+    } else {
+        alert('Error al eliminar: ' + error.message);
+    }
+}
 
         // ==================== ADMIN ====================
         async function resetUserCode(userId) { const newCode = Math.random().toString(36).substring(2, 8).toUpperCase(); await supabase.from('simple_users').update({ password: newCode }).eq('id', userId); alert(`Nuevo código: ${newCode}`); loadAdminUsers(); }
