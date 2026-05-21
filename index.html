@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRITIFLIX - Comentarios de Películas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%);
+            padding: 20px 40px;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #e50914, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .search-bar {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: none;
+            background: #2a2a3a;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: none;
+            background: #e50914;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .search-bar button:hover {
+            transform: scale(1.02);
+            background: #ff0a1a;
+        }
+
+        /* Layout principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        /* Secciones comunes */
+        .section {
+            background: #14141e;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #2a2a3a;
+        }
+
+        .section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #e50914;
+            border-left: 4px solid #e50914;
+            padding-left: 12px;
+        }
+
+        .section h3 {
+            font-size: 1rem;
+            color: #aaa;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        /* Grid de películas */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .movie-card {
+            background: #1e1e2a;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .movie-card .info {
+            padding: 10px;
+        }
+
+        .movie-card .title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .movie-card .rating {
+            font-size: 0.8rem;
+            color: #ffd700;
+            margin-top: 5px;
+        }
+
+        /* Lista de tendencias, críticas, amigos */
+        .trend-list, .critics-list, .friends-list {
+            list-style: none;
+        }
+
+        .trend-list li, .critics-list li, .friends-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2a3a;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .trend-list li:hover, .critics-list li:hover, .friends-list li:hover {
+            color: #e50914;
+        }
+
+        .spoiler-tag {
+            color: #ffa500;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        /* Película destacada */
+        .featured-movie {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .featured-movie img {
+            width: 180px;
+            border-radius: 12px;
+        }
+
+        .featured-details {
+            flex: 1;
+        }
+
+        .featured-details h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .sinopsis {
+            margin: 15px 0;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #e50914;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: white;
+        }
+
+        /* Críticas de la comunidad */
+        .comment-input {
+            background: #1e1e2a;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .comment-input textarea {
+            width: 100%;
+            background: #2a2a3a;
+            border: 1px solid #3a3a4a;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #2a2a3a;
+            padding: 6px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn.active {
+            background: #e50914;
+        }
+
+        .review-card {
+            background: #1e1e2a;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .review-user {
+            font-weight: bold;
+            color: #e50914;
+        }
+
+        .review-stars {
+            color: #ffd700;
+        }
+
+        .review-date {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .review-content {
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .spoiler-warning {
+            background: #332700;
+            padding: 8px;
+            border-radius: 8px;
+            color: #ffd700;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .header {
+                padding: 15px 20px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .error {
+            color: #e50914;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 CRITIFLIX</h1>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar película... (Ej: Oppenheimer, Spider-Man)">
+            <button id="searchBtn">🔍 Buscar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Columna principal izquierda -->
+        <div class="main">
+            <!-- Recomendados para ti -->
+            <div class="section">
+                <h2>🎯 RECOMENDADOS PARA TI</h2>
+                <div class="movies-grid" id="recommendationsGrid">
+                    <div class="loading">Cargando recomendaciones...</div>
+                </div>
+            </div>
+
+            <!-- Película destacada (Oppenheimer por defecto) -->
+            <div class="section" id="featuredSection">
+                <div class="featured-movie" id="featuredMovie">
+                    <div class="loading">Cargando película destacada...</div>
+                </div>
+            </div>
+
+            <!-- Críticas de la comunidad -->
+            <div class="section">
+                <h2>💬 CRÍTICAS DE LA COMUNIDAD</h2>
+                <div class="comment-input">
+                    <textarea id="commentText" rows="3" placeholder="Escribe tu crítica..."></textarea>
+                    <div class="comment-actions">
+                        <button class="btn btn-primary" id="publishBtn">📝 Publicar</button>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="spoilerCheckbox"> ⚠️ Con Spoilers
+                        </label>
+                        <select id="ratingSelect" style="background:#2a2a3a; color:white; border-radius:20px; padding:6px 12px;">
+                            <option value="5">⭐⭐⭐⭐⭐ 5</option>
+                            <option value="4">⭐⭐⭐⭐ 4</option>
+                            <option value="3">⭐⭐⭐ 3</option>
+                            <option value="2">⭐⭐ 2</option>
+                            <option value="1">⭐ 1</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <span class="filter-btn active" data-filter="all">📋 Todas</span>
+                    <span class="filter-btn" data-filter="recent">🕐 Más Recientes</span>
+                    <span class="filter-btn" data-filter="best">⭐ Mejor Valoradas</span>
+                    <span class="filter-btn" data-filter="no-spoiler">🚫 Sin Spoilers</span>
+                </div>
+
+                <div id="reviewsList">
+                    <div class="loading">Cargando críticas...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar derecho -->
+        <div class="sidebar">
+            <div class="section">
+                <h2>🔥 TENDENCIAS EN CRÍTICAS</h2>
+                <ul class="trend-list" id="trendingList">
+                    <li>Cargando...</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>🏆 LO MEJOR DE 2024</h2>
+                <ul class="critics-list" id="best2024List">
+                    <li>Cargando...</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>👥 CRÍTICAS DE AMIGOS</h2>
+                <ul class="friends-list" id="friendsList">
+                    <li>Cargando...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURACIÓN TMDB ====================
+        // IMPORTANTE: Reemplaza con tu API Key de TMDB
+        // Obtén una gratis en: https://www.themoviedb.org/signup
+        const TMDB_API_KEY = '398c85e1174b4fff7916d36f25c27552';  // <KEY
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+        const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+
+        // Estado global
+        let currentMovie = null;
+        let allReviews = [];
+
+        // Usuarios de ejemplo para las listas laterales
+        const fakeUsers = ['CINEMANÍACO_99', 'CLIC PARA VER SPOILERS', 'SOUARÁTOR ROLLUR', 'SPIDERMAN_FAN', 'SQUARATOR', 'OPPENHEIMER_LOVER', 'GRISIK_FIHER', 'COMÁDO', 'KILLERS_FLOWER'];
+        const fakeMovies2024 = ['Dune 2', 'Oppenheimer', 'Killers of the Flower Moon', 'Poor Things', 'The Zone of Interest'];
+
+        // ==================== FUNCIONES API ====================
+        async function fetchFromTMDB(endpoint) {
+            try {
+                const url = `${TMDB_BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}&language=es-ES`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Error ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error TMDB:', error);
+                return null;
+            }
+        }
+
+        // Obtener películas populares (recomendadas)
+        async function loadRecommendations() {
+            const data = await fetchFromTMDB('/movie/popular');
+            if (data && data.results) {
+                displayMovies(data.results.slice(0, 6), 'recommendationsGrid');
+            } else {
+                document.getElementById('recommendationsGrid').innerHTML = '<div class="error">No se pudieron cargar recomendaciones</div>';
+            }
+        }
+
+        // Buscar película
+        async function searchMovie(query) {
+            if (!query.trim()) return;
+            const data = await fetchFromTMDB(`/search/movie&query=${encodeURIComponent(query)}`);
+            if (data && data.results && data.results.length > 0) {
+                displayFeaturedMovie(data.results[0]);
+                loadReviewsForMovie(data.results[0].id);
+                currentMovie = data.results[0];
+            } else {
+                alert('No se encontró la película');
+            }
+        }
+
+        // Mostrar película destacada
+        async function displayFeaturedMovie(movie) {
+            const details = await fetchFromTMDB(`/movie/${movie.id}`);
+            const rating = details ? details.vote_average : movie.vote_average;
+            const stars = '⭐'.repeat(Math.floor(rating / 2)) + '½'.repeat(rating % 2 >= 0.5 ? 1 : 0);
+            
+            document.getElementById('featuredMovie').innerHTML = `
+                <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/180x270?text=No+Poster'}" alt="${movie.title}">
+                <div class="featured-details">
+                    <h3>${movie.title}</h3>
+                    <div class="stars">${stars} ${(rating/2).toFixed(1)} ★ (${movie.vote_count?.toLocaleString() || '0'} reseñas)</div>
+                    <div class="sinopsis"><strong>Sinopsis</strong><br>${movie.overview || 'Sin descripción disponible.'}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="scrollToComment()">📝 Escribir crítica</button>
+                        <button class="btn btn-secondary" onclick="alert('Función de puntuación próximamente')">⭐ Puntuar</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function scrollToComment() {
+            document.querySelector('.comment-input').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Mostrar grid de películas
+        function displayMovies(movies, containerId) {
+            const container = document.getElementById(containerId);
+            if (!movies || movies.length === 0) {
+                container.innerHTML = '<div class="error">No hay películas</div>';
+                return;
+            }
+            container.innerHTML = movies.map(movie => `
+                <div class="movie-card" onclick="selectMovie(${movie.id})">
+                    <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x220?text=No+Poster'}" alt="${movie.title}">
+                    <div class="info">
+                        <div class="title">${movie.title}</div>
+                        <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.selectMovie = async function(movieId) {
+            const data = await fetchFromTMDB(`/movie/${movieId}`);
+            if (data) {
+                displayFeaturedMovie(data);
+                loadReviewsForMovie(movieId);
+                currentMovie = data;
+            }
+        };
+
+        // ==================== CRÍTICAS LOCALES (con LocalStorage) ====================
+        function loadReviewsForMovie(movieId) {
+            const stored = localStorage.getItem(`reviews_${movieId}`);
+            if (stored) {
+                allReviews = JSON.parse(stored);
+            } else {
+                // Críticas de ejemplo
+                allReviews = [
+                    { id: 1, user: 'CINEMANÍACO_99', rating: 5, date: '13/03/2024', content: 'Una obra maestra de Nolan, la tensión es increíble... elementos atónitos con foco inesperado.', spoiler: false },
+                    { id: 2, user: 'CLIC PARA VER SPOILERS', rating: 4, date: '10/03/2024', content: 'SPOILER: El final es impactante, no te lo pierdas.', spoiler: true },
+                    { id: 3, user: 'Cinemaniaco_8', rating: 5, date: '18/03/2024', content: 'Increíble experiencia cinematográfica. Nolan en su mejor momento.', spoiler: false },
+                ];
+                saveReviews();
+            }
+            renderReviews('all');
+        }
+
+        function saveReviews() {
+            if (currentMovie) {
+                localStorage.setItem(`reviews_${currentMovie.id}`, JSON.stringify(allReviews));
+            }
+        }
+
+        function addReview(content, rating, spoiler) {
+            if (!currentMovie) {
+                alert('Selecciona o busca una película primero');
+                return false;
+            }
+            if (!content.trim()) {
+                alert('Escribe una crítica');
+                return false;
+            }
+            const newReview = {
+                id: Date.now(),
+                user: '🎬 CRITIFLIX_USER',
+                rating: parseInt(rating),
+                date: new Date().toLocaleDateString('es-ES'),
+                content: content,
+                spoiler: spoiler
+            };
+            allReviews.unshift(newReview);
+            saveReviews();
+            renderReviews('all');
+            document.getElementById('commentText').value = '';
+            document.getElementById('spoilerCheckbox').checked = false;
+            return true;
+        }
+
+        function renderReviews(filter) {
+            let filtered = [...allReviews];
+            
+            if (filter === 'recent') {
+                // Ya están ordenadas por fecha descendente
+            } else if (filter === 'best') {
+                filtered.sort((a,b) => b.rating - a.rating);
+            } else if (filter === 'no-spoiler') {
+                filtered = filtered.filter(r => !r.spoiler);
+            }
+            
+            const container = document.getElementById('reviewsList');
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="loading">No hay críticas aún. ¡Sé el primero!</div>';
+                return;
+            }
+            
+            container.innerHTML = filtered.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-user">${review.user}</span>
+                        <span class="review-stars">${'⭐'.repeat(review.rating)}</span>
+                        <span class="review-date">${review.date}</span>
+                    </div>
+                    <div class="review-content">
+                        ${review.content}
+                        ${review.spoiler ? '<div class="spoiler-warning" onclick="this.style.display=\'none\';">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== LISTAS LATERALES ====================
+        function loadTrending() {
+            const trending = fakeUsers.slice(0, 8).map(u => `<li>🔥 ${u}</li>`).join('');
+            document.getElementById('trendingList').innerHTML = trending;
+        }
+
+        function loadBest2024() {
+            const best = fakeMovies2024.map(m => `<li>🏆 ${m}</li>`).join('');
+            document.getElementById('best2024List').innerHTML = best;
+        }
+
+        function loadFriendsReviews() {
+            const friends = fakeUsers.slice(0, 6).map(u => `<li>👤 ${u}</li>`).join('');
+            document.getElementById('friendsList').innerHTML = friends;
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        async function init() {
+            // Cargar película por defecto: Oppenheimer (ID: 872585)
+            const defaultMovie = await fetchFromTMDB('/movie/872585'); // Oppenheimer
+            if (defaultMovie) {
+                displayFeaturedMovie(defaultMovie);
+                currentMovie = defaultMovie;
+                loadReviewsForMovie(defaultMovie.id);
+            } else {
+                // Fallback
+                document.getElementById('featuredMovie').innerHTML = '<div class="error">Error al cargar película destacada</div>';
+            }
+            
+            await loadRecommendations();
+            loadTrending();
+            loadBest2024();
+            loadFriendsReviews();
+            
+            // Eventos
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                const query = document.getElementById('searchInput').value;
+                searchMovie(query);
+            });
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchMovie(e.target.value);
+            });
+            document.getElementById('publishBtn').addEventListener('click', () => {
+                const content = document.getElementById('commentText').value;
+                const rating = document.getElementById('ratingSelect').value;
+                const spoiler = document.getElementById('spoilerCheckbox').checked;
+                if (addReview(content, rating, spoiler)) {
+                    alert('¡Crítica publicada!');
+                }
+            });
+            
+            // Filtros
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderReviews(btn.dataset.filter);
+                });
+            });
+        }
+        
+        // Advertencia de API Key
+        if (TMDB_API_KEY === 'TU_API_KEY_AQUI') {
+            console.warn('⚠️ Recuerda obtener tu API Key de TMDB (gratis) y reemplazarla en el código');
+            document.body.insertAdjacentHTML('afterbegin', '<div style="background:#e50914; color:white; text-align:center; padding:8px;">⚠️ Configura tu API Key de TMDB en el código (línea ~160) para que funcione correctamente</div>');
+        }
+        
+        init();
+    </script>
+</body>
+</html>
