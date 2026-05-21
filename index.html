@@ -3,401 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRITIFLIX - Panel Admin y Comunidad</title>
+    <title>CRITIFLIX - Comunidad de Cine</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            line-height: 1.5;
-        }
-        .header {
-            background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%);
-            padding: 15px 40px;
-            border-bottom: 1px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .header h1 {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #e50914, #ff6b6b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            cursor: pointer;
-        }
-        .auth-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        .btn-primary {
-            background: #e50914;
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-secondary {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-        .btn-admin {
-            background: #ffc107;
-            color: #1a1a2e;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #2a2a3a;
-            padding: 6px 16px;
-            border-radius: 40px;
-        }
-        .search-bar {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-        }
-        .search-bar input {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 30px;
-            border: none;
-            background: #2a2a3a;
-            color: white;
-            font-size: 1rem;
-        }
-        .search-bar button {
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: none;
-            background: #e50914;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 40px;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 30px;
-        }
-        .section {
-            background: #14141e;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid #2a2a3a;
-        }
-        .section h2 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: #e50914;
-            border-left: 4px solid #e50914;
-            padding-left: 12px;
-        }
-        .movies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-        }
-        .movie-card {
-            background: #1e1e2a;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .movie-card:hover {
-            transform: translateY(-5px);
-        }
-        .movie-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .movie-card .info {
-            padding: 10px;
-        }
-        .movie-card .title {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .movie-card .rating {
-            font-size: 0.8rem;
-            color: #ffd700;
-            margin-top: 5px;
-        }
-        .featured-movie {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .featured-movie img {
-            width: 160px;
-            border-radius: 12px;
-        }
-        .featured-details {
-            flex: 1;
-        }
-        .featured-details h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        .stars {
-            color: #ffd700;
-            margin: 10px 0;
-        }
-        .sinopsis {
-            margin: 15px 0;
-            line-height: 1.5;
-            color: #ccc;
-            font-size: 0.9rem;
-        }
-        .comment-input {
-            background: #1e1e2a;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        .comment-input textarea {
-            width: 100%;
-            background: #2a2a3a;
-            border: 1px solid #3a3a4a;
-            border-radius: 12px;
-            padding: 12px;
-            color: white;
-            font-family: inherit;
-            resize: vertical;
-        }
-        .comment-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        .filter-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            background: #2a2a3a;
-            padding: 6px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-        .filter-btn.active {
-            background: #e50914;
-        }
-        .review-card {
-            background: #1e1e2a;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .review-user {
-            font-weight: bold;
-            color: #e50914;
-            cursor: pointer;
-        }
-        .review-stars {
-            color: #ffd700;
-        }
-        .review-date {
-            color: #888;
-            font-size: 0.75rem;
-        }
-        .review-content {
-            margin-top: 10px;
-            line-height: 1.4;
-            font-size: 0.9rem;
-        }
-        .review-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .vote-buttons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-top: 8px;
-        }
-        .vote-btn {
-            background: #2a2a3a;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .vote-btn.voted {
-            background: #e50914;
-        }
-        .spoiler-warning {
-            background: #332700;
-            padding: 6px;
-            border-radius: 8px;
-            color: #ffd700;
-            font-size: 0.75rem;
-            margin-top: 8px;
-            cursor: pointer;
-            text-align: center;
-        }
-        .modal, .admin-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content, .admin-modal-content {
-            background: #14141e;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid #e50914;
-        }
-        .modal-content h3, .admin-modal-content h3 {
-            margin-bottom: 20px;
-            color: #e50914;
-        }
-        .modal-content input, .admin-modal-content input, .admin-modal-content select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            background: #2a2a3a;
-            border: 1px solid #3a3a4a;
-            border-radius: 8px;
-            color: white;
-        }
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .user-table th, .user-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #2a2a3a;
-        }
-        .user-table th {
-            color: #e50914;
-        }
-        .rank-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.5; }
+        .header { background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%); padding: 15px 40px; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header h1 { font-size: 2rem; background: linear-gradient(135deg, #e50914, #ff6b6b); -webkit-background-clip: text; background-clip: text; color: transparent; cursor: pointer; }
+        .auth-buttons { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .btn-primary { background: #e50914; color: white; border: none; padding: 8px 18px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        .btn-secondary { background: #333; color: white; border: none; padding: 8px 18px; border-radius: 30px; cursor: pointer; }
+        .btn-admin { background: #ffc107; color: #1a1a2e; border: none; padding: 8px 18px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        .user-info { display: flex; align-items: center; gap: 12px; background: #2a2a3a; padding: 6px 16px; border-radius: 40px; flex-wrap: wrap; }
+        .search-bar { margin-top: 15px; display: flex; gap: 10px; }
+        .search-bar input { flex: 1; padding: 12px 20px; border-radius: 30px; border: none; background: #2a2a3a; color: white; }
+        .search-bar button { padding: 12px 25px; border-radius: 30px; border: none; background: #e50914; color: white; cursor: pointer; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+        .section { background: #14141e; border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid #2a2a3a; }
+        .section h2 { font-size: 1.3rem; margin-bottom: 15px; color: #e50914; border-left: 4px solid #e50914; padding-left: 12px; }
+        .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        .movie-card { background: #1e1e2a; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+        .movie-card:hover { transform: translateY(-5px); }
+        .movie-card img { width: 100%; height: 200px; object-fit: cover; }
+        .movie-card .info { padding: 10px; }
+        .movie-card .title { font-weight: bold; font-size: 0.9rem; }
+        .movie-card .rating { font-size: 0.8rem; color: #ffd700; }
+        .featured-movie { display: flex; gap: 20px; flex-wrap: wrap; }
+        .featured-movie img { width: 160px; border-radius: 12px; }
+        .featured-details { flex: 1; }
+        .featured-details h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .stars { color: #ffd700; margin: 10px 0; }
+        .sinopsis { margin: 15px 0; line-height: 1.5; color: #ccc; font-size: 0.9rem; }
+        .comment-input { background: #1e1e2a; border-radius: 12px; padding: 15px; margin: 15px 0; }
+        .comment-input textarea { width: 100%; background: #2a2a3a; border: 1px solid #3a3a4a; border-radius: 12px; padding: 12px; color: white; font-family: inherit; resize: vertical; }
+        .comment-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { background: #2a2a3a; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+        .filter-btn.active { background: #e50914; }
+        .review-card { background: #1e1e2a; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .review-user { font-weight: bold; color: #e50914; cursor: pointer; }
+        .review-stars { color: #ffd700; }
+        .review-date { color: #888; font-size: 0.75rem; }
+        .review-content { margin-top: 10px; line-height: 1.4; font-size: 0.9rem; }
+        .review-actions { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .vote-buttons { display: flex; gap: 15px; align-items: center; margin-top: 8px; }
+        .vote-btn { background: #2a2a3a; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .vote-btn.voted { background: #e50914; }
+        .spoiler-warning { background: #332700; padding: 6px; border-radius: 8px; color: #ffd700; font-size: 0.75rem; margin-top: 8px; cursor: pointer; text-align: center; }
+        .spoiler-hidden { filter: blur(5px); cursor: pointer; transition: filter 0.2s; }
+        .spoiler-hidden:hover { filter: blur(2px); }
+        .modal, .admin-modal, .profile-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content, .admin-modal-content, .profile-modal-content { background: #14141e; border-radius: 20px; padding: 30px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid #e50914; }
+        .user-table { width: 100%; border-collapse: collapse; }
+        .user-table th, .user-table td { padding: 10px; text-align: left; border-bottom: 1px solid #2a2a3a; }
+        .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
         .rank-nuevo { background: #555; }
         .rank-aprendiz { background: #2e7d32; }
         .rank-confiable { background: #1565c0; }
         .rank-experto { background: #6a1b9a; }
         .rank-top { background: #ff8f00; }
-        .banner-global {
-            background: linear-gradient(135deg, #1a472a, #0d2818);
-            border-left: 4px solid #ffd700;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .close-banner {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .sidebar {
-            position: sticky;
-            top: 120px;
-            height: fit-content;
-        }
-        .latest-list, .best-list, .ranking-list {
-            list-style: none;
-        }
-        .latest-list li, .best-list li, .ranking-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #2a2a3a;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-        .search-results {
-            background: #14141e;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid #2a2a3a;
-        }
-        .close-results {
-            float: right;
-            background: #333;
-            border: none;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; padding: 20px; }
-            .header { padding: 15px 20px; }
-        }
+        .banner-global { background: linear-gradient(135deg, #1a472a, #0d2818); border-left: 4px solid #ffd700; padding: 12px 20px; margin-bottom: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .close-banner { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+        .notification { position: fixed; bottom: 20px; right: 20px; background: #e50914; padding: 12px 20px; border-radius: 30px; z-index: 1000; animation: fadeOut 3s ease-in-out; }
+        @keyframes fadeOut { 0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+        .sidebar { position: sticky; top: 120px; height: fit-content; }
+        .latest-list, .best-list, .ranking-list { list-style: none; }
+        .latest-list li, .best-list li, .ranking-list li { padding: 10px 0; border-bottom: 1px solid #2a2a3a; cursor: pointer; font-size: 0.85rem; }
+        .search-results { background: #14141e; border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid #2a2a3a; }
+        .close-results { float: right; background: #333; border: none; color: white; padding: 5px 12px; border-radius: 20px; cursor: pointer; }
+        .reply-btn { background: #2a2a3a; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; }
+        .thread-line { border-left: 2px solid #e50914; margin-left: 20px; padding-left: 15px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; padding: 20px; } .header { padding: 15px 20px; } }
         .loading { text-align: center; padding: 40px; color: #888; }
-        button { cursor: pointer; }
-        .reply-btn { background: #2a2a3a; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; }
+        .bell-icon { position: relative; cursor: pointer; font-size: 1.2rem; }
+        .bell-icon.has-notification::after { content: '●'; position: absolute; top: -5px; right: -5px; color: #e50914; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -468,9 +149,7 @@
             <input type="password" id="loginPassword" placeholder="Contraseña">
             <div id="recoverFields" style="display: none;"><input type="text" id="recoverSecret" placeholder="Palabra secreta"></div>
             <div id="registerFields" style="display: none;">
-                <div class="password-tip" style="background:#1a2a1a; padding:10px; border-radius:8px; margin-bottom:15px;">
-                    <h4>🔒 Consejos</h4><ul><li>No uses misma contraseña que en otros sitios</li></ul>
-                </div>
+                <div style="background:#1a2a1a; padding:10px; border-radius:8px; margin-bottom:15px;"><h4>🔒 Consejos</h4><ul style="margin-left:20px;"><li>No uses misma contraseña que en otros sitios</li></ul></div>
                 <input type="password" id="registerPassword" placeholder="Elige una contraseña">
                 <input type="text" id="registerSecret" placeholder="Palabra secreta">
             </div>
@@ -483,6 +162,15 @@
         </div>
     </div>
 
+    <!-- Modal Perfil -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <h3>👤 Mi Perfil</h3>
+            <div id="profileContent"></div>
+            <button class="btn-secondary" id="closeProfileBtn" style="margin-top:20px;">Cerrar</button>
+        </div>
+    </div>
+
     <!-- Modal Admin -->
     <div id="adminModal" class="admin-modal">
         <div class="admin-modal-content">
@@ -492,695 +180,8 @@
                 <button class="btn-admin" id="adminBannerBtn">📢 Banner Global</button>
                 <button class="btn-admin" id="adminBackupBtn">💾 Backup Datos</button>
             </div>
-            <div id="adminPanelContent">
-                <p>Selecciona una opción</p>
-            </div>
+            <div id="adminPanelContent"><p>Selecciona una opción</p></div>
             <button class="btn-secondary" id="closeAdminBtn" style="margin-top:20px;">Cerrar</button>
-        </div>
-    </div>
-
-    <script>
-        const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_fkt2NkOU9mfsb5V6zUaIsQ__ytD_PRj';
-        const TMDB_API_KEY = '398c85e1174b4fff7916d36f25c27552';
-        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-        const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let currentUser = null, currentMovie = null, currentReviews = [], modalMode = 'login', userVotes = {};
-
-        // Rangos
-        function getRank(points) {
-            if (points >= 100) return { name: 'Colaborador TOP', class: 'rank-top' };
-            if (points >= 80) return { name: 'Experto', class: 'rank-experto' };
-            if (points >= 50) return { name: 'Confiable', class: 'rank-confiable' };
-            if (points >= 20) return { name: 'Aprendiz', class: 'rank-aprendiz' };
-            return { name: 'Nuevo', class: 'rank-nuevo' };
-        }
-
-        // Autenticación
-        async function handleLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            if (!username || !password) return alert('Completa campos');
-            const { data, error } = await supabase.from('simple_users').select('*').eq('username', username).eq('password', password).single();
-            if (data && !data.is_banned) {
-                currentUser = { id: data.id, username: data.username, isAdmin: data.is_admin, points: data.points || 0 };
-                localStorage.setItem('critiflix_user', JSON.stringify(currentUser));
-                closeModal(); updateAuthUI(); if (currentMovie) loadReviews(); loadRanking();
-                alert(`¡Bienvenido, ${username}!`);
-            } else if (data && data.is_banned) alert('Usuario baneado');
-            else alert('Usuario o contraseña incorrectos');
-        }
-        async function handleRegister() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const secret = document.getElementById('registerSecret').value.trim();
-            if (!username || !password || !secret) return alert('Completa campos');
-            const { data: existing } = await supabase.from('simple_users').select('username').eq('username', username).single();
-            if (existing) return alert('Usuario ya existe');
-            const { error } = await supabase.from('simple_users').insert({ username, password, secret_word: secret, is_admin: username === 'dastan', points: 0 });
-            if (!error) alert('Registro exitoso'), openLoginModal();
-            else alert('Error');
-        }
-        async function handleRecover() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const secret = document.getElementById('recoverSecret').value.trim();
-            if (!username || !secret) return alert('Completa campos');
-            const { data } = await supabase.from('simple_users').select('password').eq('username', username).eq('secret_word', secret).single();
-            if (data) alert(`Tu contraseña es: ${data.password}`);
-            else alert('Usuario o palabra secreta incorrectos');
-        }
-        function logout() { currentUser = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); if (currentMovie) loadReviews(); }
-        function openLoginModal() { modalMode = 'login'; document.getElementById('modalTitle').innerText = 'Iniciar Sesión'; document.getElementById('loginPassword').style.display = 'block'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Iniciar Sesión'; document.getElementById('modalSwitchBtn').innerText = 'Registrarse'; document.getElementById('authModal').style.display = 'flex'; }
-        function openRegisterModal() { modalMode = 'register'; document.getElementById('modalTitle').innerText = 'Registrarse'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'block'; document.getElementById('modalActionBtn').innerText = 'Registrarse'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
-        function openRecoverModal() { modalMode = 'recover'; document.getElementById('modalTitle').innerText = 'Recuperar'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'block'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Recuperar'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('authModal').style.display = 'none'; }
-        function updateAuthUI() {
-            const authSection = document.getElementById('authSection'), commentSection = document.getElementById('commentInputSection'), loginMsg = document.getElementById('loginToCommentMsg');
-            if (currentUser) {
-                const rank = getRank(currentUser.points || 0);
-                authSection.innerHTML = `<div class="user-info"><span>🎬 ${currentUser.username}</span><span class="rank-badge ${rank.class}">${rank.name}</span>${currentUser.isAdmin ? '<span style="background:#e50914; padding:2px 8px; border-radius:12px;">ADMIN</span>' : ''}<button class="btn-secondary" onclick="logout()">Salir</button>${currentUser.isAdmin ? '<button class="btn-admin" onclick="openAdminModal()">🔧 Admin</button>' : ''}</div>`;
-                commentSection.style.display = 'block'; loginMsg.style.display = 'none';
-            } else { authSection.innerHTML = `<button class="btn-primary" onclick="openLoginModal()">Iniciar Sesión</button>`; commentSection.style.display = 'none'; loginMsg.style.display = 'block'; }
-        }
-
-        // Votos y puntos
-        async function vote(reviewId, authorId, voteType) {
-            if (!currentUser) return alert('Inicia sesión para votar');
-            const { data: existing } = await supabase.from('review_votes').select('*').eq('review_id', reviewId).eq('user_id', currentUser.id).single();
-            if (existing) return alert('Ya votaste esta crítica');
-            await supabase.from('review_votes').insert({ review_id: reviewId, user_id: currentUser.id, vote_type: voteType });
-            if (voteType === 'up') await supabase.from('simple_users').update({ points: supabase.raw('points + 3') }).eq('id', authorId);
-            loadReviews(); loadRanking();
-        }
-
-        // Críticas
-        async function loadReviews() {
-            if (!currentMovie) return;
-            let query = supabase.from('reviews').select('*').eq('movie_id', currentMovie.id).order('created_at', { ascending: false });
-            const { data } = await query;
-            if (data) { currentReviews = data; renderReviews('all'); }
-        }
-        async function addReview(content, rating, spoiler) {
-            if (!currentUser) return alert('Inicia sesión');
-            if (!content.trim()) return alert('Escribe algo');
-            let parentId = null, replyTo = null;
-            const mentionMatch = content.match(/@(\w+)/);
-            if (mentionMatch) replyTo = mentionMatch[1];
-            const { error } = await supabase.from('reviews').insert({ movie_id: currentMovie.id, movie_title: currentMovie.title, user_id: currentUser.id, user_name: currentUser.username, rating: parseInt(rating), content: content, has_spoilers: spoiler, parent_review_id: parentId, reply_to_user: replyTo });
-            if (!error) {
-                await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', currentUser.id);
-                if (replyTo) { const { data: repliedUser } = await supabase.from('simple_users').select('id').eq('username', replyTo).single(); if (repliedUser) await supabase.from('simple_users').update({ points: supabase.raw('points + 1') }).eq('id', repliedUser.id); }
-                await loadReviews(); document.getElementById('commentText').value = ''; document.getElementById('spoilerCheckbox').checked = false; loadLatestReviews(); loadRanking();
-                alert('¡Crítica publicada! +1 punto');
-            } else alert('Error');
-        }
-        async function editReview(id, content) { await supabase.from('reviews').update({ content }).eq('id', id); loadReviews(); }
-        async function deleteReview(id) { if (confirm('¿Eliminar?')) { await supabase.from('reviews').delete().eq('id', id); loadReviews(); loadLatestReviews(); } }
-
-        // Admin functions
-        async function resetUserCode(userId) {
-            const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            await supabase.from('simple_users').update({ password: newCode }).eq('id', userId);
-            alert(`Nuevo código: ${newCode}`);
-        }
-        async function banUser(userId) { await supabase.from('simple_users').update({ is_banned: true }).eq('id', userId); loadAdminUsers(); }
-        async function unbanUser(userId) { await supabase.from('simple_users').update({ is_banned: false }).eq('id', userId); loadAdminUsers(); }
-        async function setAdmin(userId, isAdmin) { await supabase.from('simple_users').update({ is_admin: isAdmin }).eq('id', userId); loadAdminUsers(); }
-        async function loadAdminUsers() {
-            const { data } = await supabase.from('simple_users').select('*').order('points', { ascending: false });
-            if (data) document.getElementById('adminPanelContent').innerHTML = `<table class="user-table"><tr><th>Usuario</th><th>Puntos</th><th>Rango</th><th>Estado</th><th>Acciones</th></tr>${data.map(u => `<tr><td>${u.username}${u.id === currentUser?.id ? ' (tú)' : ''}</td><td>${u.points || 0}</td><td><span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></td><td>${u.is_banned ? '🚫 Baneado' : '✅ Activo'}${u.is_admin ? ' 👑 Admin' : ''}</td><td>${u.id !== currentUser?.id ? `<button class="btn-secondary" onclick="resetUserCode(${u.id})">Reset código</button> ${u.is_banned ? `<button class="btn-primary" onclick="unbanUser(${u.id})">Desbanear</button>` : `<button class="btn-secondary" onclick="banUser(${u.id})">Banear</button>`} <button class="btn-secondary" onclick="setAdmin(${u.id}, ${!u.is_admin})">${u.is_admin ? 'Quitar admin' : 'Hacer admin'}</button>` : '— eres tú —'}</td></tr>`).join('')}</table>`;
-        }
-        async function loadBanner() {
-            const { data } = await supabase.from('global_banner').select('*').eq('is_active', true).single();
-            const container = document.getElementById('bannerContainer');
-            if (data && data.message) container.innerHTML = `<div class="banner-global"><span>📢 ${data.message}</span><button class="close-banner" onclick="this.parentElement.remove()">✕</button></div>`;
-            else container.innerHTML = '';
-        }
-        async function saveBanner(message) { await supabase.from('global_banner').update({ message, is_active: !!message, updated_at: new Date() }).eq('id', 1); loadBanner(); }
-        function exportJSON() { const data = { users: [], reviews: [] }; supabase.from('simple_users').select('*').then(r => { data.users = r.data; supabase.from('reviews').select('*').then(r2 => { data.reviews = r2.data; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_backup.json'; a.click(); }); }); }
-        function exportCSV() { supabase.from('simple_users').select('*').then(r => { let csv = 'id,username,points,is_admin,is_banned\n'; r.data.forEach(u => csv += `${u.id},${u.username},${u.points || 0},${u.is_admin},${u.is_banned}\n`); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_users.csv'; a.click(); }); }
-
-        function openAdminModal() { if (currentUser?.isAdmin) { loadAdminUsers(); document.getElementById('adminModal').style.display = 'flex'; } else alert('No eres admin'); }
-        document.getElementById('adminUsersBtn').onclick = () => loadAdminUsers();
-        document.getElementById('adminBannerBtn').onclick = () => document.getElementById('adminPanelContent').innerHTML = `<textarea id="bannerMsg" rows="3" style="width:100%; background:#2a2a3a; color:white; padding:10px; border-radius:8px;" placeholder="Mensaje del banner..."></textarea><button class="btn-primary" onclick="saveBanner(document.getElementById('bannerMsg').value)">Guardar Banner</button>`;
-        document.getElementById('adminBackupBtn').onclick = () => document.getElementById('adminPanelContent').innerHTML = `<button class="btn-primary" onclick="exportJSON()">📄 Exportar JSON</button><button class="btn-primary" onclick="exportCSV()">📊 Exportar CSV</button>`;
-        document.getElementById('closeAdminBtn').onclick = () => document.getElementById('adminModal').style.display = 'none';
-
-        async function loadRanking() { const { data } = await supabase.from('simple_users').select('username, points').order('points', { ascending: false }).limit(10); if (data) document.getElementById('rankingList').innerHTML = data.map((u, i) => `<li>${i+1}. ${u.username} - ${u.points || 0} pts <span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></li>`).join(''); }
-
-        // TMDB
-        async function fetchFromTMDB(endpoint) { try { let url = endpoint.includes('?') ? `${TMDB_BASE_URL}${endpoint}&api_key=${TMDB_API_KEY}&language=es-ES` : `${TMDB_BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}&language=es-ES`; const res = await fetch(url); return res.ok ? await res.json() : null; } catch(e) { return null; } }
-        async function loadRecommendations() { const data = await fetchFromTMDB('/movie/popular'); if (data?.results) document.getElementById('recommendationsGrid').innerHTML = data.results.slice(0, 8).map(m => `<div class="movie-card" onclick="selectMovie(${m.id})"><img src="${m.poster_path ? IMG_BASE + m.poster_path : 'https://via.placeholder.com/150x220'}" alt="${m.title}"><div class="info"><div class="title">${m.title}</div><div class="rating">⭐ ${(m.vote_average/2).toFixed(1)} ★</div></div></div>`).join(''); }
-        async function loadBestOf2025() { const data = await fetchFromTMDB('/discover/movie?sort_by=vote_average.desc&vote_count.gte=100'); if (data?.results) document.getElementById('best2025List').innerHTML = data.results.slice(0, 5).map(m => `<li onclick="selectMovie(${m.id})">🏆 ${m.title} <span style="color:#ffd700;">★ ${(m.vote_average/2).toFixed(1)}</span></li>`).join(''); }
-        async function loadLatestReviews() { const { data } = await supabase.from('reviews').select('*').order('created_at', { ascending: false }).limit(5); if (data) document.getElementById('latestReviewsList').innerHTML = data.map(r => `<li onclick="selectMovie(${r.movie_id})"><div style="display:flex; justify-content:space-between;"><span style="color:#e50914;">🎬 ${r.movie_title}</span><span style="color:#ffd700;">⭐ ${r.rating} ★</span></div><div style="font-size:0.7rem;">✍️ ${r.user_name}</div>${r.has_spoilers ? '<span style="color:#ffa500;">⚠️ SPOILER</span>' : ''}</li>`).join(''); }
-        async function searchMovie(query) { const data = await fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`); if (data?.results?.length) { document.getElementById('searchResultsGrid').innerHTML = data.results.map(m => `<div class="movie-card" onclick="selectMovieFromSearch(${m.id})"><img src="${m.poster_path ? IMG_BASE + m.poster_path : 'https://via.placeholder.com/150x220'}" alt="${m.title}"><div class="info"><div class="title">${m.title}</div><div class="rating">⭐ ${(m.vote_average/2).toFixed(1)} ★</div></div></div>`).join(''); document.getElementById('searchResultsSection').style.display = 'block'; } else alert('No encontrado'); }
-        window.selectMovieFromSearch = async function(id) { const data = await fetchFromTMDB(`/movie/${id}`); if (data) { displayFeaturedMovie(data); currentMovie = data; await loadReviews(); document.getElementById('searchResultsSection').style.display = 'none'; document.getElementById('searchInput').value = ''; } };
-        async function displayFeaturedMovie(m) { const rating = m.vote_average; const stars = '⭐'.repeat(Math.floor(rating/2)) + (rating%2>=0.5 ? '½' : ''); document.getElementById('featuredMovie').innerHTML = `<img src="${m.poster_path ? IMG_BASE + m.poster_path : 'https://via.placeholder.com/160x240'}" alt="${m.title}"><div class="featured-details"><h3>${m.title}</h3><div class="stars">${stars} ${(rating/2).toFixed(1)} ★</div><div class="sinopsis">${m.overview || 'Sin sinopsis'}</div></div>`; }
-        window.selectMovie = async function(id) { const data = await fetchFromTMDB(`/movie/${id}`); if (data) { displayFeaturedMovie(data); currentMovie = data; await loadReviews(); } };
-        function renderReviews(filter) { let filtered = [...currentReviews]; if (filter === 'best') filtered.sort((a,b) => b.rating - a.rating); const container = document.getElementById('reviewsList'); if (!filtered.length) { container.innerHTML = '<div class="loading">No hay críticas</div>'; return; } container.innerHTML = filtered.map(r => { const isAuthor = currentUser && r.user_id === currentUser.id; const isAdmin = currentUser?.isAdmin; const canEdit = isAuthor || isAdmin; return `<div class="review-card"><div class="review-header"><span class="review-user" onclick="document.getElementById('commentText').value = '@${r.user_name} '">✍️ ${r.user_name}</span><span class="review-stars">${'⭐'.repeat(r.rating)}</span><span class="review-date">📅 ${new Date(r.created_at).toLocaleDateString()}</span></div><div class="review-content">${r.content}${r.has_spoilers ? '<div class="spoiler-warning" onclick="this.style.display=\'none\';">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}</div><div class="vote-buttons"><button class="vote-btn" onclick="vote(${r.id}, ${r.user_id}, 'up')">👍 ${r.votes_up || 0}</button></div>${canEdit ? `<div class="review-actions"><button class="btn-secondary" onclick="editReviewPrompt(${r.id})">✏️ Editar</button><button class="btn-secondary" onclick="deleteReview(${r.id})">🗑️ Eliminar</button></div>` : ''}</div>`; }).join(''); }
-        window.editReviewPrompt = async function(id) { const newContent = prompt('Editar crítica:'); if (newContent) await editReview(id, newContent); };
-
-        async function init() {
-            const saved = localStorage.getItem('critiflix_user');
-            if (saved) { currentUser = JSON.parse(saved); const { data } = await supabase.from('simple_users').select('points, is_banned').eq('id', currentUser.id).single(); if (data && !data.is_banned) { currentUser.points = data.points || 0; updateAuthUI(); } else { currentUser = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); } }
-            else updateAuthUI();
-            await loadRecommendations(); await loadBestOf2025(); await loadLatestReviews(); await loadRanking(); await loadBanner();
-            const defaultMovie = await fetchFromTMDB('/movie/872585');
-            if (defaultMovie) { displayFeaturedMovie(defaultMovie); currentMovie = defaultMovie; await loadReviews(); }
-            document.getElementById('searchBtn').onclick = () => searchMovie(document.getElementById('searchInput').value);
-            document.getElementById('closeResultsBtn').onclick = () => document.getElementById('searchResultsSection').style.display = 'none';
-            document.getElementById('publishBtn').onclick = () => addReview(document.getElementById('commentText').value, document.getElementById('ratingSelect').value, document.getElementById('spoilerCheckbox').checked);
-            document.getElementById('modalActionBtn').onclick = () => { if (modalMode === 'login') handleLogin(); else if (modalMode === 'register') handleRegister(); else handleRecover(); };
-            document.getElementById('modalSwitchBtn').onclick = () => modalMode === 'login' ? openRegisterModal() : openLoginModal();
-            document.getElementById('modalRecoverBtn').onclick = openRecoverModal;
-            document.getElementById('closeModalBtn').onclick = closeModal;
-            document.querySelectorAll('.filter-btn').forEach(btn => { btn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderReviews(btn.dataset.filter); }; });
-        }
-        init();
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRITIFLIX - Comentarios de Películas</title>
-    <!-- Librería de Supabase (la correcta) -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            line-height: 1.5;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%);
-            padding: 15px 40px;
-            border-bottom: 1px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #e50914, #ff6b6b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            cursor: pointer;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn-primary {
-            background: #e50914;
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-secondary {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #2a2a3a;
-            padding: 6px 16px;
-            border-radius: 40px;
-        }
-
-        .search-bar {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 30px;
-            border: none;
-            background: #2a2a3a;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .search-bar button {
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: none;
-            background: #e50914;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 40px;
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 30px;
-        }
-
-        .section {
-            background: #14141e;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid #2a2a3a;
-        }
-
-        .section h2 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: #e50914;
-            border-left: 4px solid #e50914;
-            padding-left: 12px;
-        }
-
-        .movies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .movie-card {
-            background: #1e1e2a;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .movie-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .movie-card .info {
-            padding: 10px;
-        }
-
-        .movie-card .title {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .movie-card .rating {
-            font-size: 0.8rem;
-            color: #ffd700;
-            margin-top: 5px;
-        }
-
-        .featured-movie {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .featured-movie img {
-            width: 160px;
-            border-radius: 12px;
-        }
-
-        .featured-details {
-            flex: 1;
-        }
-
-        .featured-details h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .stars {
-            color: #ffd700;
-            margin: 10px 0;
-        }
-
-        .sinopsis {
-            margin: 15px 0;
-            line-height: 1.5;
-            color: #ccc;
-            font-size: 0.9rem;
-        }
-
-        .comment-input {
-            background: #1e1e2a;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .comment-input textarea {
-            width: 100%;
-            background: #2a2a3a;
-            border: 1px solid #3a3a4a;
-            border-radius: 12px;
-            padding: 12px;
-            color: white;
-            font-family: inherit;
-            resize: vertical;
-        }
-
-        .comment-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .filter-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: #2a2a3a;
-            padding: 6px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .filter-btn.active {
-            background: #e50914;
-        }
-
-        .review-card {
-            background: #1e1e2a;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .review-user {
-            font-weight: bold;
-            color: #e50914;
-        }
-
-        .review-stars {
-            color: #ffd700;
-        }
-
-        .review-date {
-            color: #888;
-            font-size: 0.75rem;
-        }
-
-        .review-content {
-            margin-top: 10px;
-            line-height: 1.4;
-            font-size: 0.9rem;
-        }
-
-        .review-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .spoiler-warning {
-            background: #332700;
-            padding: 6px;
-            border-radius: 8px;
-            color: #ffd700;
-            font-size: 0.75rem;
-            margin-top: 8px;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #14141e;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            border: 1px solid #e50914;
-        }
-
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: #e50914;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background: #2a2a3a;
-            border: 1px solid #3a3a4a;
-            border-radius: 12px;
-            color: white;
-        }
-
-        .password-tip {
-            background: #1a2a1a;
-            border-left: 3px solid #4caf50;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-        }
-
-        .password-tip h4 {
-            color: #4caf50;
-            margin-bottom: 5px;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 120px;
-            height: fit-content;
-        }
-
-        .latest-list, .best-list {
-            list-style: none;
-        }
-
-        .latest-list li, .best-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #2a2a3a;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .search-results {
-            background: #14141e;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid #2a2a3a;
-        }
-
-        .close-results {
-            float: right;
-            background: #333;
-            border: none;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-                padding: 20px;
-            }
-            .header {
-                padding: 15px 20px;
-            }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
-        button {
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="header-top">
-            <h1 onclick="location.reload()">🎬 CRITIFLIX</h1>
-            <div class="auth-buttons" id="authSection">
-                <div class="loading">Cargando...</div>
-            </div>
-        </div>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Buscar película... (Ej: Superman, Batman, Oppenheimer)">
-            <button id="searchBtn">🔍 Buscar</button>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="main">
-            <div id="searchResultsSection" class="search-results" style="display: none;">
-                <button class="close-results" id="closeResultsBtn">✕ Cerrar</button>
-                <h2>🔍 RESULTADOS DE BÚSQUEDA</h2>
-                <div id="searchResultsGrid" class="movies-grid"></div>
-            </div>
-
-            <div class="section">
-                <h2>🎯 RECOMENDADOS PARA TI</h2>
-                <div class="movies-grid" id="recommendationsGrid">
-                    <div class="loading">Cargando recomendaciones...</div>
-                </div>
-            </div>
-
-            <div class="section" id="featuredSection">
-                <div class="featured-movie" id="featuredMovie">
-                    <div class="loading">Cargando película destacada...</div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>💬 CRÍTICAS DE LA COMUNIDAD</h2>
-                <div class="comment-input" id="commentInputSection" style="display: none;">
-                    <textarea id="commentText" rows="3" placeholder="Escribe tu crítica..."></textarea>
-                    <div class="comment-actions">
-                        <button class="btn-primary" id="publishBtn">📝 Publicar</button>
-                        <label style="display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" id="spoilerCheckbox"> ⚠️ Con Spoilers
-                        </label>
-                        <select id="ratingSelect" style="background:#2a2a3a; color:white; border-radius:20px; padding:6px 12px;">
-                            <option value="5">⭐⭐⭐⭐⭐ 5</option>
-                            <option value="4">⭐⭐⭐⭐ 4</option>
-                            <option value="3">⭐⭐⭐ 3</option>
-                            <option value="2">⭐⭐ 2</option>
-                            <option value="1">⭐ 1</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="loginToCommentMsg" class="loading" style="display: none;">
-                    🔐 Inicia sesión para escribir críticas
-                </div>
-
-                <div class="filter-bar">
-                    <span class="filter-btn active" data-filter="all">📋 Todas</span>
-                    <span class="filter-btn" data-filter="recent">🕐 Más Recientes</span>
-                    <span class="filter-btn" data-filter="best">⭐ Mejor Valoradas</span>
-                    <span class="filter-btn" data-filter="no-spoiler">🚫 Sin Spoilers</span>
-                </div>
-
-                <div id="reviewsList">
-                    <div class="loading">Cargando críticas...</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="section">
-                <h2>🔥 ÚLTIMAS CRÍTICAS</h2>
-                <ul class="latest-list" id="latestReviewsList">
-                    <li>Cargando...</li>
-                </ul>
-            </div>
-            <div class="section">
-                <h2>🏆 LO MEJOR DE 2025</h2>
-                <ul class="best-list" id="best2025List">
-                    <li>Cargando...</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Login/Registro -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <h3 id="modalTitle">🔐 Iniciar Sesión</h3>
-            <input type="text" id="loginUsername" placeholder="Nombre de usuario">
-            <input type="password" id="loginPassword" placeholder="Contraseña">
-            <div id="recoverFields" style="display: none;">
-                <input type="text" id="recoverSecret" placeholder="Palabra secreta">
-            </div>
-            <div id="registerFields" style="display: none;">
-                <div class="password-tip">
-                    <h4>🔒 Consejos para tu contraseña</h4>
-                    <ul style="margin-left: 20px;">
-                        <li>No uses la misma que en otros sitios</li>
-                        <li>No uses datos personales</li>
-                        <li>Usa una frase fácil de recordar</li>
-                    </ul>
-                </div>
-                <input type="password" id="registerPassword" placeholder="Elige una contraseña">
-                <input type="text" id="registerSecret" placeholder="Palabra secreta (para recuperar tu cuenta)">
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="btn-primary" id="modalActionBtn">Iniciar Sesión</button>
-                <button class="btn-secondary" id="modalSwitchBtn">¿No tienes cuenta? Regístrate</button>
-            </div>
-            <button class="btn-secondary" id="modalRecoverBtn" style="margin-top: 10px; width: 100%;">¿Olvidaste tu contraseña?</button>
-            <button class="btn-secondary" id="closeModalBtn" style="margin-top: 10px; width: 100%;">Cerrar</button>
         </div>
     </div>
 
@@ -1191,476 +192,317 @@
         const TMDB_API_KEY = '398c85e1174b4fff7916d36f25c27552';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
-        const ADMIN_USERNAME = 'sliink27';
 
-        // Inicializar Supabase (forma correcta)
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Estado global
+        let currentUserObj = null;
+        let currentMovieObj = null;
+        let currentReviewsArray = [];
+        let modalModeVar = 'login';
+        let userVotesMap = {};
 
-        let currentUser = null;
-        let currentMovie = null;
-        let currentReviews = [];
-        let modalMode = 'login';
+        // ==================== RANGOS ====================
+        function getRank(points) {
+            if (points >= 100) return { name: 'Colaborador TOP', class: 'rank-top' };
+            if (points >= 80) return { name: 'Experto', class: 'rank-experto' };
+            if (points >= 50) return { name: 'Confiable', class: 'rank-confiable' };
+            if (points >= 20) return { name: 'Aprendiz', class: 'rank-aprendiz' };
+            return { name: 'Nuevo', class: 'rank-nuevo' };
+        }
+
+        function showNotification(msg) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.innerHTML = msg;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
+        }
 
         // ==================== AUTENTICACIÓN ====================
-        function openLoginModal() {
-            modalMode = 'login';
-            document.getElementById('modalTitle').innerText = '🔐 Iniciar Sesión';
-            document.getElementById('loginPassword').style.display = 'block';
-            document.getElementById('recoverFields').style.display = 'none';
-            document.getElementById('registerFields').style.display = 'none';
-            document.getElementById('modalActionBtn').innerText = 'Iniciar Sesión';
-            document.getElementById('modalSwitchBtn').innerText = '¿No tienes cuenta? Regístrate';
-            document.getElementById('authModal').style.display = 'flex';
-        }
-
-        function openRegisterModal() {
-            modalMode = 'register';
-            document.getElementById('modalTitle').innerText = '📝 Registrarse';
-            document.getElementById('loginPassword').style.display = 'none';
-            document.getElementById('recoverFields').style.display = 'none';
-            document.getElementById('registerFields').style.display = 'block';
-            document.getElementById('modalActionBtn').innerText = 'Registrarse';
-            document.getElementById('modalSwitchBtn').innerText = '¿Ya tienes cuenta? Inicia Sesión';
-            document.getElementById('authModal').style.display = 'flex';
-        }
-
-        function openRecoverModal() {
-            modalMode = 'recover';
-            document.getElementById('modalTitle').innerText = '🆘 Recuperar Contraseña';
-            document.getElementById('loginPassword').style.display = 'none';
-            document.getElementById('recoverFields').style.display = 'block';
-            document.getElementById('registerFields').style.display = 'none';
-            document.getElementById('modalActionBtn').innerText = 'Recuperar';
-            document.getElementById('modalSwitchBtn').innerText = 'Volver al inicio de sesión';
-            document.getElementById('authModal').style.display = 'flex';
-        }
-
         async function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-            if (!username || !password) { alert('Completa todos los campos'); return; }
-
-            const { data, error } = await supabase
-                .from('simple_users')
-                .select('*')
-                .eq('username', username)
-                .eq('password', password)
-                .single();
-
-            if (data) {
-                currentUser = { id: data.id, username: data.username, isAdmin: data.is_admin };
-                localStorage.setItem('critiflix_user', JSON.stringify(currentUser));
-                closeModal();
-                updateAuthUI();
-                if (currentMovie) loadReviewsFromDB();
-                alert(`¡Bienvenido, ${username}!`);
-            } else {
-                alert('Usuario o contraseña incorrectos');
-            }
+            if (!username || !password) return alert('Completa campos');
+            const { data, error } = await supabaseClient.from('simple_users').select('*').eq('username', username).eq('password', password).single();
+            if (data && !data.is_banned) {
+                currentUserObj = { id: data.id, username: data.username, isAdmin: data.is_admin, points: data.points || 0, secret_word: data.secret_word };
+                localStorage.setItem('critiflix_user', JSON.stringify(currentUserObj));
+                closeModal(); updateAuthUI(); if (currentMovieObj) loadReviews(); loadRanking();
+                showNotification(`¡Bienvenido, ${username}!`);
+            } else if (data && data.is_banned) alert('Usuario baneado');
+            else alert('Usuario o contraseña incorrectos');
         }
 
         async function handleRegister() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('registerPassword').value;
             const secret = document.getElementById('registerSecret').value.trim();
-            if (!username || !password || !secret) { alert('Completa todos los campos'); return; }
-            if (password.length < 4) { alert('La contraseña debe tener al menos 4 caracteres'); return; }
-
-            const { data: existing } = await supabase
-                .from('simple_users')
-                .select('username')
-                .eq('username', username)
-                .single();
-
-            if (existing) { alert('El usuario ya existe'); return; }
-
-            const isAdmin = (username === ADMIN_USERNAME);
-            const { error } = await supabase
-                .from('simple_users')
-                .insert({ username, password, secret_word: secret, is_admin: isAdmin });
-
-            if (!error) {
-                alert(isAdmin ? '¡Registro exitoso! Eres administrador.' : '¡Registro exitoso! Ahora inicia sesión.');
-                openLoginModal();
-            } else {
-                alert('Error al registrar: ' + error.message);
-            }
+            if (!username || !password || !secret) return alert('Completa campos');
+            const { data: existing } = await supabaseClient.from('simple_users').select('username').eq('username', username).single();
+            if (existing) return alert('Usuario ya existe');
+            const { error } = await supabaseClient.from('simple_users').insert({ username, password, secret_word: secret, is_admin: username === 'dastan', points: 0 });
+            if (!error) { alert('Registro exitoso'); openLoginModal(); }
+            else alert('Error');
         }
 
         async function handleRecover() {
             const username = document.getElementById('loginUsername').value.trim();
             const secret = document.getElementById('recoverSecret').value.trim();
-            if (!username || !secret) { alert('Completa todos los campos'); return; }
-
-            const { data } = await supabase
-                .from('simple_users')
-                .select('password')
-                .eq('username', username)
-                .eq('secret_word', secret)
-                .single();
-
-            if (data) {
-                alert(`Tu contraseña es: ${data.password}\n📌 Guárdala en un lugar seguro.`);
-                openLoginModal();
-            } else {
-                alert('Usuario o palabra secreta incorrectos');
-            }
+            if (!username || !secret) return alert('Completa campos');
+            const { data } = await supabaseClient.from('simple_users').select('password').eq('username', username).eq('secret_word', secret).single();
+            if (data) alert(`Tu contraseña es: ${data.password}`);
+            else alert('Usuario o palabra secreta incorrectos');
         }
 
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('critiflix_user');
-            updateAuthUI();
-            if (currentMovie) loadReviewsFromDB();
+        async function changePassword(oldPassword, newPassword) {
+            if (!currentUserObj) return false;
+            const { data } = await supabaseClient.from('simple_users').select('password').eq('id', currentUserObj.id).single();
+            if (data.password !== oldPassword) { alert('Contraseña actual incorrecta'); return false; }
+            await supabaseClient.from('simple_users').update({ password: newPassword }).eq('id', currentUserObj.id);
+            alert('Contraseña cambiada con éxito');
+            return true;
         }
 
-        function closeModal() {
-            document.getElementById('authModal').style.display = 'none';
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('registerPassword').value = '';
-            document.getElementById('registerSecret').value = '';
-            document.getElementById('recoverSecret').value = '';
+        function logout() { currentUserObj = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); if (currentMovieObj) loadReviews(); }
+
+        function openLoginModal() { modalModeVar = 'login'; document.getElementById('modalTitle').innerText = 'Iniciar Sesión'; document.getElementById('loginPassword').style.display = 'block'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Iniciar Sesión'; document.getElementById('modalSwitchBtn').innerText = 'Registrarse'; document.getElementById('authModal').style.display = 'flex'; }
+        function openRegisterModal() { modalModeVar = 'register'; document.getElementById('modalTitle').innerText = 'Registrarse'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'none'; document.getElementById('registerFields').style.display = 'block'; document.getElementById('modalActionBtn').innerText = 'Registrarse'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
+        function openRecoverModal() { modalModeVar = 'recover'; document.getElementById('modalTitle').innerText = 'Recuperar'; document.getElementById('loginPassword').style.display = 'none'; document.getElementById('recoverFields').style.display = 'block'; document.getElementById('registerFields').style.display = 'none'; document.getElementById('modalActionBtn').innerText = 'Recuperar'; document.getElementById('modalSwitchBtn').innerText = 'Volver'; document.getElementById('authModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('authModal').style.display = 'none'; }
+
+        async function openProfileModal() {
+            if (!currentUserObj) return;
+            const { data: userReviews } = await supabaseClient.from('reviews').select('*').eq('user_id', currentUserObj.id).order('created_at', { ascending: false });
+            const profileHtml = `
+                <p><strong>Usuario:</strong> ${currentUserObj.username}</p>
+                <p><strong>Puntos:</strong> ${currentUserObj.points || 0}</p>
+                <p><strong>Rango:</strong> <span class="rank-badge ${getRank(currentUserObj.points || 0).class}">${getRank(currentUserObj.points || 0).name}</span></p>
+                <hr style="margin:15px 0; border-color:#333;">
+                <h4>Cambiar Contraseña</h4>
+                <input type="password" id="oldPassword" placeholder="Contraseña actual" style="width:100%; padding:8px; margin-bottom:10px; background:#2a2a3a; color:white; border-radius:8px;">
+                <input type="password" id="newPassword" placeholder="Nueva contraseña" style="width:100%; padding:8px; margin-bottom:10px; background:#2a2a3a; color:white; border-radius:8px;">
+                <button class="btn-primary" onclick="changePassword(document.getElementById('oldPassword').value, document.getElementById('newPassword').value)">Actualizar Contraseña</button>
+                <hr style="margin:15px 0; border-color:#333;">
+                <h4>Mis Críticas</h4>
+                ${userReviews.length === 0 ? '<p>No has escrito ninguna crítica</p>' : userReviews.map(r => `
+                    <div style="background:#1e1e2a; padding:10px; margin-bottom:10px; border-radius:8px;">
+                        <div><strong>🎬 ${r.movie_title}</strong> ⭐ ${r.rating} ★</div>
+                        <div class="${r.has_spoilers ? 'spoiler-hidden' : ''}" onclick="this.classList.toggle('spoiler-hidden')">${r.content.substring(0, 100)}${r.content.length > 100 ? '...' : ''}</div>
+                        ${r.has_spoilers ? '<span style="color:#ffa500; font-size:0.7rem;">⚠️ Spoiler (clic para ver)</span>' : ''}
+                    </div>
+                `).join('')}
+            `;
+            document.getElementById('profileContent').innerHTML = profileHtml;
+            document.getElementById('profileModal').style.display = 'flex';
         }
 
         function updateAuthUI() {
             const authSection = document.getElementById('authSection');
             const commentSection = document.getElementById('commentInputSection');
             const loginMsg = document.getElementById('loginToCommentMsg');
+            if (currentUserObj) {
+                const rank = getRank(currentUserObj.points || 0);
+                authSection.innerHTML = `<div class="user-info"><span>🎬 ${currentUserObj.username}</span><span class="rank-badge ${rank.class}">${rank.name}</span>${currentUserObj.isAdmin ? '<span style="background:#e50914; padding:2px 8px; border-radius:12px;">ADMIN</span>' : ''}<button class="btn-secondary" onclick="openProfileModal()">👤 Perfil</button><button class="btn-secondary" onclick="logout()">Salir</button>${currentUserObj.isAdmin ? '<button class="btn-admin" onclick="openAdminModal()">🔧 Admin</button>' : ''}</div>`;
+                commentSection.style.display = 'block'; loginMsg.style.display = 'none';
+            } else { authSection.innerHTML = `<button class="btn-primary" onclick="openLoginModal()">Iniciar Sesión</button>`; commentSection.style.display = 'none'; loginMsg.style.display = 'block'; }
+        }
 
-            if (currentUser) {
-                authSection.innerHTML = `
-                    <div class="user-info">
-                        <span>🎬 ${currentUser.username}</span>
-                        ${currentUser.isAdmin ? '<span style="background:#e50914; padding:2px 8px; border-radius:12px; font-size:0.7rem;">ADMIN</span>' : ''}
-                        <button class="btn-secondary" onclick="logout()">Salir</button>
-                    </div>
-                `;
-                commentSection.style.display = 'block';
-                loginMsg.style.display = 'none';
-            } else {
-                authSection.innerHTML = `<button class="btn-primary" onclick="openLoginModal()">🔐 Iniciar Sesión</button>`;
-                commentSection.style.display = 'none';
-                loginMsg.style.display = 'block';
-            }
+        // ==================== VOTOS ====================
+        async function vote(reviewId, authorId) {
+            if (!currentUserObj) return alert('Inicia sesión para votar');
+            const { data: existing } = await supabaseClient.from('review_votes').select('*').eq('review_id', reviewId).eq('user_id', currentUserObj.id).single();
+            if (existing) return alert('Ya votaste esta crítica');
+            await supabaseClient.from('review_votes').insert({ review_id: reviewId, user_id: currentUserObj.id, vote_type: 'up' });
+            await supabaseClient.from('simple_users').update({ points: supabaseClient.raw('points + 3') }).eq('id', authorId);
+            if (currentUserObj.id === authorId) currentUserObj.points += 3;
+            loadReviews(); loadRanking();
+            showNotification('+3 puntos para el autor');
         }
 
         // ==================== CRÍTICAS ====================
-        async function loadReviewsFromDB() {
-            if (!currentMovie) return;
-            const { data } = await supabase
-                .from('reviews')
-                .select('*')
-                .eq('movie_id', currentMovie.id)
-                .order('created_at', { ascending: false });
-            if (data) {
-                currentReviews = data;
-                renderReviews('all');
-            }
+        async function loadReviews() {
+            if (!currentMovieObj) return;
+            const { data } = await supabaseClient.from('reviews').select('*').eq('movie_id', currentMovieObj.id).order('created_at', { ascending: false });
+            if (data) { currentReviewsArray = data; renderReviews('all'); }
         }
 
         async function addReview(content, rating, spoiler) {
-            if (!currentUser) { alert('Inicia sesión primero'); return false; }
-            if (!content.trim()) { alert('Escribe una crítica'); return false; }
-
-            const { error } = await supabase.from('reviews').insert({
-                movie_id: currentMovie.id,
-                movie_title: currentMovie.title,
-                user_id: currentUser.id,
-                user_name: currentUser.username,
-                rating: parseInt(rating),
-                content: content,
-                has_spoilers: spoiler
+            if (!currentUserObj) return alert('Inicia sesión');
+            if (!content.trim()) return alert('Escribe algo');
+            let parentId = null, replyTo = null;
+            const mentionMatch = content.match(/@(\w+)/);
+            if (mentionMatch) replyTo = mentionMatch[1];
+            const { error } = await supabaseClient.from('reviews').insert({
+                movie_id: currentMovieObj.id, movie_title: currentMovieObj.title, user_id: currentUserObj.id,
+                user_name: currentUserObj.username, rating: parseInt(rating), content: content,
+                has_spoilers: spoiler, parent_review_id: parentId, reply_to_user: replyTo
             });
-
             if (!error) {
-                await loadReviewsFromDB();
+                await supabaseClient.from('simple_users').update({ points: supabaseClient.raw('points + 1') }).eq('id', currentUserObj.id);
+                currentUserObj.points += 1;
+                if (replyTo) {
+                    const { data: repliedUser } = await supabaseClient.from('simple_users').select('id').eq('username', replyTo).single();
+                    if (repliedUser && repliedUser.id !== currentUserObj.id) {
+                        await supabaseClient.from('simple_users').update({ points: supabaseClient.raw('points + 1') }).eq('id', repliedUser.id);
+                        showNotification(`📢 @${replyTo} ha recibido +1 punto por tu mención`);
+                    }
+                }
+                await loadReviews(); 
                 document.getElementById('commentText').value = '';
                 document.getElementById('spoilerCheckbox').checked = false;
-                document.getElementById('ratingSelect').value = '5';
-                alert('¡Crítica publicada!');
-                loadLatestReviews();
-                return true;
-            } else {
-                alert('Error al publicar: ' + error.message);
-                return false;
-            }
+                loadLatestReviews(); loadRanking();
+                showNotification('Crítica publicada +1 punto');
+            } else alert('Error: ' + error.message);
         }
 
-        async function editReview(reviewId, newContent) {
-            const { error } = await supabase
-                .from('reviews')
-                .update({ content: newContent })
-                .eq('id', reviewId);
-            if (!error) {
-                await loadReviewsFromDB();
-                alert('Crítica editada');
-            } else {
-                alert('Error al editar');
-            }
+        async function editReview(id, content) {
+            await supabaseClient.from('reviews').update({ content }).eq('id', id);
+            loadReviews();
+            showNotification('Crítica editada');
         }
 
-        async function deleteReview(reviewId) {
+        async function deleteReview(id, rating, userId) {
             if (!confirm('¿Eliminar esta crítica?')) return;
-            const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
-            if (!error) {
-                await loadReviewsFromDB();
-                loadLatestReviews();
-                alert('Crítica eliminada');
-            } else {
-                alert('Error al eliminar');
-            }
+            await supabaseClient.from('reviews').delete().eq('id', id);
+            await supabaseClient.from('simple_users').update({ points: supabaseClient.raw(`points - 1`) }).eq('id', userId);
+            if (currentUserObj.id === userId) currentUserObj.points = Math.max(0, (currentUserObj.points || 0) - 1);
+            loadReviews(); loadLatestReviews(); loadRanking();
+            showNotification('Crítica eliminada -1 punto');
         }
 
-        async function loadLatestReviews() {
-            const { data } = await supabase
-                .from('reviews')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(5);
-            const container = document.getElementById('latestReviewsList');
-            if (data && data.length > 0) {
-                container.innerHTML = data.map(r => `
-                    <li onclick="window.selectMovie(${r.movie_id})">
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:#e50914;">🎬 ${r.movie_title}</span>
-                            <span style="color:#ffd700;">⭐ ${r.rating} ★</span>
-                        </div>
-                        <div style="font-size:0.7rem; color:#aaa;">✍️ ${r.user_name}</div>
-                        ${r.has_spoilers ? '<span style="color:#ffa500; font-size:0.7rem;">⚠️ CONTIENE SPOILERS</span>' : ''}
-                    </li>
-                `).join('');
-            } else {
-                container.innerHTML = '<li style="color:#888;">Aún no hay críticas</li>';
-            }
+        // ==================== ADMIN ====================
+        async function resetUserCode(userId) { const newCode = Math.random().toString(36).substring(2, 8).toUpperCase(); await supabaseClient.from('simple_users').update({ password: newCode }).eq('id', userId); alert(`Nuevo código: ${newCode}`); loadAdminUsers(); }
+        async function banUser(userId) { await supabaseClient.from('simple_users').update({ is_banned: true }).eq('id', userId); loadAdminUsers(); }
+        async function unbanUser(userId) { await supabaseClient.from('simple_users').update({ is_banned: false }).eq('id', userId); loadAdminUsers(); }
+        async function setAdmin(userId, isAdmin) { await supabaseClient.from('simple_users').update({ is_admin: isAdmin }).eq('id', userId); loadAdminUsers(); }
+
+        async function loadAdminUsers() {
+            const { data } = await supabaseClient.from('simple_users').select('*').order('points', { ascending: false });
+            if (data) document.getElementById('adminPanelContent').innerHTML = `<table class="user-table"><tr><th>Usuario</th><th>Puntos</th><th>Rango</th><th>Estado</th><th>Acciones</th></tr>${data.map(u => `<tr><td>${u.username}${u.id === currentUserObj?.id ? ' (tú)' : ''}</td><td>${u.points || 0}</td><td><span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></td><td>${u.is_banned ? '🚫 Baneado' : '✅ Activo'}${u.is_admin ? ' 👑 Admin' : ''}</td><td>${u.id !== currentUserObj?.id ? `<button class="btn-secondary" onclick="resetUserCode(${u.id})">Reset código</button> ${u.is_banned ? `<button class="btn-primary" onclick="unbanUser(${u.id})">Desbanear</button>` : `<button class="btn-secondary" onclick="banUser(${u.id})">Banear</button>`} <button class="btn-secondary" onclick="setAdmin(${u.id}, ${!u.is_admin})">${u.is_admin ? 'Quitar admin' : 'Hacer admin'}</button>` : '— eres tú —'}</td></tr>`).join('')}</table>`;
+        }
+
+        async function loadBanner() {
+            const { data } = await supabaseClient.from('global_banner').select('*').eq('is_active', true).single();
+            const container = document.getElementById('bannerContainer');
+            if (data && data.message && data.message.trim()) container.innerHTML = `<div class="banner-global"><span>📢 ${data.message}</span><button class="close-banner" onclick="this.parentElement.remove()">✕</button></div>`;
+            else container.innerHTML = '';
+        }
+
+        async function saveBanner(message) {
+            const { data: existing } = await supabaseClient.from('global_banner').select('id').limit(1).single();
+            if (existing) await supabaseClient.from('global_banner').update({ message, is_active: !!message.trim(), updated_at: new Date() }).eq('id', existing.id);
+            else await supabaseClient.from('global_banner').insert({ message, is_active: !!message.trim() });
+            loadBanner();
+            alert('Banner guardado');
+        }
+
+        function exportJSON() { supabaseClient.from('simple_users').select('*').then(r => { const users = r.data; supabaseClient.from('reviews').select('*').then(r2 => { const data = { users, reviews: r2.data }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_backup.json'; a.click(); }); }); }
+        function exportCSV() { supabaseClient.from('simple_users').select('*').then(r => { let csv = 'id,username,points,is_admin,is_banned\n'; r.data.forEach(u => csv += `${u.id},${u.username},${u.points || 0},${u.is_admin},${u.is_banned}\n`); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'critiflix_users.csv'; a.click(); }); }
+
+        function openAdminModal() { if (currentUserObj?.isAdmin) { loadAdminUsers(); document.getElementById('adminModal').style.display = 'flex'; } else alert('No eres admin'); }
+
+        // ==================== RANKING ====================
+        async function loadRanking() {
+            const { data } = await supabaseClient.from('simple_users').select('username, points').order('points', { ascending: false }).limit(10);
+            if (data) document.getElementById('rankingList').innerHTML = data.map((u, i) => `<li>${i+1}. ${u.username} - ${u.points || 0} pts <span class="rank-badge ${getRank(u.points || 0).class}">${getRank(u.points || 0).name}</span></li>`).join('');
         }
 
         // ==================== TMDB ====================
         async function fetchFromTMDB(endpoint) {
             try {
-                let url;
-                if (endpoint.includes('?')) {
-                    url = `${TMDB_BASE_URL}${endpoint}&api_key=${TMDB_API_KEY}&language=es-ES`;
-                } else {
-                    url = `${TMDB_BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}&language=es-ES`;
-                }
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`Error ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error TMDB:', error);
-                return null;
-            }
-        }
-
-        async function searchMovie(query) {
-            if (!query.trim()) return;
-            const data = await fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`);
-            if (data && data.results && data.results.length > 0) {
-                displaySearchResults(data.results);
-            } else {
-                alert('No se encontraron películas para: ' + query);
-            }
-        }
-
-        function displaySearchResults(movies) {
-            const container = document.getElementById('searchResultsGrid');
-            const section = document.getElementById('searchResultsSection');
-            container.innerHTML = movies.map(movie => `
-                <div class="movie-card" onclick="window.selectMovieFromSearch(${movie.id})">
-                    <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/150x220?text=No+Poster'}" alt="${movie.title}">
-                    <div class="info">
-                        <div class="title">${movie.title}</div>
-                        <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★</div>
-                    </div>
-                </div>
-            `).join('');
-            section.style.display = 'block';
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        window.selectMovieFromSearch = async function(movieId) {
-            const data = await fetchFromTMDB(`/movie/${movieId}`);
-            if (data) {
-                displayFeaturedMovie(data);
-                currentMovie = data;
-                await loadReviewsFromDB();
-                document.getElementById('searchResultsSection').style.display = 'none';
-                document.getElementById('searchInput').value = '';
-            }
-        };
-
-        async function displayFeaturedMovie(movie) {
-            const rating = movie.vote_average;
-            const starsCount = Math.floor(rating / 2);
-            const halfStar = (rating % 2) >= 0.5 ? '½' : '';
-            const stars = '⭐'.repeat(starsCount) + halfStar;
-            document.getElementById('featuredMovie').innerHTML = `
-                <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x240?text=No+Poster'}" alt="${movie.title}">
-                <div class="featured-details">
-                    <h3>${movie.title}</h3>
-                    <div class="stars">${stars} ${(rating/2).toFixed(1)} ★ (${movie.vote_count?.toLocaleString() || 0} reseñas)</div>
-                    <div class="sinopsis"><strong>Sinopsis</strong><br>${movie.overview || 'Sin sinopsis disponible.'}</div>
-                </div>
-            `;
+                let url = endpoint.includes('?') ? `${TMDB_BASE_URL}${endpoint}&api_key=${TMDB_API_KEY}&language=es-ES` : `${TMDB_BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}&language=es-ES`;
+                const res = await fetch(url);
+                return res.ok ? await res.json() : null;
+            } catch(e) { return null; }
         }
 
         async function loadRecommendations() {
             const data = await fetchFromTMDB('/movie/popular');
-            if (data && data.results) {
-                const container = document.getElementById('recommendationsGrid');
-                container.innerHTML = data.results.slice(0, 8).map(movie => `
-                    <div class="movie-card" onclick="window.selectMovie(${movie.id})">
-                        <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/150x220?text=No+Poster'}" alt="${movie.title}">
-                        <div class="info">
-                            <div class="title">${movie.title}</div>
-                            <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★</div>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                document.getElementById('recommendationsGrid').innerHTML = '<div class="error">Error al cargar</div>';
-            }
+            if (data?.results) document.getElementById('recommendationsGrid').innerHTML = data.results.slice(0, 8).map(m => `<div class="movie-card" onclick="selectMovie(${m.id})"><img src="${m.poster_path ? IMG_BASE + m.poster_path : 'https://via.placeholder.com/150x220'}" alt="${m.title}"><div class="info"><div class="title">${m.title}</div><div class="rating">⭐ ${(m.vote_average/2).toFixed(1)} ★</div></div></div>`).join('');
         }
 
         async function loadBestOf2025() {
             const data = await fetchFromTMDB('/discover/movie?sort_by=vote_average.desc&vote_count.gte=100');
-            const container = document.getElementById('best2025List');
-            if (data && data.results) {
-                container.innerHTML = data.results.slice(0, 5).map(movie => `
-                    <li onclick="window.selectMovie(${movie.id})">🏆 ${movie.title} <span style="color:#ffd700;">★ ${(movie.vote_average/2).toFixed(1)}</span></li>
-                `).join('');
-            } else {
-                container.innerHTML = '<li>Error al cargar</li>';
-            }
+            if (data?.results) document.getElementById('best2025List').innerHTML = data.results.slice(0, 5).map(m => `<li onclick="selectMovie(${m.id})">🏆 ${m.title} <span style="color:#ffd700;">★ ${(m.vote_average/2).toFixed(1)}</span></li>`).join('');
         }
 
-        window.selectMovie = async function(movieId) {
-            const data = await fetchFromTMDB(`/movie/${movieId}`);
-            if (data) {
-                displayFeaturedMovie(data);
-                currentMovie = data;
-                await loadReviewsFromDB();
-            }
+        async function loadLatestReviews() {
+            const { data } = await supabaseClient.from('reviews').select('*').order('created_at', { ascending: false }).limit(5);
+            if (data) document.getElementById('latestReviewsList').innerHTML = data.map(r => `<li onclick="selectMovie(${r.movie_id})"><div style="display:flex; justify-content:space-between;"><span style="color:#e50914;">🎬 ${r.movie_title}</span><span style="color:#ffd700;">⭐ ${r.rating} ★</span></div><div style="font-size:0.7rem;">✍️ ${r.user_name}</div>${r.has_spoilers ? '<span style="color:#ffa500;">⚠️ SPOILER</span>' : ''}</li>`).join('');
+        }
+
+        async function searchMovie(query) {
+            const data = await fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`);
+            if (data?.results?.length) {
+                document.getElementById('searchResultsGrid').innerHTML = data.results.map(m => `<div class="movie-card" onclick="selectMovieFromSearch(${m.id})"><img src="${m.poster_path ? IMG_BASE + m.poster_path : 'https://via.placeholder.com/150x220'}" alt="${m.title}"><div class="info"><div class="title">${m.title}</div><div class="rating">⭐ ${(m.vote_average/2).toFixed(1)} ★</div></div></div>`).join('');
+                document.getElementById('searchResultsSection').style.display = 'block';
+            } else alert('No encontrado');
+        }
+
+        window.selectMovieFromSearch = async function(id) {
+            const data = await fetchFromTMDB(`/movie/${id}`);
+            if (data) { displayFeaturedMovie(data); currentMovieObj = data; await loadReviews(); document.getElementById('searchResultsSection').style.display = 'none'; document.getElementById('searchInput').value = ''; }
+        };
+
+        async function displayFeaturedMovie(m) {
+            const rating = m.vote_average;
+            const stars = '⭐'.repeat(Math.floor(rating/2)) + (rating%2>=0.5 ? '½' : '');
+            document.getElementById('featuredMovie').innerHTML = `<img src="${m.poster_path ? IMG_BASE + m.poster_path : 'https://via.placeholder.com/160x240'}" alt="${m.title}"><div class="featured-details"><h3>${m.title}</h3><div class="stars">${stars} ${(rating/2).toFixed(1)} ★</div><div class="sinopsis">${m.overview || 'Sin sinopsis'}</div></div>`;
+        }
+
+        window.selectMovie = async function(id) {
+            const data = await fetchFromTMDB(`/movie/${id}`);
+            if (data) { displayFeaturedMovie(data); currentMovieObj = data; await loadReviews(); }
         };
 
         function renderReviews(filter) {
-            let filtered = [...currentReviews];
-            if (filter === 'recent') {
-                filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-            } else if (filter === 'best') {
-                filtered.sort((a,b) => b.rating - a.rating);
-            } else if (filter === 'no-spoiler') {
-                filtered = filtered.filter(r => !r.has_spoilers);
-            }
-            
+            let filtered = [...currentReviewsArray];
+            if (filter === 'best') filtered.sort((a,b) => b.rating - a.rating);
+            else if (filter === 'recent') filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            else if (filter === 'no-spoiler') filtered = filtered.filter(r => !r.has_spoilers);
             const container = document.getElementById('reviewsList');
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="loading">No hay críticas aún. ¡Sé el primero!</div>';
-                return;
-            }
-            
-            container.innerHTML = filtered.map(review => {
-                const isAuthor = currentUser && review.user_id === currentUser.id;
-                const isAdmin = currentUser && currentUser.isAdmin;
+            if (!filtered.length) { container.innerHTML = '<div class="loading">No hay críticas aún</div>'; return; }
+            container.innerHTML = filtered.map(r => {
+                const isAuthor = currentUserObj && r.user_id === currentUserObj.id;
+                const isAdmin = currentUserObj?.isAdmin;
                 const canEdit = isAuthor || isAdmin;
-                return `
-                    <div class="review-card" id="review-${review.id}">
-                        <div class="review-header">
-                            <span class="review-user">✍️ ${review.user_name}</span>
-                            <span class="review-stars">${'⭐'.repeat(review.rating)}</span>
-                            <span class="review-date">📅 ${new Date(review.created_at).toLocaleDateString()}</span>
-                        </div>
-                        <div class="review-content" id="content-${review.id}">
-                            ${review.content}
-                            ${review.has_spoilers ? '<div class="spoiler-warning" onclick="this.style.display=\'none\';">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}
-                        </div>
-                        ${canEdit ? `
-                            <div class="review-actions">
-                                <button class="btn-primary" onclick="enableEditMode(${review.id}, \`${review.content.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">✏️ Editar</button>
-                                <button class="btn-secondary" onclick="deleteReview(${review.id})">🗑️ Eliminar</button>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
+                return `<div class="review-card" id="review-${r.id}"><div class="review-header"><span class="review-user" onclick="document.getElementById('commentText').value = '@${r.user_name} '">✍️ ${r.user_name}</span><span class="review-stars">${'⭐'.repeat(r.rating)}</span><span class="review-date">📅 ${new Date(r.created_at).toLocaleDateString()}</span></div><div class="review-content ${r.has_spoilers ? 'spoiler-hidden' : ''}" onclick="if(this.classList) this.classList.toggle('spoiler-hidden')">${r.content}${r.has_spoilers ? '<div class="spoiler-warning" onclick="event.stopPropagation(); this.parentElement.classList.toggle(\'spoiler-hidden\')">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}</div><div class="vote-buttons"><button class="vote-btn" onclick="vote(${r.id}, ${r.user_id})">👍 ${r.votes_up || 0}</button></div>${canEdit ? `<div class="review-actions"><button class="btn-secondary" onclick="editReviewPrompt(${r.id})">✏️ Editar</button><button class="btn-secondary" onclick="deleteReview(${r.id}, ${r.rating}, ${r.user_id})">🗑️ Eliminar</button></div>` : ''}</div>`;
             }).join('');
         }
 
-        window.enableEditMode = function(reviewId, oldContent) {
-            const contentDiv = document.getElementById(`content-${reviewId}`);
-            contentDiv.innerHTML = `
-                <textarea id="edit-textarea-${reviewId}" rows="3" style="width:100%; background:#2a2a3a; color:white; border-radius:8px; padding:8px;">${oldContent}</textarea>
-                <div style="margin-top:8px;">
-                    <button class="btn-primary" onclick="saveEdit(${reviewId})">💾 Guardar</button>
-                    <button class="btn-secondary" onclick="location.reload()">❌ Cancelar</button>
-                </div>
-            `;
-        };
-
-        window.saveEdit = async function(reviewId) {
-            const newContent = document.getElementById(`edit-textarea-${reviewId}`).value;
-            await editReview(reviewId, newContent);
+        window.editReviewPrompt = async function(id) {
+            const newContent = prompt('Editar crítica:');
+            if (newContent) await editReview(id, newContent);
         };
 
         // ==================== INICIALIZACIÓN ====================
         async function init() {
-            console.log('Iniciando CRITIFLIX...');
-            
-            // Cargar usuario guardado
-            const savedUser = localStorage.getItem('critiflix_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-            }
-            updateAuthUI();
-
-            // Cargar datos de TMDB
-            await loadRecommendations();
-            await loadBestOf2025();
-            await loadLatestReviews();
-
-            // Cargar película por defecto (Oppenheimer)
+            const saved = localStorage.getItem('critiflix_user');
+            if (saved) {
+                currentUserObj = JSON.parse(saved);
+                const { data } = await supabaseClient.from('simple_users').select('points, is_banned, is_admin').eq('id', currentUserObj.id).single();
+                if (data && !data.is_banned) { currentUserObj.points = data.points || 0; currentUserObj.isAdmin = data.is_admin; updateAuthUI(); }
+                else { currentUserObj = null; localStorage.removeItem('critiflix_user'); updateAuthUI(); }
+            } else updateAuthUI();
+            await loadRecommendations(); await loadBestOf2025(); await loadLatestReviews(); await loadRanking(); await loadBanner();
             const defaultMovie = await fetchFromTMDB('/movie/872585');
-            if (defaultMovie) {
-                displayFeaturedMovie(defaultMovie);
-                currentMovie = defaultMovie;
-                await loadReviewsFromDB();
-            }
-
-            // Eventos
+            if (defaultMovie) { displayFeaturedMovie(defaultMovie); currentMovieObj = defaultMovie; await loadReviews(); }
             document.getElementById('searchBtn').onclick = () => searchMovie(document.getElementById('searchInput').value);
             document.getElementById('closeResultsBtn').onclick = () => document.getElementById('searchResultsSection').style.display = 'none';
-            document.getElementById('publishBtn').onclick = () => {
-                const content = document.getElementById('commentText').value;
-                const rating = document.getElementById('ratingSelect').value;
-                const spoiler = document.getElementById('spoilerCheckbox').checked;
-                addReview(content, rating, spoiler);
-            };
-            
-            // Modal eventos
-            document.getElementById('modalActionBtn').onclick = () => {
-                if (modalMode === 'login') handleLogin();
-                else if (modalMode === 'register') handleRegister();
-                else handleRecover();
-            };
-            document.getElementById('modalSwitchBtn').onclick = () => {
-                if (modalMode === 'login') openRegisterModal();
-                else openLoginModal();
-            };
-            document.getElementById('modalRecoverBtn').onclick = () => openRecoverModal();
+            document.getElementById('publishBtn').onclick = () => addReview(document.getElementById('commentText').value, document.getElementById('ratingSelect').value, document.getElementById('spoilerCheckbox').checked);
+            document.getElementById('modalActionBtn').onclick = () => { if (modalModeVar === 'login') handleLogin(); else if (modalModeVar === 'register') handleRegister(); else handleRecover(); };
+            document.getElementById('modalSwitchBtn').onclick = () => modalModeVar === 'login' ? openRegisterModal() : openLoginModal();
+            document.getElementById('modalRecoverBtn').onclick = openRecoverModal;
             document.getElementById('closeModalBtn').onclick = closeModal;
-
-            // Filtros
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.onclick = () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderReviews(btn.dataset.filter);
-                };
-            });
+            document.getElementById('closeProfileBtn').onclick = () => document.getElementById('profileModal').style.display = 'none';
+            document.getElementById('adminUsersBtn').onclick = () => loadAdminUsers();
+            document.getElementById('adminBannerBtn').onclick = () => document.getElementById('adminPanelContent').innerHTML = `<textarea id="bannerMsg" rows="3" style="width:100%; background:#2a2a3a; color:white; padding:10px; border-radius:8px;" placeholder="Mensaje del banner..."></textarea><button class="btn-primary" onclick="saveBanner(document.getElementById('bannerMsg').value)">Guardar Banner</button>`;
+            document.getElementById('adminBackupBtn').onclick = () => document.getElementById('adminPanelContent').innerHTML = `<button class="btn-primary" onclick="exportJSON()">📄 Exportar JSON</button><button class="btn-primary" onclick="exportCSV()">📊 Exportar CSV</button>`;
+            document.getElementById('closeAdminBtn').onclick = () => document.getElementById('adminModal').style.display = 'none';
+            document.querySelectorAll('.filter-btn').forEach(btn => { btn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderReviews(btn.dataset.filter); }; });
         }
-
-        // Iniciar cuando la página cargue
-        window.onload = init;
+        init();
     </script>
 </body>
 </html>
