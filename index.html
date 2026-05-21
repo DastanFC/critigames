@@ -18,7 +18,6 @@
             line-height: 1.5;
         }
 
-        /* Header */
         .header {
             background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%);
             padding: 20px 40px;
@@ -62,15 +61,8 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .search-bar button:hover {
-            transform: scale(1.02);
-            background: #ff0a1a;
-        }
-
-        /* Layout principal */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -80,7 +72,6 @@
             gap: 30px;
         }
 
-        /* Secciones comunes */
         .section {
             background: #14141e;
             border-radius: 16px;
@@ -97,14 +88,6 @@
             padding-left: 12px;
         }
 
-        .section h3 {
-            font-size: 1rem;
-            color: #aaa;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-
-        /* Grid de películas */
         .movies-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -115,8 +98,8 @@
             background: #1e1e2a;
             border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.2s;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
         .movie-card:hover {
@@ -144,30 +127,21 @@
             margin-top: 5px;
         }
 
-        /* Lista de tendencias, críticas, amigos */
-        .trend-list, .critics-list, .friends-list {
+        .latest-list, .best-list {
             list-style: none;
         }
 
-        .trend-list li, .critics-list li, .friends-list li {
-            padding: 8px 0;
+        .latest-list li, .best-list li {
+            padding: 12px 0;
             border-bottom: 1px solid #2a2a3a;
-            font-size: 0.9rem;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: background 0.2s;
         }
 
-        .trend-list li:hover, .critics-list li:hover, .friends-list li:hover {
-            color: #e50914;
+        .latest-list li:hover, .best-list li:hover {
+            background: #1e1e2a;
         }
 
-        .spoiler-tag {
-            color: #ffa500;
-            font-size: 0.75rem;
-            margin-left: 8px;
-        }
-
-        /* Película destacada */
         .featured-movie {
             display: flex;
             gap: 20px;
@@ -212,7 +186,6 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
         }
 
         .btn-primary {
@@ -225,7 +198,32 @@
             color: white;
         }
 
-        /* Críticas de la comunidad */
+        .search-results {
+            background: #14141e;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #2a2a3a;
+        }
+
+        .search-results h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #e50914;
+            border-left: 4px solid #e50914;
+            padding-left: 12px;
+        }
+
+        .close-results {
+            float: right;
+            background: #333;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
         .comment-input {
             background: #1e1e2a;
             border-radius: 12px;
@@ -312,14 +310,12 @@
             cursor: pointer;
         }
 
-        /* Sidebar */
         .sidebar {
             position: sticky;
             top: 120px;
             height: fit-content;
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
             .container {
                 grid-template-columns: 1fr;
@@ -347,15 +343,21 @@
     <div class="header">
         <h1>🎬 CRITIFLIX</h1>
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Buscar película... (Ej: Oppenheimer, Spider-Man, Super Mario)">
+            <input type="text" id="searchInput" placeholder="Buscar película... (Ej: Superman, Batman, Oppenheimer)">
             <button id="searchBtn">🔍 Buscar</button>
         </div>
     </div>
 
     <div class="container">
-        <!-- Columna principal izquierda -->
         <div class="main">
-            <!-- Recomendados para ti -->
+            <div id="searchResultsSection" class="search-results" style="display: none;">
+                <button class="close-results" id="closeResultsBtn">✕ Cerrar</button>
+                <h2>🔍 RESULTADOS DE BÚSQUEDA</h2>
+                <div id="searchResultsGrid" class="movies-grid">
+                    <div class="loading">Buscando...</div>
+                </div>
+            </div>
+
             <div class="section">
                 <h2>🎯 RECOMENDADOS PARA TI</h2>
                 <div class="movies-grid" id="recommendationsGrid">
@@ -363,14 +365,12 @@
                 </div>
             </div>
 
-            <!-- Película destacada (Oppenheimer por defecto) -->
             <div class="section" id="featuredSection">
                 <div class="featured-movie" id="featuredMovie">
                     <div class="loading">Cargando película destacada...</div>
                 </div>
             </div>
 
-            <!-- Críticas de la comunidad -->
             <div class="section">
                 <h2>💬 CRÍTICAS DE LA COMUNIDAD</h2>
                 <div class="comment-input">
@@ -403,49 +403,37 @@
             </div>
         </div>
 
-        <!-- Sidebar derecho -->
         <div class="sidebar">
             <div class="section">
-                <h2>🔥 ULTIMAS CRÍTICAS</h2>
-                <ul class="trend-list" id="trendingList">
-                    <li>Cargando...</li>
+                <h2>🔥 ÚLTIMAS CRÍTICAS</h2>
+                <ul class="latest-list" id="latestReviewsList">
+                    <li>Cargando críticas recientes...</li>
                 </ul>
             </div>
 
             <div class="section">
                 <h2>🏆 LO MEJOR DE 2026</h2>
-                <ul class="critics-list" id="best2024List">
-                    <li>Cargando...</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>👥 TOP CRÍTICOS</h2>
-                <ul class="friends-list" id="friendsList">
-                    <li>Cargando...</li>
+                <ul class="best-list" id="best2026List">
+                    <li>Cargando mejores películas de 2026...</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURACIÓN TMDB ====================
+        // ==================== CONFIGURACIÓN ====================
         const TMDB_API_KEY = '398c85e1174b4fff7916d36f25c27552';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
 
-        // Estado global
         let currentMovie = null;
         let allReviews = [];
-
-        // Usuarios de ejemplo para las listas laterales
-        const fakeUsers = ['CINEMANÍACO_99', '  CRITIMANIACO', 'ELIAS99', 'SPIDERCRITIC', 'NOLANCRITIC', 'DONCINEMA', 'THECRITICADOR', 'TEPUNTUO', 'RESEÑITAS'];
-        const fakeMovies2024 = ['Dune 2', 'Oppenheimer', 'Scream 7', 'Torrente 5', 'La Mommia'];
+        let currentSearchResults = [];
+        let allGlobalReviews = [];
 
         // ==================== FUNCIONES API ====================
         async function fetchFromTMDB(endpoint) {
             try {
-                // Construir URL correctamente - si endpoint ya tiene ? no añadimos otro
                 let url;
                 if (endpoint.includes('?')) {
                     url = `${TMDB_BASE_URL}${endpoint}&api_key=${TMDB_API_KEY}&language=es-ES`;
@@ -461,30 +449,148 @@
             }
         }
 
-        // Obtener películas populares (recomendadas)
-        async function loadRecommendations() {
-            const data = await fetchFromTMDB('/movie/popular');
-            if (data && data.results) {
-                displayMovies(data.results.slice(0, 6), 'recommendationsGrid');
-            } else {
-                document.getElementById('recommendationsGrid').innerHTML = '<div class="error">No se pudieron cargar recomendaciones</div>';
+        // ==================== MIGRAR CRÍTICAS ANTIGUAS ====================
+        async function migrateOldReviews() {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('reviews_')) {
+                    const movieId = key.replace('reviews_', '');
+                    const reviews = JSON.parse(localStorage.getItem(key));
+                    let needsUpdate = false;
+                    
+                    for (let review of reviews) {
+                        if (!review.movieTitle) {
+                            const movieData = await fetchFromTMDB(`/movie/${movieId}`);
+                            if (movieData) {
+                                review.movieTitle = movieData.title;
+                                needsUpdate = true;
+                            }
+                        }
+                    }
+                    
+                    if (needsUpdate) {
+                        localStorage.setItem(key, JSON.stringify(reviews));
+                    }
+                }
             }
         }
 
-        // Buscar película - CORREGIDO!
+        // ==================== LO MEJOR DE 2026 ====================
+        async function loadBestOf2026() {
+            const currentYear = new Date().getFullYear();
+            const data = await fetchFromTMDB(`/discover/movie?sort_by=vote_average.desc&vote_count.gte=100&primary_release_year=${currentYear}`);
+            
+            const container = document.getElementById('best2026List');
+            if (data && data.results && data.results.length > 0) {
+                const topMovies = data.results.slice(0, 5);
+                container.innerHTML = topMovies.map(movie => `
+                    <li onclick="selectMovie(${movie.id})">
+                        🏆 ${movie.title} 
+                        <span style="color:#ffd700; font-size:0.7rem;">★ ${(movie.vote_average/2).toFixed(1)}</span>
+                    </li>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <li onclick="selectMovie(872585)">🏆 Oppenheimer ★ 4.0</li>
+                    <li onclick="selectMovie(693134)">🏆 Dune 2 ★ 4.2</li>
+                    <li onclick="selectMovie(939243)">🏆 Furiosa ★ 3.8</li>
+                `;
+            }
+        }
+
+        // ==================== ÚLTIMAS CRÍTICAS ====================
+        function loadLatestReviews() {
+            const container = document.getElementById('latestReviewsList');
+            
+            allGlobalReviews = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('reviews_')) {
+                    const movieId = key.replace('reviews_', '');
+                    const reviews = JSON.parse(localStorage.getItem(key));
+                    reviews.forEach(review => {
+                        allGlobalReviews.push({
+                            ...review,
+                            movieId: parseInt(movieId),
+                            movieTitle: review.movieTitle || 'Cargando título...'
+                        });
+                    });
+                }
+            }
+            
+            if (allGlobalReviews.length === 0) {
+                container.innerHTML = '<li style="color:#888;">Aún no hay críticas. ¡Sé el primero!</li>';
+                return;
+            }
+            
+            const latest = [...allGlobalReviews]
+                .sort((a, b) => b.id - a.id)
+                .slice(0, 5);
+            
+            container.innerHTML = latest.map(review => `
+                <li onclick="selectMovie(${review.movieId})">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:bold; color:#e50914;">🎬 ${review.movieTitle !== 'Cargando título...' ? review.movieTitle : `Película ID: ${review.movieId}`}</span>
+                        <span style="color:#ffd700;">⭐ ${review.rating} ★</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-top:5px;">
+                        <span style="color:#aaa;">✍️ ${review.user}</span>
+                        <span style="color:#888;">📅 ${review.date}</span>
+                    </div>
+                    ${review.spoiler ? '<span style="color:#ffa500; font-size:0.7rem;">⚠️ CONTIENE SPOILERS - Haz clic para leer la crítica completa</span>' : ''}
+                </li>
+            `).join('');
+        }
+
+        // ==================== BÚSQUEDA ====================
         async function searchMovie(query) {
             if (!query.trim()) return;
+            
             const data = await fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`);
+            
             if (data && data.results && data.results.length > 0) {
-                displayFeaturedMovie(data.results[0]);
-                loadReviewsForMovie(data.results[0].id);
-                currentMovie = data.results[0];
+                currentSearchResults = data.results;
+                displaySearchResults(currentSearchResults);
             } else {
-                alert('No se encontró la película: ' + query);
+                alert('No se encontraron películas para: ' + query);
             }
         }
 
-        // Mostrar película destacada
+        function displaySearchResults(movies) {
+            const container = document.getElementById('searchResultsGrid');
+            const section = document.getElementById('searchResultsSection');
+            
+            container.innerHTML = movies.map(movie => `
+                <div class="movie-card" onclick="selectMovieFromSearch(${movie.id})">
+                    <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x220?text=No+Poster'}" alt="${movie.title}">
+                    <div class="info">
+                        <div class="title">${movie.title}</div>
+                        <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★ (${movie.vote_count || 0})</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.selectMovieFromSearch = async function(movieId) {
+            const data = await fetchFromTMDB(`/movie/${movieId}`);
+            if (data) {
+                displayFeaturedMovie(data);
+                loadReviewsForMovie(movieId);
+                currentMovie = data;
+                document.getElementById('searchResultsSection').style.display = 'none';
+                document.getElementById('searchInput').value = '';
+            }
+        };
+
+        function closeSearchResults() {
+            document.getElementById('searchResultsSection').style.display = 'none';
+            currentSearchResults = [];
+        }
+
+        // ==================== PELÍCULA DESTACADA ====================
         async function displayFeaturedMovie(movie) {
             const details = await fetchFromTMDB(`/movie/${movie.id}`);
             const rating = details ? details.vote_average : movie.vote_average;
@@ -506,11 +612,15 @@
             `;
         }
 
-        function scrollToComment() {
-            document.querySelector('.comment-input').scrollIntoView({ behavior: 'smooth' });
+        async function loadRecommendations() {
+            const data = await fetchFromTMDB('/movie/popular');
+            if (data && data.results) {
+                displayMovies(data.results.slice(0, 6), 'recommendationsGrid');
+            } else {
+                document.getElementById('recommendationsGrid').innerHTML = '<div class="error">No se pudieron cargar recomendaciones</div>';
+            }
         }
 
-        // Mostrar grid de películas
         function displayMovies(movies, containerId) {
             const container = document.getElementById(containerId);
             if (!movies || movies.length === 0) {
@@ -537,18 +647,17 @@
             }
         };
 
-        // ==================== CRÍTICAS LOCALES (con LocalStorage) ====================
+        function scrollToComment() {
+            document.querySelector('.comment-input').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==================== CRÍTICAS ====================
         function loadReviewsForMovie(movieId) {
             const stored = localStorage.getItem(`reviews_${movieId}`);
             if (stored) {
                 allReviews = JSON.parse(stored);
             } else {
-                // Críticas de ejemplo
-                allReviews = [
-                    { id: 1, user: 'CINEMANÍACO_99', rating: 5, date: '13/03/2026', content: 'Una obra maestra de Nolan, la tensión es increíble... elementos atónitos con foco inesperado.', spoiler: false },
-                    { id: 2, user: 'ELIAS99', rating: 4, date: '10/03/2026', content: 'SPOILER: El final es impactante, no te lo pierdas.', spoiler: true },
-                    { id: 3, user: 'Cinemaniaco_8', rating: 5, date: '18/03/2026', content: 'Increíble experiencia cinematográfica. Nolan en su mejor momento.', spoiler: false },
-                ];
+                allReviews = [];
                 saveReviews();
             }
             renderReviews('all');
@@ -560,26 +669,31 @@
             }
         }
 
-        function addReview(content, rating, spoiler) {
+        function addReviewWithMovieTitle(content, rating, spoiler) {
             if (!currentMovie) {
-                alert('Selecciona o busca una película primero');
+                alert('Selecciona una película primero (busca o haz clic en una recomendada)');
                 return false;
             }
             if (!content.trim()) {
                 alert('Escribe una crítica');
                 return false;
             }
+            
             const newReview = {
                 id: Date.now(),
-                user: '🎬 CRITIFLIX_USER',
+                user: 'CRITIFLIX_USER',
                 rating: parseInt(rating),
                 date: new Date().toLocaleDateString('es-ES'),
                 content: content,
-                spoiler: spoiler
+                spoiler: spoiler,
+                movieTitle: currentMovie.title
             };
+            
             allReviews.unshift(newReview);
             saveReviews();
             renderReviews('all');
+            loadLatestReviews();
+            
             document.getElementById('commentText').value = '';
             document.getElementById('spoilerCheckbox').checked = false;
             document.getElementById('ratingSelect').value = '5';
@@ -618,57 +732,41 @@
             `).join('');
         }
 
-        // ==================== LISTAS LATERALES ====================
-        function loadTrending() {
-            const trending = fakeUsers.slice(0, 8).map(u => `<li>🔥 ${u}</li>`).join('');
-            document.getElementById('trendingList').innerHTML = trending;
-        }
-
-        function loadBest2024() {
-            const best = fakeMovies2024.map(m => `<li>🏆 ${m}</li>`).join('');
-            document.getElementById('best2024List').innerHTML = best;
-        }
-
-        function loadFriendsReviews() {
-            const friends = fakeUsers.slice(0, 6).map(u => `<li>👤 ${u}</li>`).join('');
-            document.getElementById('friendsList').innerHTML = friends;
-        }
-
         // ==================== INICIALIZACIÓN ====================
         async function init() {
-            // Cargar película por defecto: Oppenheimer (ID: 872585)
+            await migrateOldReviews();
+            
             const defaultMovie = await fetchFromTMDB('/movie/872585');
             if (defaultMovie) {
                 displayFeaturedMovie(defaultMovie);
                 currentMovie = defaultMovie;
                 loadReviewsForMovie(defaultMovie.id);
-            } else {
-                document.getElementById('featuredMovie').innerHTML = '<div class="error">Error al cargar película destacada</div>';
             }
             
             await loadRecommendations();
-            loadTrending();
-            loadBest2024();
-            loadFriendsReviews();
+            await loadBestOf2026();
+            loadLatestReviews();
             
-            // Eventos
             document.getElementById('searchBtn').addEventListener('click', () => {
                 const query = document.getElementById('searchInput').value;
                 searchMovie(query);
             });
+            
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchMovie(e.target.value);
             });
+            
+            document.getElementById('closeResultsBtn').addEventListener('click', closeSearchResults);
+            
             document.getElementById('publishBtn').addEventListener('click', () => {
                 const content = document.getElementById('commentText').value;
                 const rating = document.getElementById('ratingSelect').value;
                 const spoiler = document.getElementById('spoilerCheckbox').checked;
-                if (addReview(content, rating, spoiler)) {
+                if (addReviewWithMovieTitle(content, rating, spoiler)) {
                     alert('¡Crítica publicada!');
                 }
             });
             
-            // Filtros
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -678,7 +776,6 @@
             });
         }
         
-        // Iniciar la aplicación
         init();
     </script>
 </body>
