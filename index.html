@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRITIFLIX - Comentarios de Películas</title>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -20,21 +22,67 @@
 
         .header {
             background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 100%);
-            padding: 20px 40px;
+            padding: 15px 40px;
             border-bottom: 1px solid #333;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
         .header h1 {
-            font-size: 2.2rem;
-            letter-spacing: -1px;
+            font-size: 2rem;
             background: linear-gradient(135deg, #e50914, #ff6b6b);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            display: inline-block;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-google {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-logout {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #2a2a3a;
+            padding: 6px 16px;
+            border-radius: 40px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
         }
 
         .search-bar {
@@ -198,6 +246,16 @@
             color: white;
         }
 
+        .btn-edit {
+            background: #ffc107;
+            color: #1a1a2e;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
         .search-results {
             background: #14141e;
             border-radius: 16px;
@@ -279,11 +337,16 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .review-user {
             font-weight: bold;
             color: #e50914;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .review-stars {
@@ -300,6 +363,12 @@
             line-height: 1.5;
         }
 
+        .review-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
         .spoiler-warning {
             background: #332700;
             padding: 8px;
@@ -308,6 +377,42 @@
             font-size: 0.8rem;
             margin-top: 8px;
             cursor: pointer;
+        }
+
+        .announcement-banner {
+            background: linear-gradient(135deg, #1a472a, #0d2818);
+            border-left: 4px solid #ffd700;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+        }
+
+        .announcement-banner h4 {
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .announcement-banner p {
+            white-space: pre-line;
+            font-size: 0.9rem;
+        }
+
+        .admin-panel {
+            background: #1e1e2a;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid #e50914;
+        }
+
+        .admin-panel textarea {
+            width: 100%;
+            background: #2a2a3a;
+            border: 1px solid #3a3a4a;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            margin-bottom: 10px;
         }
 
         .sidebar {
@@ -324,6 +429,9 @@
             .header {
                 padding: 15px 20px;
             }
+            .header-top {
+                flex-direction: column;
+            }
         }
 
         .loading {
@@ -337,11 +445,25 @@
             text-align: center;
             padding: 20px;
         }
+
+        .edit-mode textarea {
+            width: 100%;
+            background: #2a2a3a;
+            border: 1px solid #3a3a4a;
+            border-radius: 12px;
+            padding: 8px;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🎬 CRITIFLIX</h1>
+        <div class="header-top">
+            <h1>🎬 CRITIFLIX</h1>
+            <div class="auth-buttons" id="authSection">
+                <div class="loading">Cargando...</div>
+            </div>
+        </div>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Buscar película... (Ej: Superman, Batman, Oppenheimer)">
             <button id="searchBtn">🔍 Buscar</button>
@@ -350,6 +472,16 @@
 
     <div class="container">
         <div class="main">
+            <!-- Avisos del admin -->
+            <div id="announcementsContainer"></div>
+
+            <!-- Panel de admin (solo visible para ti) -->
+            <div id="adminPanel" style="display: none;" class="admin-panel">
+                <h3>🔧 Panel de Administrador</h3>
+                <textarea id="announcementInput" rows="3" placeholder="Escribe un aviso para todos los usuarios...&#10;Ej:&#10;- Actualización del sitio&#10;- Nuevas funciones&#10;- Mantenimiento programado"></textarea>
+                <button class="btn btn-primary" id="postAnnouncementBtn">📢 Publicar Aviso</button>
+            </div>
+
             <div id="searchResultsSection" class="search-results" style="display: none;">
                 <button class="close-results" id="closeResultsBtn">✕ Cerrar</button>
                 <h2>🔍 RESULTADOS DE BÚSQUEDA</h2>
@@ -373,7 +505,7 @@
 
             <div class="section">
                 <h2>💬 CRÍTICAS DE LA COMUNIDAD</h2>
-                <div class="comment-input">
+                <div class="comment-input" id="commentInputSection" style="display: none;">
                     <textarea id="commentText" rows="3" placeholder="Escribe tu crítica..."></textarea>
                     <div class="comment-actions">
                         <button class="btn btn-primary" id="publishBtn">📝 Publicar</button>
@@ -388,6 +520,9 @@
                             <option value="1">⭐ 1</option>
                         </select>
                     </div>
+                </div>
+                <div id="loginToCommentMsg" class="loading" style="display: none;">
+                    🔑 Inicia sesión con Google para escribir críticas
                 </div>
 
                 <div class="filter-bar">
@@ -412,9 +547,9 @@
             </div>
 
             <div class="section">
-                <h2>🏆 LO MEJOR DE 2026</h2>
-                <ul class="best-list" id="best2026List">
-                    <li>Cargando mejores películas de 2026...</li>
+                <h2>🏆 LO MEJOR DE 2025</h2>
+                <ul class="best-list" id="best2025List">
+                    <li>Cargando mejores películas...</li>
                 </ul>
             </div>
         </div>
@@ -422,16 +557,132 @@
 
     <script>
         // ==================== CONFIGURACIÓN ====================
+        const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_fkt2NkOU9mfsb5V6zUaIsQ__ytD_PRj';
         const TMDB_API_KEY = '398c85e1174b4fff7916d36f25c27552';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+        const ADMIN_EMAIL = 'sliink27@gmail.com';
 
+        // Inicializar Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
         let currentMovie = null;
         let allReviews = [];
         let currentSearchResults = [];
-        let allGlobalReviews = [];
 
-        // ==================== FUNCIONES API ====================
+        // ==================== AUTENTICACIÓN ====================
+        async function handleGoogleLogin() {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin }
+            });
+            if (error) console.error('Error login:', error);
+        }
+
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            await checkUser();
+            if (currentMovie) loadReviewsFromDB();
+        }
+
+        async function checkUser() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                // Verificar si es admin
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('is_admin')
+                    .eq('id', user.id)
+                    .single();
+                
+                currentUser = {
+                    id: user.id,
+                    email: user.email,
+                    name: user.user_metadata?.full_name || user.email?.split('@')[0],
+                    avatar: user.user_metadata?.avatar_url,
+                    isAdmin: profile?.is_admin || false
+                };
+            } else {
+                currentUser = null;
+            }
+            updateAuthUI();
+            if (currentMovie) loadReviewsFromDB();
+            loadAnnouncements();
+        }
+
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            const commentSection = document.getElementById('commentInputSection');
+            const loginMsg = document.getElementById('loginToCommentMsg');
+            const adminPanel = document.getElementById('adminPanel');
+
+            if (currentUser) {
+                authSection.innerHTML = `
+                    <div class="user-info">
+                        <img src="${currentUser.avatar || 'https://via.placeholder.com/32'}" class="user-avatar">
+                        <span>${currentUser.name}</span>
+                        ${currentUser.isAdmin ? '<span style="background:#e50914; padding:2px 8px; border-radius:12px; font-size:0.7rem;">ADMIN</span>' : ''}
+                        <button class="btn-logout" onclick="handleLogout()">Salir</button>
+                    </div>
+                `;
+                commentSection.style.display = 'block';
+                loginMsg.style.display = 'none';
+                if (currentUser.isAdmin) {
+                    adminPanel.style.display = 'block';
+                } else {
+                    adminPanel.style.display = 'none';
+                }
+            } else {
+                authSection.innerHTML = `<button class="btn-google" onclick="handleGoogleLogin()">🔑 Iniciar con Google</button>`;
+                commentSection.style.display = 'none';
+                loginMsg.style.display = 'block';
+                adminPanel.style.display = 'none';
+            }
+        }
+
+        // ==================== AVISOS ====================
+        async function loadAnnouncements() {
+            const { data, error } = await supabase
+                .from('announcements')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(3);
+
+            const container = document.getElementById('announcementsContainer');
+            if (data && data.length > 0) {
+                container.innerHTML = data.map(a => `
+                    <div class="announcement-banner">
+                        <h4>📢 AVISO IMPORTANTE</h4>
+                        <p>${a.message.replace(/\n/g, '<br>')}</p>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        async function postAnnouncement() {
+            if (!currentUser?.isAdmin) return;
+            const message = document.getElementById('announcementInput').value.trim();
+            if (!message) return;
+
+            const { error } = await supabase
+                .from('announcements')
+                .insert({ message: message, created_by: currentUser.id });
+
+            if (!error) {
+                document.getElementById('announcementInput').value = '';
+                loadAnnouncements();
+                alert('Aviso publicado');
+            } else {
+                alert('Error al publicar');
+            }
+        }
+
+        // ==================== FUNCIONES TMDB ====================
         async function fetchFromTMDB(endpoint) {
             try {
                 let url;
@@ -449,38 +700,10 @@
             }
         }
 
-        // ==================== MIGRAR CRÍTICAS ANTIGUAS ====================
-        async function migrateOldReviews() {
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('reviews_')) {
-                    const movieId = key.replace('reviews_', '');
-                    const reviews = JSON.parse(localStorage.getItem(key));
-                    let needsUpdate = false;
-                    
-                    for (let review of reviews) {
-                        if (!review.movieTitle) {
-                            const movieData = await fetchFromTMDB(`/movie/${movieId}`);
-                            if (movieData) {
-                                review.movieTitle = movieData.title;
-                                needsUpdate = true;
-                            }
-                        }
-                    }
-                    
-                    if (needsUpdate) {
-                        localStorage.setItem(key, JSON.stringify(reviews));
-                    }
-                }
-            }
-        }
-
-        // ==================== LO MEJOR DE 2026 ====================
-        async function loadBestOf2026() {
+        async function loadBestOf2025() {
             const currentYear = new Date().getFullYear();
             const data = await fetchFromTMDB(`/discover/movie?sort_by=vote_average.desc&vote_count.gte=100&primary_release_year=${currentYear}`);
-            
-            const container = document.getElementById('best2026List');
+            const container = document.getElementById('best2025List');
             if (data && data.results && data.results.length > 0) {
                 const topMovies = data.results.slice(0, 5);
                 container.innerHTML = topMovies.map(movie => `
@@ -493,61 +716,127 @@
                 container.innerHTML = `
                     <li onclick="selectMovie(872585)">🏆 Oppenheimer ★ 4.0</li>
                     <li onclick="selectMovie(693134)">🏆 Dune 2 ★ 4.2</li>
-                    <li onclick="selectMovie(939243)">🏆 Furiosa ★ 3.8</li>
                 `;
             }
         }
 
-        // ==================== ÚLTIMAS CRÍTICAS ====================
-        function loadLatestReviews() {
-            const container = document.getElementById('latestReviewsList');
-            
-            allGlobalReviews = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('reviews_')) {
-                    const movieId = key.replace('reviews_', '');
-                    const reviews = JSON.parse(localStorage.getItem(key));
-                    reviews.forEach(review => {
-                        allGlobalReviews.push({
-                            ...review,
-                            movieId: parseInt(movieId),
-                            movieTitle: review.movieTitle || 'Cargando título...'
-                        });
-                    });
-                }
+        // ==================== CRÍTICAS EN SUPABASE ====================
+        async function loadReviewsFromDB() {
+            if (!currentMovie) return;
+
+            const { data, error } = await supabase
+                .from('reviews')
+                .select('*')
+                .eq('movie_id', currentMovie.id)
+                .order('created_at', { ascending: false });
+
+            if (!error && data) {
+                allReviews = data;
+                renderReviews('all');
+                loadLatestReviewsFromDB();
             }
-            
-            if (allGlobalReviews.length === 0) {
-                container.innerHTML = '<li style="color:#888;">Aún no hay críticas. ¡Sé el primero!</li>';
-                return;
-            }
-            
-            const latest = [...allGlobalReviews]
-                .sort((a, b) => b.id - a.id)
-                .slice(0, 5);
-            
-            container.innerHTML = latest.map(review => `
-                <li onclick="selectMovie(${review.movieId})">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:bold; color:#e50914;">🎬 ${review.movieTitle !== 'Cargando título...' ? review.movieTitle : `Película ID: ${review.movieId}`}</span>
-                        <span style="color:#ffd700;">⭐ ${review.rating} ★</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-top:5px;">
-                        <span style="color:#aaa;">✍️ ${review.user}</span>
-                        <span style="color:#888;">📅 ${review.date}</span>
-                    </div>
-                    ${review.spoiler ? '<span style="color:#ffa500; font-size:0.7rem;">⚠️ CONTIENE SPOILERS - Haz clic para leer la crítica completa</span>' : ''}
-                </li>
-            `).join('');
         }
 
-        // ==================== BÚSQUEDA ====================
+        async function addReviewToDB(content, rating, spoiler) {
+            if (!currentUser) {
+                alert('Inicia sesión para publicar críticas');
+                return false;
+            }
+            if (!currentMovie) {
+                alert('Selecciona una película primero');
+                return false;
+            }
+            if (!content.trim()) {
+                alert('Escribe una crítica');
+                return false;
+            }
+
+            const newReview = {
+                movie_id: currentMovie.id,
+                movie_title: currentMovie.title,
+                user_id: currentUser.id,
+                user_name: currentUser.name,
+                rating: parseInt(rating),
+                content: content,
+                has_spoilers: spoiler
+            };
+
+            const { error } = await supabase.from('reviews').insert(newReview);
+
+            if (!error) {
+                await loadReviewsFromDB();
+                document.getElementById('commentText').value = '';
+                document.getElementById('spoilerCheckbox').checked = false;
+                document.getElementById('ratingSelect').value = '5';
+                alert('¡Crítica publicada!');
+                return true;
+            } else {
+                alert('Error al publicar');
+                return false;
+            }
+        }
+
+        async function editReview(reviewId, newContent) {
+            const { error } = await supabase
+                .from('reviews')
+                .update({ content: newContent, updated_at: new Date() })
+                .eq('id', reviewId);
+
+            if (!error) {
+                await loadReviewsFromDB();
+                alert('Crítica editada');
+            } else {
+                alert('Error al editar');
+            }
+        }
+
+        async function deleteReview(reviewId) {
+            if (!confirm('¿Eliminar esta crítica?')) return;
+
+            const { error } = await supabase
+                .from('reviews')
+                .delete()
+                .eq('id', reviewId);
+
+            if (!error) {
+                await loadReviewsFromDB();
+                alert('Crítica eliminada');
+            } else {
+                alert('Error al eliminar');
+            }
+        }
+
+        async function loadLatestReviewsFromDB() {
+            const { data, error } = await supabase
+                .from('reviews')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(5);
+
+            const container = document.getElementById('latestReviewsList');
+            if (data && data.length > 0) {
+                container.innerHTML = data.map(review => `
+                    <li onclick="selectMovie(${review.movie_id})">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:bold; color:#e50914;">🎬 ${review.movie_title}</span>
+                            <span style="color:#ffd700;">⭐ ${review.rating} ★</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-top:5px;">
+                            <span style="color:#aaa;">✍️ ${review.user_name}</span>
+                            <span style="color:#888;">📅 ${new Date(review.created_at).toLocaleDateString()}</span>
+                        </div>
+                        ${review.has_spoilers ? '<span style="color:#ffa500; font-size:0.7rem;">⚠️ CONTIENE SPOILERS</span>' : ''}
+                    </li>
+                `).join('');
+            } else {
+                container.innerHTML = '<li style="color:#888;">Aún no hay críticas. ¡Sé el primero!</li>';
+            }
+        }
+
+        // ==================== BÚSQUEDA Y PELÍCULAS ====================
         async function searchMovie(query) {
             if (!query.trim()) return;
-            
             const data = await fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`);
-            
             if (data && data.results && data.results.length > 0) {
                 currentSearchResults = data.results;
                 displaySearchResults(currentSearchResults);
@@ -559,17 +848,15 @@
         function displaySearchResults(movies) {
             const container = document.getElementById('searchResultsGrid');
             const section = document.getElementById('searchResultsSection');
-            
             container.innerHTML = movies.map(movie => `
                 <div class="movie-card" onclick="selectMovieFromSearch(${movie.id})">
                     <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x220?text=No+Poster'}" alt="${movie.title}">
                     <div class="info">
                         <div class="title">${movie.title}</div>
-                        <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★ (${movie.vote_count || 0})</div>
+                        <div class="rating">⭐ ${(movie.vote_average/2).toFixed(1)} ★</div>
                     </div>
                 </div>
             `).join('');
-            
             section.style.display = 'block';
             section.scrollIntoView({ behavior: 'smooth' });
         }
@@ -578,8 +865,8 @@
             const data = await fetchFromTMDB(`/movie/${movieId}`);
             if (data) {
                 displayFeaturedMovie(data);
-                loadReviewsForMovie(movieId);
                 currentMovie = data;
+                await loadReviewsFromDB();
                 document.getElementById('searchResultsSection').style.display = 'none';
                 document.getElementById('searchInput').value = '';
             }
@@ -587,10 +874,8 @@
 
         function closeSearchResults() {
             document.getElementById('searchResultsSection').style.display = 'none';
-            currentSearchResults = [];
         }
 
-        // ==================== PELÍCULA DESTACADA ====================
         async function displayFeaturedMovie(movie) {
             const details = await fetchFromTMDB(`/movie/${movie.id}`);
             const rating = details ? details.vote_average : movie.vote_average;
@@ -606,7 +891,6 @@
                     <div class="sinopsis"><strong>Sinopsis</strong><br>${movie.overview || 'Sin descripción disponible.'}</div>
                     <div class="btn-group">
                         <button class="btn btn-primary" onclick="scrollToComment()">📝 Escribir crítica</button>
-                        <button class="btn btn-secondary" onclick="alert('Función de puntuación próximamente')">⭐ Puntuar</button>
                     </div>
                 </div>
             `;
@@ -616,17 +900,11 @@
             const data = await fetchFromTMDB('/movie/popular');
             if (data && data.results) {
                 displayMovies(data.results.slice(0, 8), 'recommendationsGrid');
-            } else {
-                document.getElementById('recommendationsGrid').innerHTML = '<div class="error">No se pudieron cargar recomendaciones</div>';
             }
         }
 
         function displayMovies(movies, containerId) {
             const container = document.getElementById(containerId);
-            if (!movies || movies.length === 0) {
-                container.innerHTML = '<div class="error">No hay películas</div>';
-                return;
-            }
             container.innerHTML = movies.map(movie => `
                 <div class="movie-card" onclick="selectMovie(${movie.id})">
                     <img src="${movie.poster_path ? IMG_BASE + movie.poster_path : 'https://via.placeholder.com/160x220?text=No+Poster'}" alt="${movie.title}">
@@ -642,8 +920,8 @@
             const data = await fetchFromTMDB(`/movie/${movieId}`);
             if (data) {
                 displayFeaturedMovie(data);
-                loadReviewsForMovie(movieId);
                 currentMovie = data;
+                await loadReviewsFromDB();
             }
         };
 
@@ -651,64 +929,15 @@
             document.querySelector('.comment-input').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ==================== CRÍTICAS ====================
-        function loadReviewsForMovie(movieId) {
-            const stored = localStorage.getItem(`reviews_${movieId}`);
-            if (stored) {
-                allReviews = JSON.parse(stored);
-            } else {
-                allReviews = [];
-                saveReviews();
-            }
-            renderReviews('all');
-        }
-
-        function saveReviews() {
-            if (currentMovie) {
-                localStorage.setItem(`reviews_${currentMovie.id}`, JSON.stringify(allReviews));
-            }
-        }
-
-        function addReviewWithMovieTitle(content, rating, spoiler) {
-            if (!currentMovie) {
-                alert('Selecciona una película primero (busca o haz clic en una recomendada)');
-                return false;
-            }
-            if (!content.trim()) {
-                alert('Escribe una crítica');
-                return false;
-            }
-            
-            const newReview = {
-                id: Date.now(),
-                user: 'CRITIFLIX_USER',
-                rating: parseInt(rating),
-                date: new Date().toLocaleDateString('es-ES'),
-                content: content,
-                spoiler: spoiler,
-                movieTitle: currentMovie.title
-            };
-            
-            allReviews.unshift(newReview);
-            saveReviews();
-            renderReviews('all');
-            loadLatestReviews();
-            
-            document.getElementById('commentText').value = '';
-            document.getElementById('spoilerCheckbox').checked = false;
-            document.getElementById('ratingSelect').value = '5';
-            return true;
-        }
-
+        // ==================== RENDER REVIEWS ====================
         function renderReviews(filter) {
             let filtered = [...allReviews];
-            
             if (filter === 'recent') {
-                filtered.sort((a,b) => b.id - a.id);
+                filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
             } else if (filter === 'best') {
                 filtered.sort((a,b) => b.rating - a.rating);
             } else if (filter === 'no-spoiler') {
-                filtered = filtered.filter(r => !r.spoiler);
+                filtered = filtered.filter(r => !r.has_spoilers);
             }
             
             const container = document.getElementById('reviewsList');
@@ -717,55 +946,89 @@
                 return;
             }
             
-            container.innerHTML = filtered.map(review => `
-                <div class="review-card">
-                    <div class="review-header">
-                        <span class="review-user">${review.user}</span>
-                        <span class="review-stars">${'⭐'.repeat(review.rating)}</span>
-                        <span class="review-date">${review.date}</span>
+            container.innerHTML = filtered.map(review => {
+                const isAuthor = currentUser && review.user_id === currentUser.id;
+                const isAdmin = currentUser && currentUser.isAdmin;
+                const canEdit = isAuthor || isAdmin;
+                
+                return `
+                    <div class="review-card" id="review-${review.id}">
+                        <div class="review-header">
+                            <span class="review-user">
+                                <img src="${review.user_avatar || 'https://via.placeholder.com/24'}" style="width:24px; height:24px; border-radius:50%;">
+                                ${review.user_name}
+                            </span>
+                            <span class="review-stars">${'⭐'.repeat(review.rating)}</span>
+                            <span class="review-date">📅 ${new Date(review.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div class="review-content" id="content-${review.id}">
+                            ${review.content}
+                            ${review.has_spoilers ? '<div class="spoiler-warning" onclick="this.style.display=\'none\';">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}
+                        </div>
+                        ${canEdit ? `
+                            <div class="review-actions">
+                                <button class="btn btn-edit" onclick="enableEditMode(${review.id}, \`${review.content.replace(/`/g, '\\`')}\`)">✏️ Editar</button>
+                                <button class="btn btn-delete" onclick="deleteReview(${review.id})">🗑️ Eliminar</button>
+                            </div>
+                        ` : ''}
                     </div>
-                    <div class="review-content">
-                        ${review.content}
-                        ${review.spoiler ? '<div class="spoiler-warning" onclick="this.style.display=\'none\';">⚠️ CLIC PARA VER SPOILERS ⚠️</div>' : ''}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
+
+        window.enableEditMode = function(reviewId, oldContent) {
+            const contentDiv = document.getElementById(`content-${reviewId}`);
+            const currentHtml = contentDiv.innerHTML;
+            contentDiv.innerHTML = `
+                <textarea id="edit-textarea-${reviewId}" rows="3" style="width:100%; background:#2a2a3a; color:white; border-radius:8px; padding:8px;">${oldContent}</textarea>
+                <div style="margin-top:8px;">
+                    <button class="btn btn-primary" onclick="saveEdit(${reviewId})">💾 Guardar</button>
+                    <button class="btn btn-secondary" onclick="cancelEdit(${reviewId}, \`${oldContent.replace(/`/g, '\\`')}\`)">❌ Cancelar</button>
+                </div>
+            `;
+        };
+
+        window.saveEdit = async function(reviewId) {
+            const newContent = document.getElementById(`edit-textarea-${reviewId}`).value;
+            await editReview(reviewId, newContent);
+        };
+
+        window.cancelEdit = function(reviewId, oldContent) {
+            const contentDiv = document.getElementById(`content-${reviewId}`);
+            contentDiv.innerHTML = oldContent;
+            const parent = contentDiv.closest('.review-card');
+            const actions = parent.querySelector('.review-actions');
+            if (actions) actions.style.display = 'flex';
+        };
 
         // ==================== INICIALIZACIÓN ====================
         async function init() {
-            await migrateOldReviews();
+            await loadRecommendations();
+            await loadBestOf2025();
             
             const defaultMovie = await fetchFromTMDB('/movie/872585');
             if (defaultMovie) {
                 displayFeaturedMovie(defaultMovie);
                 currentMovie = defaultMovie;
-                loadReviewsForMovie(defaultMovie.id);
+                await loadReviewsFromDB();
             }
             
-            await loadRecommendations();
-            await loadBestOf2026();
-            loadLatestReviews();
+            await checkUser();
             
             document.getElementById('searchBtn').addEventListener('click', () => {
-                const query = document.getElementById('searchInput').value;
-                searchMovie(query);
+                searchMovie(document.getElementById('searchInput').value);
             });
-            
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchMovie(e.target.value);
             });
-            
             document.getElementById('closeResultsBtn').addEventListener('click', closeSearchResults);
-            
             document.getElementById('publishBtn').addEventListener('click', () => {
                 const content = document.getElementById('commentText').value;
                 const rating = document.getElementById('ratingSelect').value;
                 const spoiler = document.getElementById('spoilerCheckbox').checked;
-                if (addReviewWithMovieTitle(content, rating, spoiler)) {
-                    alert('¡Crítica publicada!');
-                }
+                addReviewToDB(content, rating, spoiler);
             });
+            document.getElementById('postAnnouncementBtn').addEventListener('click', postAnnouncement);
             
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
