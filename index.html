@@ -673,24 +673,26 @@ body {
 .comment-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   margin-left: 36px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 
 .vote-btn {
   background: none;
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 3px 9px;
   font-size: 11px;
   color: var(--text-3);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   transition: all 0.18s;
   font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
 }
 .vote-btn:hover { border-color: var(--gold); color: var(--gold); }
 .vote-btn.voted-util { background: var(--gold-pale); border-color: var(--gold); color: var(--gold); }
@@ -761,6 +763,20 @@ body {
   display: flex;
   gap: 8px;
   align-items: flex-end;
+}
+@media (max-width: 600px) {
+  .reply-input-row {
+    flex-wrap: wrap;
+  }
+  .reply-input-row .reply-input {
+    width: 100%;
+    flex: none;
+  }
+  .reply-input-row > div {
+    flex-direction: row !important;
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 .reply-input {
@@ -2336,8 +2352,8 @@ async function cargarOpiniones() {
     const editadoBadge = op.editado ? `<span class="editado-badge">✏️ Editado</span>` : '';
     const editBtn = esAutor ? `<button class="edit-reply-btn" data-id="${op.id}" data-contenido="${(op.contenido||'').replace(/"/g,'&quot;').replace(/\n/g,' ')}">✏️ Editar</button>` : '';
     const deleteBtn = esAutor ? `<button class="delete-reply-btn" data-id="${op.id}">🗑 Borrar</button>` : '';
-    const adminDeleteBtn = (esMod() && !esAutor) ? `<button class="admin-delete-btn" data-id="${op.id}" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 10px;font-size:11px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🛡 Eliminar</button>` : '';
-    const adminBanBtn = (esAdmin() && !esAutor) ? `<button class="admin-ban-btn" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 10px;font-size:11px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🚫 Banear</button>` : '';
+    const adminDeleteBtn = (esMod() && !esAutor) ? `<button class="admin-delete-btn" data-id="${op.id}" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 8px;font-size:10px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;white-space:nowrap;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🛡 Eliminar</button>` : '';
+    const adminBanBtn = (esAdmin() && !esAutor) ? `<button class="admin-ban-btn" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 8px;font-size:10px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;white-space:nowrap;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🚫 Banear</button>` : '';
 
     html += `
       <div class="${esTopVotada ? 'comment-item top-voted' : 'comment-item'}" id="op_${op.id}">
