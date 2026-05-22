@@ -255,18 +255,24 @@ body {
 }
 
 .netflix-strip {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 0 20px 12px;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  padding: 0 20px 16px;
 }
-.netflix-strip::-webkit-scrollbar { display: none; }
+@media (max-width: 600px) {
+  .netflix-strip {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+  }
+  .netflix-strip::-webkit-scrollbar { display: none; }
+}
 
 .movie-card {
-  flex-shrink: 0;
-  width: 130px;
+  width: 100%;
   cursor: pointer;
   transition: transform 0.22s cubic-bezier(.22,1,.36,1);
   position: relative;
@@ -275,17 +281,17 @@ body {
 .movie-card:active { transform: scale(0.97); }
 
 .movie-poster {
-  width: 130px;
-  height: 195px;
+  width: 100%;
+  padding-bottom: 150%;
   border-radius: 10px;
-  object-fit: cover;
-  display: block;
   background: var(--surface-3);
   position: relative;
   overflow: hidden;
 }
 
 .movie-poster img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -294,8 +300,8 @@ body {
 }
 
 .movie-poster-placeholder {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1230,7 +1236,7 @@ body {
 }
 .global-banner.visible { display: flex; }
 .global-banner-text { font-size: 13px; font-weight: 600; color: #0A0A0F; flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px; }
-.global-banner-text::before { content: '⚠️'; font-size: 15px; flex-shrink: 0; }
+.global-banner-text::before { content: '📢'; font-size: 15px; flex-shrink: 0; }
 .global-banner-close { background: rgba(0,0,0,0.15); border: none; color: #0A0A0F; cursor: pointer; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; transition: background 0.18s; }
 .global-banner-close:hover { background: rgba(0,0,0,0.25); }
 
@@ -1481,8 +1487,7 @@ body {
 
 @media (min-width: 600px) {
   .notif-panel { top: 60px; right: 20px; }
-  .movie-card { width: 120px; }
-  .movie-poster { width: 120px; height: 180px; }
+  /* grid auto-sizing en PC */
   .container { padding-bottom: 40px; }
 }
 </style>
@@ -1586,14 +1591,11 @@ body {
 
   <!-- NETFLIX STRIP: TMDB Popular -->
   <div class="netflix-section" id="netflixSection">
-    <div class="netflix-section-title">🔥 Tendencia ahora</div>
+    <div class="netflix-section-title">🔥 Tendencia · <span style="font-size:12px;font-weight:400;color:var(--text-3);">Esta semana en TMDB</span></div>
     <div class="netflix-strip" id="popularStrip">
       <div class="loading">Cargando...</div>
     </div>
-    <div class="netflix-section-title">🏆 Las más comentadas</div>
-    <div class="netflix-strip" id="commentedStrip">
-      <div class="loading">Cargando...</div>
-    </div>
+
   </div>
 
   <!-- MOVIE DETAIL PANEL -->
@@ -1858,6 +1860,7 @@ function getBadgeHtml(pts, rol) {
 }
 
 function esAdmin() { return usuario && usuario.rol === 'admin'; }
+function esMod() { return usuario && (usuario.rol === 'moderador' || usuario.rol === 'admin'); }
 
 function renderizarContenido(texto) {
   if (!texto) return '';
@@ -1916,22 +1919,7 @@ async function cargarPopulares() {
 }
 
 async function cargarMasComentadas() {
-  const strip = document.getElementById('commentedStrip');
-  // Buscar películas con más opiniones en nuestra BD
-  const { data } = await db.from('peliculas').select('*').order('comentarios_count', { ascending: false }).limit(10);
-  if (!data || data.length === 0) {
-    // Fallback con top rated TMDB
-    const tmdbData = await tmdbFetch('/movie/top_rated');
-    if (!tmdbData || !tmdbData.results) {
-      strip.innerHTML = DEMO_MOVIES.slice(0,6).map(m => movieCardHtml(m)).join('');
-      return;
-    }
-    strip.innerHTML = tmdbData.results.slice(0, 20).map(m => movieCardHtml(m)).join('');
-    return;
-  }
-  // Mezclar con info de TMDB
-  const cards = data.map(p => movieCardHtmlFromDB(p));
-  strip.innerHTML = cards.join('');
+  // Ya no hay carril separado, función vacía por compatibilidad
 }
 
 function movieCardHtml(m, comentariosCount = 0) {
@@ -2331,7 +2319,7 @@ async function cargarOpiniones() {
     const editadoBadge = op.editado ? `<span class="editado-badge">✏️ Editado</span>` : '';
     const editBtn = esAutor ? `<button class="edit-reply-btn" data-id="${op.id}" data-contenido="${(op.contenido||'').replace(/"/g,'&quot;').replace(/\n/g,' ')}">✏️ Editar</button>` : '';
     const deleteBtn = esAutor ? `<button class="delete-reply-btn" data-id="${op.id}">🗑 Borrar</button>` : '';
-    const adminDeleteBtn = (esAdmin() && !esAutor) ? `<button class="admin-delete-btn" data-id="${op.id}" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 10px;font-size:11px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🛡 Eliminar</button>` : '';
+    const adminDeleteBtn = (esMod() && !esAutor) ? `<button class="admin-delete-btn" data-id="${op.id}" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 10px;font-size:11px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🛡 Eliminar</button>` : '';
     const adminBanBtn = (esAdmin() && !esAutor) ? `<button class="admin-ban-btn" data-nick="${op.nickname}" style="background:none;border:1px solid rgba(192,57,43,0.4);border-radius:999px;padding:3px 10px;font-size:11px;color:rgba(192,57,43,0.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.18s;" onmouseover="this.style.background='rgba(192,57,43,0.12)'" onmouseout="this.style.background='none'">🚫 Banear</button>` : '';
 
     html += `
@@ -2792,7 +2780,7 @@ async function cargarMisOpiniones() {
   const netflix = document.getElementById('netflixSection');
   netflix.innerHTML = `
     <div class="netflix-section-title">✍️ Mis opiniones</div>
-    <div class="netflix-strip" id="misOpinionesStrip"><div class="loading">Cargando...</div></div>
+    <div class="netflix-strip" id="misOpinionesStrip" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;"><div class="loading">Cargando...</div></div>
   `;
   netflix.style.display = 'block';
 
