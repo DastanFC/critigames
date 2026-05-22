@@ -1512,6 +1512,40 @@ body {
   /* grid auto-sizing en PC */
   .container { padding-bottom: 40px; }
 }
+
+/* Spoiler oculto con blur */
+.spoiler-blur {
+    filter: blur(5px);
+    cursor: pointer;
+    transition: filter 0.2s ease;
+    user-select: none;
+}
+
+.spoiler-blur:hover {
+    filter: blur(3px);
+}
+
+.spoiler-blur.revealed {
+    filter: blur(0);
+    cursor: default;
+    user-select: auto;
+}
+
+.spoiler-warning-badge {
+    display: inline-block;
+    background: #332700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: #ffd700;
+    font-size: 0.7rem;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.spoiler-warning-badge:hover {
+    background: #4a3a00;
+}
+
 </style>
 </head>
 
@@ -1521,7 +1555,7 @@ body {
 <div class="topbar">
   <div class="logo">
     <span class="logo-icon">🎬</span>
-    <span>Criti<em>Flix</em></span>
+    <span>Ciné<em>Club</em></span>
   </div>
   <div class="topbar-right">
     <button class="notif-btn" id="notifBtn" onclick="toggleNotifPanel()">
@@ -2358,20 +2392,15 @@ async function cargarOpiniones() {
 
     html += `
       <div class="${esTopVotada ? 'comment-item top-voted' : 'comment-item'}" id="op_${op.id}">
-        <div class="comment-header">
-          <div class="comment-avatar profile-link" data-nick="${op.nickname}" style="background:${ac.bg};color:${ac.color};cursor:pointer;">${nombre.substring(0,2).toUpperCase()}</div>
-          <span class="comment-author profile-link" data-nick="${op.nickname}" style="cursor:pointer;">${nombre}</span>
-          ${getBadgeHtml(uData?.puntos || 0, uData?.rol || 'usuario')}
-          ${esTopVotada && maxVotos > 0 ? `<span class="top-voted-badge">🏅 Más votada</span>` : ''}
-          ${editadoBadge}
-          <span class="comment-time">${timeAgo(op.created_at)}</span>
-        </div>
         <div class="comment-content">
-          ${citaHtml}
-          ${op.es_spoiler ? '<div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.25);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:11px;color:#FC8181;display:flex;align-items:center;gap:5px;">🚨 <b>SPOILER</b> · Este comentario puede revelar partes importantes de la película</div>' : ''}
-          ${renderizarContenido(op.contenido)}
-          ${scoresHtml}
-        </div>
+    ${citaHtml}
+    ${op.es_spoiler ? '<div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.25);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:11px;color:#FC8181;display:flex;align-items:center;gap:5px;">🚨 <b>SPOILER</b> · Haz clic para revelar</div>' : ''}
+    <div class="${op.es_spoiler ? 'spoiler-blur' : ''}" onclick="if(this.classList) this.classList.toggle('revealed')">
+        ${renderizarContenido(op.contenido)}
+        ${op.es_spoiler ? '<span class="spoiler-warning-badge" onclick="event.stopPropagation(); this.parentElement.classList.toggle(\'revealed\')">⚠️ REVELAR SPOILER</span>' : ''}
+    </div>
+    ${scoresHtml}
+</div>
         <div class="comment-actions">
           <button class="vote-btn ${miVoto === 'util' ? 'voted-util' : ''}" data-vote-id="${op.id}" data-vote-tipo="util" data-nick="${op.nickname}">👍 ${op.votos_util || 0}</button>
           <button class="vote-btn ${miVoto === 'noutil' ? 'voted-noutil' : ''}" data-vote-id="${op.id}" data-vote-tipo="noutil" data-nick="${op.nickname}">👎 ${op.votos_noutil || 0}</button>
