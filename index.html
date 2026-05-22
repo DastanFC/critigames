@@ -3283,7 +3283,7 @@ function mostrarBannerGlobal(msg, tipo) {
   banner.style.borderBottomColor = 'rgba(0,0,0,0.2)';
   textEl.style.color = c.color;
   document.querySelector('.global-banner-close').style.color = c.color;
-  textEl.innerHTML = c.icon + ' ' + msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  textEl.innerHTML =  msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   banner.classList.add('visible');
 }
 
