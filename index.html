@@ -256,19 +256,25 @@ body {
 
 .netflix-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
   padding: 0 20px 16px;
 }
 @media (max-width: 600px) {
   .netflix-strip {
     display: flex;
+    gap: 10px;
     overflow-x: auto;
+    padding: 0 20px 12px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     flex-wrap: nowrap;
   }
   .netflix-strip::-webkit-scrollbar { display: none; }
+  .movie-card { flex-shrink: 0; width: 110px; }
+  .movie-poster { width: 110px; padding-bottom: 0; height: 165px; }
+  .movie-poster img { position: relative; inset: auto; }
+  .movie-poster-placeholder { position: relative; inset: auto; height: 165px; }
 }
 
 .movie-card {
@@ -768,9 +774,9 @@ body {
   background: var(--surface-2);
   color: var(--text);
   transition: all 0.18s;
-  min-height: 44px;
-  max-height: 120px;
-  width: 0;
+  min-height: 48px;
+  max-height: 140px;
+  width: 100%;
   -webkit-appearance: none;
 }
 .reply-input::placeholder { color: var(--text-3); }
@@ -1236,7 +1242,7 @@ body {
 }
 .global-banner.visible { display: flex; }
 .global-banner-text { font-size: 13px; font-weight: 600; color: #0A0A0F; flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px; }
-.global-banner-text::before { content: '📢'; font-size: 15px; flex-shrink: 0; }
+/* icono ya incluido en el texto del banner */
 .global-banner-close { background: rgba(0,0,0,0.15); border: none; color: #0A0A0F; cursor: pointer; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; transition: background 0.18s; }
 .global-banner-close:hover { background: rgba(0,0,0,0.25); }
 
@@ -1499,7 +1505,7 @@ body {
 <div class="topbar">
   <div class="logo">
     <span class="logo-icon">🎬</span>
-    <span>Criti<em>Flix</em></span>
+    <span>Ciné<em>Club</em></span>
   </div>
   <div class="topbar-right">
     <button class="notif-btn" id="notifBtn" onclick="toggleNotifPanel()">
@@ -1625,7 +1631,7 @@ body {
 
 <!-- FOOTER -->
 <footer class="site-footer">
-  <div class="footer-logo">🎬 Ciné<em>Club</em></div>
+  <div class="footer-logo">🎬 Criti<em>Flix</em></div>
   <div>La comunidad que opina sin filtros sobre cine. Sin publicidad. Sin afiliados.</div>
   <div style="margin-top:6px;font-size:10px;color:var(--text-3);">© 2025 CinéClub · Hecho con ❤️ por la comunidad</div>
 </footer>
@@ -1771,6 +1777,7 @@ let notifCount = 0;
 let peliculaActiva = null; // { tmdb_id, titulo, poster_path, backdrop_path, year, genres, overview, vote_average }
 let quillEditorNoticia = null;
 let buscarTimer = null;
+let spoilerActivo = false;
 let tmdbDisponible = false;
 
 // ════════════════════════════════════════════
@@ -2054,7 +2061,17 @@ function mostrarMovieDetail() {
           <textarea class="reply-input" id="rinput_main" placeholder="Tu opinión... usa @nombre para mencionar" rows="1"
             onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarOpinion()}"
             oninput="autoResize(this)"></textarea>
-          <button class="send-btn" id="sendbtn_main" onclick="enviarOpinion()">➤</button>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+            <button class="send-btn" id="sendbtn_main" onclick="enviarOpinion()" title="Enviar">➤</button>
+            <button id="spoilerToggleBtn" onclick="toggleSpoiler()" title="Marcar como spoiler"
+              style="width:40px;height:32px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface-2);color:var(--text-3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.18s;flex-shrink:0;">
+              🚨
+            </button>
+          </div>
+        </div>
+        <div id="spoilerIndicator" style="display:none;margin-top:6px;background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.3);border-radius:8px;padding:6px 10px;font-size:11px;color:#FC8181;display:none;align-items:center;gap:6px;">
+          🚨 <span>Esta opinión se marcará como <b>SPOILER</b></span>
+          <button onclick="toggleSpoiler()" style="background:none;border:none;color:#FC8181;cursor:pointer;margin-left:auto;font-size:13px;">✕</button>
         </div>
         <button class="score-toggle-btn" id="scoreToggleBtn" onclick="toggleScoreGrid()">⭐ Añadir puntuaciones (opcional)</button>
         <div class="inline-score-grid" id="inlineScoreGrid">
@@ -2334,6 +2351,7 @@ async function cargarOpiniones() {
         </div>
         <div class="comment-content">
           ${citaHtml}
+          ${op.es_spoiler ? '<div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.25);border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:11px;color:#FC8181;display:flex;align-items:center;gap:5px;">🚨 <b>SPOILER</b> · Este comentario puede revelar partes importantes de la película</div>' : ''}
           ${renderizarContenido(op.contenido)}
           ${scoresHtml}
         </div>
@@ -2381,7 +2399,19 @@ function toggleReplyBox(id) {
 
 function autoResize(el) {
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function toggleSpoiler() {
+  spoilerActivo = !spoilerActivo;
+  const btn = document.getElementById('spoilerToggleBtn');
+  const indicator = document.getElementById('spoilerIndicator');
+  if (btn) {
+    btn.style.background = spoilerActivo ? 'rgba(192,57,43,0.2)' : 'var(--surface-2)';
+    btn.style.borderColor = spoilerActivo ? 'rgba(192,57,43,0.6)' : 'var(--border)';
+    btn.style.color = spoilerActivo ? '#FC8181' : 'var(--text-3)';
+  }
+  if (indicator) indicator.style.display = spoilerActivo ? 'flex' : 'none';
 }
 
 function setCita(boxId, opinionId, autor, texto) {
@@ -2439,10 +2469,18 @@ async function enviarOpinion() {
     usuario_id: usuario.id,
     nickname: usuario.nickname,
     contenido: texto,
+    es_spoiler: spoilerActivo,
     ...scores,
     sc_media: media,
     tiene_scores: algunScore,
   };
+  spoilerActivo = false;
+  toggleSpoiler();
+  if (document.getElementById('spoilerToggleBtn')) {
+    document.getElementById('spoilerToggleBtn').style.background = 'var(--surface-2)';
+    document.getElementById('spoilerToggleBtn').style.borderColor = 'var(--border)';
+    document.getElementById('spoilerToggleBtn').style.color = 'var(--text-3)';
+  }
 
   if (quoteActiva && quoteActiva.boxId === 'main') {
     insertData.cita_id = quoteActiva.opinionId;
@@ -3062,7 +3100,7 @@ function renderAdminDefault() {
     </div>
     <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
       <div onclick="toggleAdminMensaje()" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);">
-        <div style="font-weight:700;font-size:13px;color:var(--text);">⚠️ Mensaje global & Estado</div>
+        <div style="font-weight:700;font-size:13px;color:var(--text);">📢 Mensaje global & Estado</div>
         <span id="adminMensajeToggleIcon" style="font-size:11px;color:var(--text-3);">▼ Expandir</span>
       </div>
       <div id="adminMensajeBody" style="display:none;padding:14px;">
@@ -3283,7 +3321,7 @@ function mostrarBannerGlobal(msg, tipo) {
   banner.style.borderBottomColor = 'rgba(0,0,0,0.2)';
   textEl.style.color = c.color;
   document.querySelector('.global-banner-close').style.color = c.color;
-  textEl.innerHTML =  msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  textEl.innerHTML = c.icon + ' ' + msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   banner.classList.add('visible');
 }
 
