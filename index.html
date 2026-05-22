@@ -1230,7 +1230,7 @@ body {
 }
 .global-banner.visible { display: flex; }
 .global-banner-text { font-size: 13px; font-weight: 600; color: #0A0A0F; flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px; }
-.global-banner-text::before { content: '📢'; font-size: 15px; flex-shrink: 0; }
+.global-banner-text::before { content: '⚠️'; font-size: 15px; flex-shrink: 0; }
 .global-banner-close { background: rgba(0,0,0,0.15); border: none; color: #0A0A0F; cursor: pointer; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; transition: background 0.18s; }
 .global-banner-close:hover { background: rgba(0,0,0,0.25); }
 
@@ -1912,7 +1912,7 @@ async function cargarPopulares() {
     strip.innerHTML = DEMO_MOVIES.slice(0,6).map(m => movieCardHtml(m)).join('');
     return;
   }
-  strip.innerHTML = data.results.slice(0, 12).map(m => movieCardHtml(m)).join('');
+  strip.innerHTML = data.results.slice(0, 20).map(m => movieCardHtml(m)).join('');
 }
 
 async function cargarMasComentadas() {
@@ -1926,7 +1926,7 @@ async function cargarMasComentadas() {
       strip.innerHTML = DEMO_MOVIES.slice(0,6).map(m => movieCardHtml(m)).join('');
       return;
     }
-    strip.innerHTML = tmdbData.results.slice(0, 10).map(m => movieCardHtml(m)).join('');
+    strip.innerHTML = tmdbData.results.slice(0, 20).map(m => movieCardHtml(m)).join('');
     return;
   }
   // Mezclar con info de TMDB
