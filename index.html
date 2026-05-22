@@ -1481,8 +1481,8 @@ body {
 
 @media (min-width: 600px) {
   .notif-panel { top: 60px; right: 20px; }
-  .movie-card { width: 150px; }
-  .movie-poster { width: 150px; height: 225px; }
+  .movie-card { width: 120px; }
+  .movie-poster { width: 120px; height: 180px; }
   .container { padding-bottom: 40px; }
 }
 </style>
@@ -1909,7 +1909,7 @@ async function cargarPopulares() {
   const strip = document.getElementById('popularStrip');
   const data = await tmdbFetch('/trending/movie/week');
   if (!data || !data.results) {
-    strip.innerHTML = DEMO_MOVIES.slice(0,6).map(m => movieCardHtml(m)).join('');
+    strip.innerHTML = DEMO_MOVIES.slice(0,20).map(m => movieCardHtml(m)).join('');
     return;
   }
   strip.innerHTML = data.results.slice(0, 20).map(m => movieCardHtml(m)).join('');
