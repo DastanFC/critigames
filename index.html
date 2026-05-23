@@ -237,7 +237,7 @@ body {
 }
 .stat-chip b { color: var(--text); font-weight: 700; }
 
-/* ─── NETFLIX GRID ─── */
+/* ─── NETFLIX GRID (TARJETAS) ─── */
 .netflix-section {
   padding: 0 0 8px;
   overflow: hidden;
@@ -271,8 +271,8 @@ body {
     flex-wrap: nowrap;
   }
   .netflix-strip::-webkit-scrollbar { display: none; }
-  .movie-card { flex-shrink: 0; width: 110px; }
-  .movie-poster { width: 110px; padding-bottom: 0; height: 165px; }
+  .movie-card { flex-shrink: 0; width: 88px; } /* ─── ESTE VALOR ─── */
+  .movie-poster { width: 110px; padding-bottom: 0; height: 132px; } /* ─── ESTE VALOR ─── */
   .movie-poster img { position: relative; inset: auto; }
   .movie-poster-placeholder { position: relative; inset: auto; height: 165px; }
 }
@@ -1732,8 +1732,8 @@ body {
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="footer-logo">🎬 Criti<em>Flix</em></div>
-  <div>La comunidad que opina sin filtros sobre cine. Sin publicidad. Sin afiliados.</div>
-  <div style="margin-top:6px;font-size:10px;color:var(--text-3);">© 2025 CinéClub · Hecho con ❤️ por la comunidad</div>
+  <div>La comunidad que opina sin filtros sobre cine y videojuegos. Sin publicidad. Sin afiliados.</div>
+  <div style="margin-top:6px;font-size:10px;color:var(--text-3);">© 2026 CritiFlix · Hecho con ❤️ por la comunidad</div>
 </footer>
 
 <!-- MODAL AUTH -->
@@ -1799,7 +1799,7 @@ body {
 <div class="modal-overlay hidden" id="noticiaModalAdmin">
   <div class="modal" style="max-width:600px;">
     <div class="modal-title" id="noticiaModalTitle">📰 Nueva noticia</div>
-    <div class="modal-sub">Comparte novedades del mundo del cine</div>
+    <div class="modal-sub">Comparte novedades del mundo del cine y videojuegos</div>
     <input type="text" id="noticiaTitulo" class="modal-input" placeholder="Título de la noticia" />
     <input type="text" id="noticiaImagen" class="modal-input" placeholder="URL de la imagen (opcional)" />
     <div style="display:flex;gap:10px;margin-bottom:10px;">
