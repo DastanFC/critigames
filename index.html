@@ -1513,6 +1513,49 @@ body {
   .container { padding-bottom: 40px; }
 }
 
+/* ─── MODO SELECTOR ─── */
+.modo-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px 4px;
+}
+
+.modo-btn {
+  flex: 1;
+  max-width: 200px;
+  padding: 10px 18px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(.22,1,.36,1);
+  white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.modo-btn:hover { border-color: var(--gold); color: var(--gold-light); background: rgba(212,168,67,0.05); }
+.modo-btn.active {
+  background: var(--gold);
+  color: var(--noir);
+  border-color: var(--gold);
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(212,168,67,0.3);
+}
+.modo-btn.active.modo-games {
+  background: #7C3AED;
+  border-color: #7C3AED;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+}
+
 /* Spoiler oculto con blur */
 .spoiler-blur {
     filter: blur(5px);
@@ -1555,7 +1598,7 @@ body {
 <div class="topbar">
   <div class="logo">
     <span class="logo-icon">🎬</span>
-    <span>Ciné<em>Club</em></span>
+    <span>Criti<em>Movie</em></span>
   </div>
   <div class="topbar-right">
     <button class="notif-btn" id="notifBtn" onclick="toggleNotifPanel()">
@@ -1627,6 +1670,12 @@ body {
 
   <!-- UPDATES -->
   <div class="updates-section" id="updatesSection"></div>
+
+  <!-- MODO SELECTOR -->
+  <div class="modo-selector">
+    <button class="modo-btn active" id="modoBtnPeliculas" onclick="setModo('pelicula', this)">🎬 Películas</button>
+    <button class="modo-btn" id="modoBtnJuegos" onclick="setModo('videojuego', this)">🎮 Videojuegos</button>
+  </div>
 
   <!-- TABS -->
   <div class="tabs-bar">
@@ -1823,6 +1872,7 @@ const SCORE_CATS = [
 
 let usuario = null;
 let tabActual = 'recientes';
+let modoActual = 'pelicula'; // 'pelicula' | 'videojuego'
 let quoteActiva = null;
 let notifCount = 0;
 let peliculaActiva = null; // { tmdb_id, titulo, poster_path, backdrop_path, year, genres, overview, vote_average }
@@ -1920,6 +1970,93 @@ function getBadgeHtml(pts, rol) {
 function esAdmin() { return usuario && usuario.rol === 'admin'; }
 function esMod() { return usuario && (usuario.rol === 'moderador' || usuario.rol === 'admin'); }
 
+// ════════════════════════════════════════════
+// MODO (Películas / Videojuegos)
+// ════════════════════════════════════════════
+
+const MODO_CINE = {
+  gold: '#D4A843', goldLight: '#E8C472', goldPale: 'rgba(212,168,67,0.1)',
+  accent: '#D4A843', accentRgb: '212,168,67',
+  heroBg: 'radial-gradient(ellipse at 20% 50%, rgba(192,57,43,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(212,168,67,0.1) 0%, transparent 50%)',
+  topbarBorder: 'rgba(212,168,67,0.12)',
+  logoIcon: '🎬', logoHtml: 'Ciné<em>Club</em>',
+  heroTitle: 'La <em>crítica</em> que importa,<br>escrita por ti',
+  heroSub: 'Opiniones reales de la comunidad · Sin spoilers forzados',
+  searchPlaceholder: 'Buscar película...',
+  fabIcon: '🎬', fabLabel: 'Opinar',
+  footerHtml: '🎬 Criti<em>Flix</em>',
+  docTitle: 'CinéClub · Opiniones de Películas',
+  stripTitle: '🔥 Tendencia · <span style="font-size:12px;font-weight:400;color:var(--text-3);">Esta semana</span>',
+  modoBtnClass: '',
+};
+
+const MODO_GAMES = {
+  gold: '#A855F7', goldLight: '#C084FC', goldPale: 'rgba(168,85,247,0.1)',
+  accent: '#A855F7', accentRgb: '168,85,247',
+  heroBg: 'radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.2) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.12) 0%, transparent 50%), radial-gradient(ellipse at 50% 100%, rgba(59,130,246,0.08) 0%, transparent 40%)',
+  topbarBorder: 'rgba(168,85,247,0.18)',
+  logoIcon: '🎮', logoHtml: 'Criti<em>Games</em>',
+  heroTitle: 'La <em>crítica gamer</em> que<br>importa, escrita por ti',
+  heroSub: 'Reseñas reales de la comunidad · Videojuegos sin filtros',
+  searchPlaceholder: 'Buscar videojuego...',
+  fabIcon: '🎮', fabLabel: 'Opinar',
+  footerHtml: '🎮 Criti<em>Games</em>',
+  docTitle: 'CritiGames · Opiniones de Videojuegos',
+  stripTitle: '🔥 Más populares · <span style="font-size:12px;font-weight:400;color:var(--text-3);">RAWG Top Games</span>',
+  modoBtnClass: 'modo-games',
+};
+
+function setModo(modo, btnEl) {
+  modoActual = modo;
+  const cfg = modo === 'videojuego' ? MODO_GAMES : MODO_CINE;
+  const root = document.documentElement;
+
+  // ── Swap CSS variables (paleta completa) ──
+  root.style.setProperty('--gold', cfg.gold);
+  root.style.setProperty('--gold-light', cfg.goldLight);
+  root.style.setProperty('--gold-pale', cfg.goldPale);
+
+  // Hero background
+  const heroBg = document.querySelector('.hero-bg');
+  if (heroBg) heroBg.style.background = cfg.heroBg;
+
+  // Topbar border
+  const topbar = document.querySelector('.topbar');
+  if (topbar) topbar.style.borderBottomColor = cfg.topbarBorder;
+
+  // ── Botones modo ──
+  document.querySelectorAll('.modo-btn').forEach(b => b.classList.remove('active', 'modo-games'));
+  btnEl.classList.add('active');
+  if (cfg.modoBtnClass) btnEl.classList.add(cfg.modoBtnClass);
+
+  // ── Textos e identidad ──
+  const logoIcon = document.querySelector('.logo-icon');
+  const logoText = document.querySelector('.logo span:not(.logo-icon)');
+  const heroTitle = document.querySelector('.hero-title');
+  const heroSub = document.querySelector('.hero-sub');
+  const searchInput = document.getElementById('searchInput');
+  const fabLabel = document.querySelector('.fab-label');
+  const fabIcon = document.querySelector('.fab-icon');
+  const footerLogo = document.querySelector('.footer-logo');
+
+  if (logoIcon) logoIcon.textContent = cfg.logoIcon;
+  if (logoText) logoText.innerHTML = cfg.logoHtml;
+  if (heroTitle) heroTitle.innerHTML = cfg.heroTitle;
+  if (heroSub) heroSub.textContent = cfg.heroSub;
+  if (searchInput) searchInput.placeholder = cfg.searchPlaceholder;
+  if (fabLabel) fabLabel.textContent = cfg.fabLabel;
+  if (fabIcon) fabIcon.textContent = cfg.fabIcon;
+  if (footerLogo) footerLogo.innerHTML = cfg.footerHtml;
+  document.title = cfg.docTitle;
+
+  // ── Cerrar detalle abierto si lo hay ──
+  cerrarMovieDetail();
+
+  // ── Recargar contenido ──
+  const tabActiveEl = document.querySelector('.tab.active');
+  if (tabActiveEl) setTab(tabActual, tabActiveEl);
+}
+
 function renderizarContenido(texto) {
   if (!texto) return '';
   const escaped = texto.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1940,6 +2077,15 @@ const DEMO_MOVIES = [
   { id: 4, title: 'Poor Things', release_date: '2023', poster_path: null, backdrop_path: null, overview: 'La extraordinaria historia de Bella Baxter.', vote_average: 7.8, genre_ids: [35, 18] },
   { id: 5, title: 'Pasión de Gavilanes', release_date: '2003', poster_path: null, backdrop_path: null, overview: 'Telenovela clásica colombiana.', vote_average: 7.0, genre_ids: [10766] },
   { id: 6, title: 'El Padrino', release_date: '1972', poster_path: null, backdrop_path: null, overview: 'La épica familia mafiosa Corleone.', vote_average: 9.2, genre_ids: [18, 80] },
+];
+
+const DEMO_GAMES = [
+  { id: 9001, title: 'The Legend of Zelda: Tears of the Kingdom', release_date: '2023', poster_path: null, backdrop_path: null, overview: 'La secuela épica de Breath of the Wild.', vote_average: 9.0, genre_ids: [], _tipo: 'videojuego' },
+  { id: 9002, title: 'God of War Ragnarök', release_date: '2022', poster_path: null, backdrop_path: null, overview: 'Kratos y Atreus se enfrentan al Ragnarök.', vote_average: 9.3, genre_ids: [], _tipo: 'videojuego' },
+  { id: 9003, title: 'Elden Ring', release_date: '2022', poster_path: null, backdrop_path: null, overview: 'Un RPG de mundo abierto de FromSoftware.', vote_average: 9.5, genre_ids: [], _tipo: 'videojuego' },
+  { id: 9004, title: 'Spider-Man 2', release_date: '2023', poster_path: null, backdrop_path: null, overview: 'Peter Parker y Miles Morales juntos.', vote_average: 8.8, genre_ids: [], _tipo: 'videojuego' },
+  { id: 9005, title: 'Baldur\'s Gate 3', release_date: '2023', poster_path: null, backdrop_path: null, overview: 'RPG épico de fantasía por Larian Studios.', vote_average: 9.6, genre_ids: [], _tipo: 'videojuego' },
+  { id: 9006, title: 'FIFA 25', release_date: '2024', poster_path: null, backdrop_path: null, overview: 'La entrega anual de fútbol de EA Sports.', vote_average: 7.0, genre_ids: [], _tipo: 'videojuego' },
 ];
 
 const GENRE_MAP = {
@@ -1966,8 +2112,75 @@ async function tmdbFetch(endpoint, params = {}) {
   }
 }
 
+// ════════════════════════════════════════════
+// RAWG API (videojuegos)
+// ════════════════════════════════════════════
+// Obtén tu clave gratis en https://rawg.io/apidocs
+const RAWG_KEY = '0f28a5bfdda4462489f37fbb908f5246'; // ← reemplaza con tu clave RAWG
+const RAWG_BASE = 'https://api.rawg.io/api';
+
+async function rawgFetch(endpoint, params = {}) {
+  const qs = new URLSearchParams({ key: RAWG_KEY, ...params }).toString();
+  const url = `${RAWG_BASE}${endpoint}?${qs}`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('RAWG error: ' + r.status);
+    return await r.json();
+  } catch(e) {
+    console.warn('RAWG no disponible:', e.message);
+    return null;
+  }
+}
+
+// Normaliza un juego de RAWG al formato interno (mismo que películas TMDB)
+function rawgToInternal(g) {
+  return {
+    id: g.id,
+    title: g.name,
+    release_date: g.released || '',
+    poster_path: null,          // usamos background_image directamente
+    backdrop_path: null,
+    rawg_image: g.background_image || null,
+    overview: g.description_raw || g.description || '',
+    vote_average: g.rating ? parseFloat((g.rating * 2).toFixed(1)) : 0, // RAWG da /5, nosotros /10
+    genre_ids: [],
+    genres: (g.genres || []).map(x => ({ name: x.name })),
+    _tipo: 'videojuego',
+    _rawg: true,
+  };
+}
+
+async function rawgPopulares() {
+  const data = await rawgFetch('/games', { ordering: '-rating', page_size: 20, metacritic: '70,100' });
+  if (!data || !data.results) return DEMO_GAMES;
+  return data.results.map(rawgToInternal);
+}
+
+async function rawgSearch(query) {
+  const data = await rawgFetch('/games', { search: query, page_size: 10, search_exact: false });
+  if (!data || !data.results) return DEMO_GAMES.filter(g => g.title.toLowerCase().includes(query.toLowerCase()));
+  return data.results.map(rawgToInternal);
+}
+
+async function rawgDetail(id) {
+  const data = await rawgFetch(`/games/${id}`);
+  if (!data) return null;
+  return rawgToInternal(data);
+}
+
 async function cargarPopulares() {
   const strip = document.getElementById('popularStrip');
+  const titleEl = document.querySelector('.netflix-section-title');
+
+  if (modoActual === 'videojuego') {
+    if (titleEl) titleEl.innerHTML = MODO_GAMES.stripTitle;
+    strip.innerHTML = '<div class="loading">Cargando juegos...</div>';
+    const juegos = await rawgPopulares();
+    strip.innerHTML = juegos.map(g => gameCardHtml(g)).join('');
+    return;
+  }
+
+  if (titleEl) titleEl.innerHTML = MODO_CINE.stripTitle;
   const data = await tmdbFetch('/trending/movie/week');
   if (!data || !data.results) {
     strip.innerHTML = DEMO_MOVIES.slice(0,20).map(m => movieCardHtml(m)).join('');
@@ -1985,13 +2198,14 @@ function movieCardHtml(m, comentariosCount = 0) {
   const year = m.release_date ? m.release_date.substring(0,4) : '';
   const rating = m.vote_average ? m.vote_average.toFixed(1) : '—';
   const generos = (m.genre_ids || []).slice(0,2).map(id => GENRE_MAP[id] || '').filter(Boolean).join(', ');
+  const icon = (m._tipo === 'videojuego' || modoActual === 'videojuego') ? '🎮' : '🎬';
 
   return `
     <div class="movie-card" onclick="abrirPelicula(${JSON.stringify(m).replace(/"/g,'&quot;')})">
       <div class="movie-poster">
         ${poster 
-          ? `<img src="${poster}" alt="${m.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'movie-poster-placeholder\\'><span style=\\'font-size:32px\\'>🎬</span><span style=\\'font-size:9px;color:var(--text-3);padding:0 4px;text-align:center\\'>${(m.title||'').substring(0,20)}</span></div>'" />`
-          : `<div class="movie-poster-placeholder"><span style="font-size:32px">🎬</span><span style="font-size:9px;color:var(--text-3);padding:0 4px;text-align:center;line-height:1.3">${(m.title||'').substring(0,20)}</span></div>`
+          ? `<img src="${poster}" alt="${m.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'movie-poster-placeholder\\'><span style=\\'font-size:32px\\'>${icon}</span><span style=\\'font-size:9px;color:var(--text-3);padding:0 4px;text-align:center\\'>${(m.title||'').substring(0,20)}</span></div>'" />`
+          : `<div class="movie-poster-placeholder"><span style="font-size:32px">${icon}</span><span style="font-size:9px;color:var(--text-3);padding:0 4px;text-align:center;line-height:1.3">${(m.title||'').substring(0,20)}</span></div>`
         }
         <div class="movie-poster-overlay">
           <div class="movie-rating-badge">⭐ ${rating}</div>
@@ -2021,6 +2235,42 @@ function movieCardHtmlFromDB(p) {
       </div>
       <div class="movie-card-title">${p.titulo || 'Sin título'} ${year ? `(${year})` : ''}</div>
     </div>`;
+}
+
+function gameCardHtml(g, comentariosCount = 0) {
+  const img = g.rawg_image || null;
+  const year = g.release_date ? g.release_date.substring(0,4) : '';
+  const rating = g.vote_average ? g.vote_average.toFixed(1) : '—';
+  return `
+    <div class="movie-card" onclick="abrirJuego(${JSON.stringify(g).replace(/"/g,'&quot;')})">
+      <div class="movie-poster">
+        ${img
+          ? `<img src="${img}" alt="${g.title}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.parentElement.innerHTML='<div class=\\'movie-poster-placeholder\\'><span style=\\'font-size:32px\\'>🎮</span></div>'" />`
+          : `<div class="movie-poster-placeholder"><span style="font-size:32px">🎮</span><span style="font-size:9px;color:var(--text-3);padding:0 4px;text-align:center;line-height:1.3">${(g.title||'').substring(0,20)}</span></div>`
+        }
+        <div class="movie-poster-overlay">
+          <div class="movie-rating-badge">⭐ ${rating}</div>
+          ${comentariosCount > 0 ? `<div class="movie-comment-count">💬 ${comentariosCount}</div>` : ''}
+        </div>
+      </div>
+      <div class="movie-card-title">${g.title || 'Sin título'} ${year ? `(${year})` : ''}</div>
+    </div>`;
+}
+
+async function abrirJuego(gameData) {
+  if (typeof gameData === 'string') {
+    try { gameData = JSON.parse(gameData); } catch(e) { return; }
+  }
+  // Enriquecer con detalles de RAWG si es un juego real
+  if (gameData._rawg && gameData.id && !gameData.overview) {
+    const detail = await rawgDetail(gameData.id);
+    if (detail) gameData = detail;
+  }
+  peliculaActiva = gameData;
+  mostrarMovieDetail();
+  setTimeout(() => {
+    document.getElementById('movieDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 async function abrirPeliculaFromDB(tmdbId) {
@@ -2070,18 +2320,21 @@ function mostrarMovieDetail() {
   if (!peliculaActiva) return;
   const m = peliculaActiva;
   const panel = document.getElementById('movieDetail');
+  const esJuego = m._tipo === 'videojuego';
   
-  const backdrop = m.backdrop_path ? `${TMDB_IMG}w780${m.backdrop_path}` : null;
-  const poster = m.poster_path ? `${TMDB_IMG}w300${m.poster_path}` : null;
+  // Backdrop: RAWG usa rawg_image, TMDB usa backdrop_path
+  const backdropUrl = m.rawg_image || (m.backdrop_path ? `${TMDB_IMG}w780${m.backdrop_path}` : null);
   const year = m.release_date ? m.release_date.substring(0,4) : '';
   const genres = (m.genres || []).slice(0,3).map(g => `<span class="movie-detail-genre">${g.name}</span>`).join('');
-  const rating = m.vote_average ? `★ ${m.vote_average.toFixed(1)} TMDB` : '';
+  const ratingLabel = esJuego ? 'RAWG' : 'TMDB';
+  const rating = m.vote_average ? `★ ${m.vote_average.toFixed(1)} ${ratingLabel}` : '';
+  const placeholderIcon = esJuego ? '🎮' : '🎬';
 
   panel.innerHTML = `
     <div class="movie-detail-hero">
-      ${backdrop
-        ? `<img class="movie-detail-backdrop" src="${backdrop}" alt="${m.title}" />`
-        : `<div class="movie-detail-backdrop-placeholder">🎬</div>`
+      ${backdropUrl
+        ? `<img class="movie-detail-backdrop" src="${backdropUrl}" alt="${m.title}" />`
+        : `<div class="movie-detail-backdrop-placeholder">${placeholderIcon}</div>`
       }
       <div class="movie-detail-hero-overlay">
         <div class="movie-detail-hero-info">
@@ -2177,7 +2430,8 @@ function recalcMedia() {
 
 async function cargarScoresMedia() {
   if (!peliculaActiva) return;
-  const tmdbId = peliculaActiva.id;
+  const esJuego = peliculaActiva._tipo === 'videojuego';
+  const tmdbId = esJuego ? -(peliculaActiva.id) : peliculaActiva.id;
   const { data } = await db.from('peliculas').select('*').eq('tmdb_id', tmdbId).single();
   if (!data) return;
 
@@ -2212,10 +2466,23 @@ async function cargarScoresMedia() {
 // ════════════════════════════════════════════
 function abrirBuscadorPelicula() {
   if (!usuario) { mostrarModalAuth(); return; }
-  document.getElementById('buscarPeliculaModal').classList.remove('hidden');
-  document.getElementById('buscarPeliculaInput').value = '';
+  const modal = document.getElementById('buscarPeliculaModal');
+  const title = modal.querySelector('.modal-title');
+  const sub = modal.querySelector('.modal-sub');
+  const input = document.getElementById('buscarPeliculaInput');
+  if (modoActual === 'videojuego') {
+    if (title) title.textContent = '🎮 ¿Sobre qué videojuego?';
+    if (sub) sub.textContent = 'Busca el título y selecciónalo.';
+    if (input) input.placeholder = 'Ej: Zelda, Elden Ring, FIFA...';
+  } else {
+    if (title) title.textContent = '🎬 ¿Sobre qué película?';
+    if (sub) sub.textContent = 'Busca el título y selecciónala.';
+    if (input) input.placeholder = 'Ej: Oppenheimer, El Padrino...';
+  }
+  modal.classList.remove('hidden');
+  input.value = '';
   document.getElementById('buscarPeliculaResults').innerHTML = '';
-  setTimeout(() => document.getElementById('buscarPeliculaInput').focus(), 100);
+  setTimeout(() => input.focus(), 100);
 }
 
 function cerrarBuscadorPelicula() {
@@ -2231,32 +2498,42 @@ async function buscarPeliculaModal() {
   res.innerHTML = '<div style="padding:8px;color:var(--text-3);font-size:12px;">Buscando...</div>';
 
   buscarTimer = setTimeout(async () => {
-    const data = await tmdbFetch('/search/movie', { query: q });
-    if (!data || !data.results || data.results.length === 0) {
-      // Si TMDB no disponible, buscar manualmente en demos
-      const demos = DEMO_MOVIES.filter(m => m.title.toLowerCase().includes(q.toLowerCase()));
-      if (demos.length === 0) {
+    if (modoActual === 'videojuego') {
+      const juegos = await rawgSearch(q);
+      if (!juegos.length) {
         res.innerHTML = '<div style="padding:8px;color:var(--text-3);font-size:12px;">Sin resultados. Prueba con otro título.</div>';
-      } else {
-        renderBuscarResults(demos, res);
+        return;
       }
-      return;
+      renderBuscarResults(juegos, res, true);
+    } else {
+      const data = await tmdbFetch('/search/movie', { query: q });
+      if (!data || !data.results || data.results.length === 0) {
+        const demos = DEMO_MOVIES.filter(m => m.title.toLowerCase().includes(q.toLowerCase()));
+        if (demos.length === 0) {
+          res.innerHTML = '<div style="padding:8px;color:var(--text-3);font-size:12px;">Sin resultados. Prueba con otro título.</div>';
+        } else {
+          renderBuscarResults(demos, res, false);
+        }
+        return;
+      }
+      renderBuscarResults(data.results.slice(0, 8), res, false);
     }
-    renderBuscarResults(data.results.slice(0, 8), res);
   }, 400);
 }
 
-function renderBuscarResults(movies, container) {
-  if (movies.length === 0) {
+function renderBuscarResults(items, container, esJuego = false) {
+  if (items.length === 0) {
     container.innerHTML = '<div style="padding:8px;color:var(--text-3);font-size:12px;">Sin resultados.</div>';
     return;
   }
-  container.innerHTML = movies.map(m => {
-    const year = m.release_date ? m.release_date.substring(0,4) : '';
-    const poster = m.poster_path ? `${TMDB_IMG}w92${m.poster_path}` : null;
+  const onclickFn = esJuego ? 'seleccionarJuego' : 'seleccionarPelicula';
+  container.innerHTML = items.map(m => {
+    const year = (m.release_date || '').substring(0,4);
+    const imgUrl = m.rawg_image || (m.poster_path ? `${TMDB_IMG}w92${m.poster_path}` : null);
+    const icon = esJuego ? '🎮' : '🎬';
     return `
-      <div onclick='seleccionarPelicula(${JSON.stringify(m).replace(/'/g,"&#39;")})' style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-        ${poster ? `<img src="${poster}" style="width:36px;height:54px;object-fit:cover;border-radius:5px;flex-shrink:0;" alt="" />` : `<div style="width:36px;height:54px;background:var(--surface-2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎬</div>`}
+      <div onclick='${onclickFn}(${JSON.stringify(m).replace(/'/g,"&#39;")})' style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
+        ${imgUrl ? `<img src="${imgUrl}" style="width:36px;height:54px;object-fit:cover;border-radius:5px;flex-shrink:0;" alt="" onerror="this.style.display='none'" />` : `<div style="width:36px;height:54px;background:var(--surface-2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${icon}</div>`}
         <div>
           <div style="font-size:13px;font-weight:600;color:var(--text);">${m.title || 'Sin título'}</div>
           <div style="font-size:11px;color:var(--text-3);">${year}${m.vote_average ? ' · ★ ' + m.vote_average.toFixed(1) : ''}</div>
@@ -2302,18 +2579,54 @@ async function ensurePeliculaEnBD(m) {
   });
 }
 
+async function seleccionarJuego(gameData) {
+  cerrarBuscadorPelicula();
+  if (gameData._rawg) {
+    const detail = await rawgDetail(gameData.id);
+    if (detail) gameData = detail;
+  }
+  peliculaActiva = gameData;
+  // Guardar juego en BD (reutilizamos tabla peliculas con tmdb_id negativo para evitar colisiones)
+  await ensureJuegoEnBD(gameData);
+  mostrarMovieDetail();
+  setTimeout(() => {
+    document.getElementById('movieDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const box = document.getElementById('replybox_main');
+    if (box) { box.classList.add('open'); document.getElementById('rinput_main')?.focus(); }
+  }, 300);
+}
+
+async function ensureJuegoEnBD(g) {
+  if (!g || !g.id) return;
+  // Usamos id negativo para diferenciar juegos de películas en la misma tabla
+  const dbId = -(g.id);
+  const { data: existing } = await db.from('peliculas').select('id').eq('tmdb_id', dbId).single();
+  if (existing) return;
+  await db.from('peliculas').insert({
+    tmdb_id: dbId,
+    titulo: g.title,
+    poster_path: null,
+    backdrop_path: null,
+    year: g.release_date ? g.release_date.substring(0,4) : null,
+    overview: g.overview || null,
+    generos: (g.genres || []).map(x => x.name),
+    comentarios_count: 0,
+  });
+}
+
 // ════════════════════════════════════════════
 // OPINIONES (comentarios de película)
 // ════════════════════════════════════════════
 async function cargarOpiniones() {
   if (!peliculaActiva) return;
-  const tmdbId = peliculaActiva.id;
+  const esJuego = peliculaActiva._tipo === 'videojuego';
+  const dbId = esJuego ? -(peliculaActiva.id) : peliculaActiva.id;
   const container = document.getElementById('commentsList');
   if (!container) return;
 
   const { data: ops, error } = await db.from('opiniones')
     .select('*')
-    .eq('tmdb_id', tmdbId)
+    .eq('tmdb_id', dbId)
     .order('created_at', { ascending: true });
 
   const countEl = document.getElementById('opinionesCount');
@@ -2510,11 +2823,17 @@ async function enviarOpinion() {
   }
   const media = algunScore ? parseFloat((scoreVals.reduce((a,b)=>a+b,0)/scoreVals.length).toFixed(1)) : null;
 
-  // Asegurar película en BD
-  await ensurePeliculaEnBD(peliculaActiva);
+  // Asegurar en BD (película o juego)
+  const esJuego = peliculaActiva._tipo === 'videojuego';
+  const dbId = esJuego ? -(peliculaActiva.id) : peliculaActiva.id;
+  if (esJuego) {
+    await ensureJuegoEnBD(peliculaActiva);
+  } else {
+    await ensurePeliculaEnBD(peliculaActiva);
+  }
 
   const insertData = {
-    tmdb_id: peliculaActiva.id,
+    tmdb_id: dbId,
     usuario_id: usuario.id,
     nickname: usuario.nickname,
     contenido: texto,
@@ -2783,20 +3102,28 @@ async function guardarEdicionOpinion(opinionId) {
 async function buscarPelicula() {
   const q = document.getElementById('searchInput').value.trim();
   const netflixSection = document.getElementById('netflixSection');
-  if (q.length < 2) { netflixSection.style.display = 'block'; return; }
+  if (q.length < 2) {
+    netflixSection.style.display = 'block';
+    const old = document.getElementById('searchResultsSection');
+    if (old) old.style.display = 'none';
+    return;
+  }
 
   netflixSection.style.display = 'none';
   clearTimeout(buscarTimer);
   buscarTimer = setTimeout(async () => {
-    const data = await tmdbFetch('/search/movie', { query: q });
-    let resultados = data?.results?.slice(0,12) || DEMO_MOVIES.filter(m => m.title.toLowerCase().includes(q.toLowerCase()));
+    let resultados = [];
+    let esJuego = modoActual === 'videojuego';
 
-    if (resultados.length === 0) {
-      // Mostrar empty
-      return;
+    if (esJuego) {
+      resultados = await rawgSearch(q);
+    } else {
+      const data = await tmdbFetch('/search/movie', { query: q });
+      resultados = data?.results?.slice(0,12) || DEMO_MOVIES.filter(m => m.title.toLowerCase().includes(q.toLowerCase()));
     }
 
-    // Renderizar strip de resultados
+    if (!resultados.length) return;
+
     let existingSearch = document.getElementById('searchResultsSection');
     if (!existingSearch) {
       existingSearch = document.createElement('div');
@@ -2804,9 +3131,11 @@ async function buscarPelicula() {
       existingSearch.className = 'netflix-section';
       document.getElementById('netflixSection').insertAdjacentElement('afterend', existingSearch);
     }
+    const label = esJuego ? '🎮' : '🔍';
+    const cardsFn = esJuego ? (g) => gameCardHtml(g) : (m) => movieCardHtml(m);
     existingSearch.innerHTML = `
-      <div class="netflix-section-title">🔍 Resultados para "${q}"</div>
-      <div class="netflix-strip">${resultados.map(m => movieCardHtml(m)).join('')}</div>
+      <div class="netflix-section-title">${label} Resultados para "${q}"</div>
+      <div class="netflix-strip">${resultados.map(cardsFn).join('')}</div>
     `;
     existingSearch.style.display = 'block';
   }, 500);
