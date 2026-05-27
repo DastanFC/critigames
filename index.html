@@ -1,184 +1,770 @@
 <!DOCTYPE html>
 <html lang="es">
-    <!-- ========== FAVICONS COMPLETO ========== -->
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="manifest" href="site.webmanifest">
-<link rel="shortcut icon" href="favicon.ico">
-<meta name="msapplication-TileColor" content="#0a0a0a">
-<meta name="theme-color" content="#0a0a0a">
-
-<!-- Iconos específicos para Android Chrome -->
-<link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>CRITIFLIX - Comunidad de Cine y Videojuegos</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlayerCore — Reviews reales de jugadores</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --off-white: #f7f7f5;
+  --gray-50: #f2f2f0;
+  --gray-100: #e8e8e4;
+  --gray-200: #d0d0cc;
+  --gray-400: #909088;
+  --gray-500: #6b6b66;
+  --gray-700: #3a3a36;
+  --gray-900: #1a1a18;
+  --green: #6ac46a;
+  --green-dark: #4a8c4a;
+  --yellow: #ffbe00;
+  --red: #e84040;
+  --blue-accent: #1a6ef5;
+  --border: #e0e0da;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            line-height: 1.5;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+* { margin:0; padding:0; box-sizing:border-box; }
 
-        /* Contenedor principal */
-        .landing {
-            text-align: center;
-            padding: 20px;
-            max-width: 800px;
-            width: 100%;
-        }
+body {
+  background: var(--off-white);
+  color: var(--gray-900);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
 
-        /* Logo grande */
-        .logo {
-            margin-bottom: 20px;
-        }
+/* NAV */
+nav {
+  background: var(--gray-900);
+  padding: 0 1.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  height: 50px;
+  position: sticky; top:0; z-index:100;
+}
+.nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.4rem; font-weight: 800;
+  letter-spacing: 1px; color: var(--white);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--green); }
+.nav-search {
+  flex: 1; max-width: 420px;
+  display: flex; align-items: center;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 3px;
+}
+.nav-search input {
+  flex:1; background:none; border:none; outline:none;
+  color: var(--white); font-family: 'Source Serif 4', serif;
+  font-size: .85rem; padding: .4rem .8rem;
+}
+.nav-search input::placeholder { color: rgba(255,255,255,.4); }
+.nav-search button {
+  background: var(--green); border:none; padding: .4rem .8rem;
+  color: var(--gray-900); font-weight: 700; cursor:pointer;
+  font-size: .8rem; font-family: 'Barlow Condensed', sans-serif;
+}
+.nav-links { display:flex; gap:1.2rem; margin-left:auto; }
+.nav-links a {
+  color: rgba(255,255,255,.65); font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem; font-weight: 600; text-decoration:none;
+  letter-spacing:.5px; transition: color .15s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-user {
+  display: flex; align-items: center; gap: 1rem;
+}
+.nav-user-info {
+  color: white; font-size: 0.8rem;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.nav-btn-login {
+  background: none; border: 1px solid rgba(255,255,255,.3);
+  color: var(--white); padding: .3rem .9rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: .85rem;
+  cursor:pointer; border-radius:2px;
+}
+.nav-btn-login:hover { background: rgba(255,255,255,.1); }
+.btn-logout {
+  background: none; border: none;
+  color: rgba(255,255,255,.5); cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+}
+.btn-logout:hover { color: white; }
 
-        .logo h1 {
-            font-size: 4rem;
-            background: linear-gradient(135deg, #e50914, #ff6b6b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -2px;
-        }
+/* SUB-NAV */
+.sub-nav {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex;
+  overflow-x: auto;
+}
+.sub-nav a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem; font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase;
+  color: var(--gray-500); text-decoration: none;
+  padding: .7rem 1rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.sub-nav a:hover, .sub-nav a.active {
+  color: var(--gray-900); border-bottom-color: var(--gray-900);
+}
 
-        /* Subtítulo */
-        .subtitle {
-            font-size: 1.1rem;
-            color: #888;
-            margin-bottom: 50px;
-            border-top: 1px solid #2a2a3a;
-            border-bottom: 1px solid #2a2a3a;
-            padding: 12px 0;
-            display: inline-block;
-        }
+/* MAIN */
+.page-wrap {
+  max-width: 1140px; margin: 0 auto; padding: 0 1rem;
+}
+.section-header {
+  padding: 1.5rem 0 1rem;
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.section-header h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.score {
+  width: 54px; height: 54px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem; font-weight: 800;
+  border-radius: 4px;
+}
+.score.green  { background: var(--green);  color: var(--gray-900); }
+.score.yellow { background: var(--yellow); color: var(--gray-900); }
+.score.red    { background: var(--red);    color: var(--white); }
+.score.na     { background: var(--gray-100); color: var(--gray-500); font-size:1rem; }
+.score.small { width: 40px; height: 40px; font-size: 1.2rem; }
 
-        /* Contenedor de botones */
-        .botones {
-            display: flex;
-            gap: 25px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
-        }
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.game-card {
+  background: var(--white);
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+.game-card:hover { box-shadow: inset 0 0 0 2px var(--gray-900); z-index:1; }
+.game-card-img {
+  width:100%; aspect-ratio: 16/9;
+  object-fit: cover; background: var(--gray-100);
+  display: block;
+}
+.game-card-body { padding: .75rem; flex:1; display:flex; flex-direction:column; gap:.4rem; }
+.game-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--gray-900);
+}
+.game-card-meta {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem; color: var(--gray-500);
+}
+.game-card-footer {
+  padding: .6rem .75rem;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
 
-        /* Estilo base de los botones */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 16px 40px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 60px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+/* MODAL */
+.modal-overlay {
+  position:fixed; inset:0;
+  background: rgba(0,0,0,.55);
+  z-index:200; display:flex; align-items:center; justify-content:center;
+  padding: 1rem;
+  opacity:0; pointer-events:none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background: var(--white);
+  width:100%; max-width: 680px;
+  max-height: 90vh; overflow-y:auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.modal-top {
+  background: var(--gray-900); padding: 1rem 1.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  position: sticky; top:0;
+}
+.modal-top h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem; font-weight: 800; color: var(--white);
+}
+.modal-close {
+  background:none; border:1px solid rgba(255,255,255,.3);
+  color: white; cursor:pointer; width:28px; height:28px;
+}
+.modal-game-info {
+  display:flex; gap:.75rem; padding:1rem 1.5rem;
+  background: var(--gray-50); border-bottom: 1px solid var(--border);
+  align-items:center;
+}
+.modal-game-img {
+  width:80px; height:50px; object-fit:cover; flex-shrink:0;
+}
+.modal-game-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+}
+.modal-body { padding: 1.5rem; }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.05);
-        }
+/* Sliders */
+.slider-row { margin-bottom:.7rem; }
+.slider-row-top {
+  display:flex; justify-content:space-between; margin-bottom:.25rem;
+}
+.slider-row-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem; font-weight: 600;
+}
+input[type=range] {
+  width:100%; height:5px; border-radius:2px;
+  background: var(--gray-100);
+  -webkit-appearance:none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:16px; height:16px;
+  border-radius:3px; background: var(--gray-900); cursor:pointer;
+}
+.overall-box {
+  background: var(--gray-900); color: white;
+  padding: 1rem 1.25rem; display:flex; gap:1rem;
+  margin-bottom: 1.2rem;
+}
+.overall-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 3rem; font-weight: 800; min-width: 70px;
+}
+.overall-bar-wrap { flex:1; }
+.overall-bar {
+  height: 6px; background: rgba(255,255,255,.15);
+  border-radius:3px; overflow:hidden;
+}
+.overall-bar-fill {
+  height:100%; border-radius:3px;
+  transition: width .3s;
+}
+.submit-btn {
+  width:100%; background: var(--gray-900); color: white;
+  border:none; padding: .85rem; cursor:pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.submit-btn:hover { background: var(--green-dark); }
 
-        .btn:active {
-            transform: translateY(1px);
-        }
+/* Reseñas */
+.review-card {
+  background: white;
+  border: 1px solid var(--border);
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  border-radius: 4px;
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.review-user {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+.review-date {
+  font-size: 0.7rem;
+  color: var(--gray-500);
+}
+.review-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.btn-small {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.btn-small:hover {
+  background: var(--gray-100);
+}
+.editado-badge {
+  font-size: 0.65rem;
+  color: var(--gray-500);
+  margin-left: 0.5rem;
+}
 
-        /* Botón CINE (rojo, como tu web) */
-        .btn-cine {
-            background: #e50914;
-            color: white;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
-        }
+/* Banner global */
+.global-banner {
+  background: var(--green-dark);
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  display: none;
+}
+.global-banner .close {
+  float: right;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-right: 1rem;
+}
 
-        .btn-cine:hover {
-            background: #ff0a1a;
-            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.5);
-        }
-
-        /* Botón VIDEOJUEGOS (verde gaming) */
-        .btn-juegos {
-            background: #A855F7;
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-juegos:hover {
-            background: #9b4de3;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-        }
-
-        /* Texto decorativo debajo */
-        .footer-text {
-            font-size: 0.8rem;
-            color: #555;
-            margin-top: 50px;
-        }
-
-        .footer-text a {
-            color: #e50914;
-            text-decoration: none;
-        }
-
-        /* Responsive para móvil */
-        @media (max-width: 550px) {
-            .logo h1 {
-                font-size: 2.5rem;
-            }
-            
-            .btn {
-                padding: 12px 25px;
-                font-size: 1.1rem;
-                width: 200px;
-                justify-content: center;
-            }
-            
-            .subtitle {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+}
+.sidebar-card {
+  background: white;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.sidebar-card-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+}
+.sidebar-card-body {
+  padding: 0.75rem 1rem;
+}
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.list-rank {
+  font-weight: 800;
+  width: 24px;
+}
+.list-title {
+  flex: 1;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+}
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr; }
+  .games-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
 </head>
 <body>
-    <div class="landing">
-        <div class="logo">
-            <h1>🎬🎮 CRITIFLIX</h1>
-        </div>
-        
-        <div class="subtitle">
-            Tu comunidad de críticas donde tu opinión es la real
-        </div>
-        
-        <div class="botones">
-            <a href="cine.html" class="btn btn-cine">
-                🎬 CINE
-            </a>
-            <a href="cine.html?modo=juegos" class="btn btn-juegos">
-                🎮 VIDEOJUEGOS
-            </a>
-        </div>
-        
-        <div class="footer-text">
-            Sin publicidad · Sin afiliados · Solo opiniones reales
-        </div>
+
+<div class="global-banner" id="globalBanner">
+  <button class="close" onclick="document.getElementById('globalBanner').style.display='none'">✕</button>
+  <span id="bannerMessage"></span>
+</div>
+
+<nav>
+  <a class="nav-logo" href="#"><span>Player</span>Core</a>
+  <div class="nav-search">
+    <input type="text" id="searchInput" placeholder="Buscar juego..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">BUSCAR</button>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active">INICIO</a>
+    <a href="#">JUEGOS</a>
+    <a href="#">TOP LISTAS</a>
+  </div>
+  <div class="nav-user" id="navUser">
+    <button class="nav-btn-login" id="loginBtn">ENTRAR</button>
+  </div>
+</nav>
+
+<div class="sub-nav">
+  <a href="#" class="active">Novedades</a>
+  <a href="#">Más valorados</a>
+  <a href="#">PC</a>
+  <a href="#">PS5</a>
+  <a href="#">Xbox</a>
+  <a href="#">Switch</a>
+</div>
+
+<div class="page-wrap">
+  <div class="two-col">
+    <div>
+      <div class="section-header"><h2>Juegos recientes</h2></div>
+      <div id="gamesGrid" class="games-grid"><div class="loading">Cargando...</div></div>
     </div>
+    <div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">📊 Comunidad</div>
+        <div class="sidebar-card-body">
+          <div id="topList" style="margin-top:0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LOGIN (estilo CRITIFLIX) -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-top"><h2 id="modalTitle">🔐 INICIAR SESIÓN</h2><button class="modal-close" onclick="closeLoginModal()">✕</button></div>
+    <div class="modal-body">
+      <div id="loginFields">
+        <input type="text" id="loginUsername" placeholder="Nombre de usuario" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border:1px solid var(--border)">
+        <input type="password" id="loginPassword" placeholder="Código secreto" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border:1px solid var(--border)">
+      </div>
+      <div id="recoverFields" style="display:none">
+        <input type="text" id="recoverNick" placeholder="Nombre de usuario" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border:1px solid var(--border)">
+        <input type="text" id="recoverSecret" placeholder="Palabra secreta" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border:1px solid var(--border)">
+      </div>
+      <div id="registerFields" style="display:none">
+        <input type="password" id="registerPassword" placeholder="Contraseña" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border:1px solid var(--border)">
+        <input type="text" id="registerSecret" placeholder="Palabra secreta" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border:1px solid var(--border)">
+      </div>
+      <button class="submit-btn" id="modalActionBtn" style="margin-bottom:0.5rem">INICIAR SESIÓN</button>
+      <button class="btn-small" id="modalSwitchBtn" style="width:100%; margin-bottom:0.5rem">¿No tienes cuenta? Regístrate</button>
+      <button class="btn-small" id="modalRecoverBtn" style="width:100%">¿Olvidaste tu código?</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VALORAR -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal">
+    <div class="modal-top"><h2>VALORAR JUEGO</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-game-info" id="modalGameInfo"></div>
+    <div class="modal-body">
+      <div class="overall-box">
+        <div class="overall-number" id="modalOverallNum">—</div>
+        <div class="overall-bar-wrap"><div class="overall-bar"><div class="overall-bar-fill" id="modalOverallFill" style="width:0%"></div></div></div>
+      </div>
+      <div id="slidersContainer"></div>
+      <div style="margin-bottom:1rem">
+        <textarea id="reviewText" class="form-textarea" style="width:100%; padding:0.6rem; border:1px solid var(--border); resize:vertical" rows="3" placeholder="Escribe tu reseña..."></textarea>
+      </div>
+      <div style="margin-bottom:1rem">
+        <div class="slider-row-label">¿Recomiendas este juego?</div>
+        <select id="recommendSelect" style="width:100%; padding:0.5rem; border:1px solid var(--border); background:white">
+          <option value="true">✅ Sí lo recomiendo</option>
+          <option value="false">❌ No lo recomiendo</option>
+        </select>
+      </div>
+      <button class="submit-btn" onclick="submitReview()">PUBLICAR VALORACIÓN</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// CONFIGURACIÓN SUPABASE
+const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_fkt2NkOU9mfsb5V6zUaIsQ__ytD_PRj';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const RAWG_KEY = '0f28a5bfdda4462489f37fbb908f5246';
+const RAWG_BASE = 'https://api.rawg.io/api';
+
+let currentUser = null;
+let currentGame = null;
+let sliderVals = {};
+let modalMode = 'login';
+
+// SLIDERS
+const SLIDER_DEFS = [
+  { key: 'gameplay', label: '🎮 Jugabilidad' },
+  { key: 'design', label: '🎨 Diseño / IA' },
+  { key: 'tech', label: '⚙️ Técnico / Gráficos' },
+  { key: 'audio', label: '🎵 Audio / Música' },
+  { key: 'value', label: '💰 Duración / Precio' }
+];
+
+function renderSliders() {
+  const container = document.getElementById('slidersContainer');
+  container.innerHTML = '';
+  SLIDER_DEFS.forEach(def => {
+    sliderVals[def.key] = 7;
+    const row = document.createElement('div');
+    row.className = 'slider-row';
+    row.innerHTML = `
+      <div class="slider-row-top">
+        <span class="slider-row-label">${def.label}</span>
+        <span id="val-${def.key}">7/10</span>
+      </div>
+      <input type="range" min="0" max="10" value="7" oninput="updateSlider('${def.key}', this.value)">
+    `;
+    container.appendChild(row);
+  });
+  updateOverall();
+}
+
+function updateSlider(key, val) {
+  sliderVals[key] = parseInt(val);
+  document.getElementById(`val-${key}`).innerText = val + '/10';
+  updateOverall();
+}
+
+function updateOverall() {
+  const vals = Object.values(sliderVals);
+  if (vals.length === 0) return;
+  const avg = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const score = Math.round(avg * 10);
+  document.getElementById('modalOverallNum').innerText = score;
+  document.getElementById('modalOverallFill').style.width = score + '%';
+  const color = score >= 75 ? '#6ac46a' : (score >= 50 ? '#ffbe00' : '#e84040');
+  document.getElementById('modalOverallFill').style.backgroundColor = color;
+}
+
+// RAWG API
+async function fetchRAWG(url) {
+  const res = await fetch(url);
+  return res.json();
+}
+
+async function loadGames() {
+  const data = await fetchRAWG(`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=20&ordering=-released`);
+  const games = data.results || [];
+  renderGames(games);
+  loadTopGames();
+}
+
+function renderGames(games) {
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = games.map(game => `
+    <div class="game-card" onclick="openGameModal(${game.id}, '${game.name.replace(/'/g, "\\'")}', '${game.background_image || ''}')">
+      <img class="game-card-img" src="${game.background_image || 'https://via.placeholder.com/300x170?text=No+Image'}" alt="${game.name}">
+      <div class="game-card-body">
+        <div class="game-card-title">${game.name}</div>
+        <div class="game-card-meta">${game.released?.slice(0,4) || ''}</div>
+      </div>
+      <div class="game-card-footer">
+        <div>PC</div>
+        <div class="score small na" id="score-${game.id}">—</div>
+      </div>
+    </div>
+  `).join('');
+  // Cargar medias reales
+  loadGamesAvg(games);
+}
+
+async function loadGamesAvg(games) {
+  const { data } = await supabase.from('games_avg').select('*');
+  if (data) {
+    games.forEach(game => {
+      const avgData = data.find(a => a.game_id === game.id);
+      const scoreEl = document.getElementById(`score-${game.id}`);
+      if (scoreEl && avgData) {
+        const score = Math.round(avgData.avg_score);
+        scoreEl.className = `score small ${score >= 75 ? 'green' : (score >= 50 ? 'yellow' : 'red')}`;
+        scoreEl.innerText = score;
+      }
+    });
+  }
+}
+
+async function loadTopGames() {
+  const { data } = await supabase.from('games_avg').select('*').order('avg_score', { ascending: false }).limit(10);
+  const list = document.getElementById('topList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div class="list-item">Sin valoraciones aún</div>';
+    return;
+  }
+  list.innerHTML = data.map((g, i) => `
+    <div class="list-item" onclick="openGameById(${g.game_id})">
+      <span class="list-rank">${i+1}</span>
+      <div class="list-title">${g.game_name}</div>
+      <div class="score small ${g.avg_score >= 75 ? 'green' : (g.avg_score >= 50 ? 'yellow' : 'red')}">${Math.round(g.avg_score)}</div>
+    </div>
+  `).join('');
+}
+
+async function openGameById(gameId) {
+  const data = await fetchRAWG(`${RAWG_BASE}/games/${gameId}?key=${RAWG_KEY}`);
+  openGameModal(gameId, data.name, data.background_image || '');
+}
+
+function openGameModal(gameId, gameName, gameImage) {
+  currentGame = { id: gameId, name: gameName, image: gameImage };
+  const info = document.getElementById('modalGameInfo');
+  info.innerHTML = `
+    <img class="modal-game-img" src="${gameImage || 'https://via.placeholder.com/80x50'}" onerror="this.src='https://via.placeholder.com/80x50'">
+    <div><div class="modal-game-title">${gameName}</div></div>
+  `;
+  renderSliders();
+  document.getElementById('reviewModal').classList.add('open');
+}
+
+async function submitReview() {
+  if (!currentUser) { alert('Inicia sesión primero'); closeModal(); openLoginModal(); return; }
+  const vals = Object.values(sliderVals);
+  const totalAvg = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const recommend = document.getElementById('recommendSelect').value === 'true';
+  const reviewText = document.getElementById('reviewText').value || '';
+  
+  const { error } = await supabase.from('game_scores').upsert({
+    game_id: currentGame.id,
+    game_name: currentGame.name,
+    user_id: currentUser.id,
+    user_name: currentUser.nickname,
+    gameplay: sliderVals.gameplay,
+    design: sliderVals.design,
+    tech: sliderVals.tech,
+    audio: sliderVals.audio,
+    value_score: sliderVals.value,
+    total_avg: totalAvg,
+    recommend: recommend,
+    review_title: '',
+    review_pros: reviewText,
+    review_cons: '',
+    platform: 'PC'
+  });
+  if (error) { alert('Error: ' + error.message); return; }
+  alert('¡Valoración publicada!');
+  closeModal();
+  loadGames();
+}
+
+// AUTH (estilo CRITIFLIX)
+async function handleLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const { data } = await supabase.from('usuarios').select('*').eq('nickname', username).eq('codigo_acceso', password).single();
+  if (data && !data.baneado) {
+    currentUser = { id: data.id, nickname: data.nickname, rol: data.rol || 'usuario' };
+    localStorage.setItem('playercore_user', JSON.stringify(currentUser));
+    updateNavUI();
+    closeLoginModal();
+  } else { alert('Usuario o código incorrectos'); }
+}
+
+async function handleRegister() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('registerPassword').value;
+  const secret = document.getElementById('registerSecret').value.trim();
+  if (!username || !password || !secret) { alert('Completa todos los campos'); return; }
+  const newCode = Math.random().toString(36).substring(2,8).toUpperCase();
+  const { error } = await supabase.from('usuarios').insert({ nickname: username, codigo_acceso: newCode, palabra_clave: secret, puntos: 0 });
+  if (error) { alert('Error: ' + error.message); return; }
+  alert(`Registro exitoso. Tu código es: ${newCode}\nGuárdalo bien.`);
+  openLoginModal();
+}
+
+async function handleRecover() {
+  const username = document.getElementById('recoverNick').value.trim();
+  const secret = document.getElementById('recoverSecret').value.trim();
+  const { data } = await supabase.from('usuarios').select('codigo_acceso').eq('nickname', username).eq('palabra_clave', secret).single();
+  if (data) { alert(`Tu código es: ${data.codigo_acceso}`); }
+  else { alert('Usuario o palabra secreta incorrectos'); }
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('playercore_user');
+  updateNavUI();
+}
+
+function updateNavUI() {
+  const navUser = document.getElementById('navUser');
+  if (currentUser) {
+    navUser.innerHTML = `<div class="nav-user-info">🎮 ${currentUser.nickname} ${currentUser.rol === 'admin' ? '👑' : ''}</div><button class="btn-logout" onclick="logout()">Salir</button>`;
+  } else {
+    navUser.innerHTML = `<button class="nav-btn-login" id="loginBtn" onclick="openLoginModal()">ENTRAR</button>`;
+  }
+}
+
+function openLoginModal() {
+  modalMode = 'login';
+  document.getElementById('loginFields').style.display = 'block';
+  document.getElementById('recoverFields').style.display = 'none';
+  document.getElementById('registerFields').style.display = 'none';
+  document.getElementById('modalActionBtn').innerText = 'INICIAR SESIÓN';
+  document.getElementById('modalTitle').innerText = '🔐 INICIAR SESIÓN';
+  document.getElementById('loginModal').classList.add('open');
+}
+
+function openRegisterModal() {
+  modalMode = 'register';
+  document.getElementById('loginFields').style.display = 'block';
+  document.getElementById('recoverFields').style.display = 'none';
+  document.getElementById('registerFields').style.display = 'block';
+  document.getElementById('modalActionBtn').innerText = 'REGISTRARSE';
+  document.getElementById('modalTitle').innerText = '📝 REGISTRARSE';
+  document.getElementById('loginModal').classList.add('open');
+}
+
+function openRecoverModal() {
+  modalMode = 'recover';
+  document.getElementById('loginFields').style.display = 'none';
+  document.getElementById('recoverFields').style.display = 'block';
+  document.getElementById('registerFields').style.display = 'none';
+  document.getElementById('modalActionBtn').innerText = 'RECUPERAR';
+  document.getElementById('modalTitle').innerText = '🆘 RECUPERAR CÓDIGO';
+  document.getElementById('loginModal').classList.add('open');
+}
+
+function closeLoginModal() {
+  document.getElementById('loginModal').classList.remove('open');
+}
+function closeModal() {
+  document.getElementById('reviewModal').classList.remove('open');
+}
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  fetchRAWG(`${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=20`).then(data => {
+    renderGames(data.results || []);
+  });
+}
+
+async function loadBanner() {
+  const { data } = await supabase.from('configuracion').select('valor').eq('clave', 'mensaje_masivo').single();
+  if (data?.valor) {
+    document.getElementById('bannerMessage').innerText = data.valor;
+    document.getElementById('globalBanner').style.display = 'block';
+  }
+}
+
+document.getElementById('modalActionBtn').onclick = () => {
+  if (modalMode === 'login') handleLogin();
+  else if (modalMode === 'register') handleRegister();
+  else handleRecover();
+};
+document.getElementById('modalSwitchBtn').onclick = () => {
+  if (modalMode === 'login') openRegisterModal();
+  else openLoginModal();
+};
+document.getElementById('modalRecoverBtn').onclick = () => openRecoverModal();
+
+// INIT
+async function init() {
+  const saved = localStorage.getItem('playercore_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    updateNavUI();
+  }
+  await loadGames();
+  await loadBanner();
+}
+init();
+</script>
 </body>
 </html>
