@@ -31,7 +31,6 @@ body {
   line-height: 1.5;
 }
 
-/* NAV */
 nav {
   background: var(--gray-900);
   padding: 0 1rem;
@@ -89,10 +88,6 @@ nav {
   cursor: pointer;
   font-size: 0.75rem;
 }
-.nav-btn-login:hover, .btn-logout:hover {
-  background: rgba(255,255,255,0.1);
-}
-
 .sub-nav {
   background: white;
   border-bottom: 2px solid var(--border);
@@ -115,7 +110,6 @@ nav {
   color: var(--gray-900);
   border-bottom-color: var(--gray-900);
 }
-
 .page-wrap {
   max-width: 1200px;
   margin: 0 auto;
@@ -132,8 +126,6 @@ nav {
   font-size: 1.2rem;
   font-weight: 800;
 }
-
-/* GRID */
 .games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -192,7 +184,6 @@ nav {
 .score.yellow { background: var(--yellow); color: var(--gray-900); }
 .score.red { background: var(--red); color: white; }
 .score.na { background: var(--gray-100); color: var(--gray-500); }
-
 .two-col {
   display: grid;
   grid-template-columns: 1fr 280px;
@@ -230,8 +221,6 @@ nav {
   font-weight: 600;
   font-size: 0.8rem;
 }
-
-/* MODAL SLIDERS */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -279,7 +268,6 @@ nav {
 .modal-game-img { width: 70px; height: 44px; object-fit: cover; background: var(--gray-100); }
 .modal-game-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; }
 .modal-body { padding: 1.2rem; }
-
 .overall-box {
   background: var(--gray-900); color: white; padding: 1rem;
   display: flex; gap: 1rem; margin-bottom: 1.5rem; border-radius: 6px;
@@ -288,7 +276,6 @@ nav {
 .overall-bar-wrap { flex: 1; }
 .overall-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
 .overall-bar-fill { height: 100%; border-radius: 4px; transition: width 0.2s; }
-
 .slider-block { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
 .slider-block-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.8rem; }
 .slider-item { margin-bottom: 0.8rem; }
@@ -296,7 +283,6 @@ nav {
 input[type="range"] { width: 100%; height: 5px; -webkit-appearance: none; background: var(--gray-200); border-radius: 3px; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gray-900); cursor: pointer; }
 .slider-value { font-weight: 700; color: var(--green-dark); }
-
 textarea, select {
   width: 100%; padding: 0.6rem; border: 1px solid var(--border);
   border-radius: 6px; font-family: inherit; font-size: 0.85rem;
@@ -308,7 +294,6 @@ textarea, select {
 }
 .submit-btn:hover { background: var(--green-dark); }
 
-/* MODAL LOGIN (sin input password problemático) */
 #loginModal .modal { max-width: 380px; }
 #loginModal input {
   width: 100%; padding: 0.7rem; margin-bottom: 0.8rem;
@@ -371,7 +356,6 @@ textarea, select {
   </div>
 </div>
 
-<!-- MODAL LOGIN -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal">
     <div class="modal-top"><h2 id="modalTitle">🔐 INICIAR SESIÓN</h2><button class="modal-close" onclick="closeLoginModal()">✕</button></div>
@@ -395,7 +379,6 @@ textarea, select {
   </div>
 </div>
 
-<!-- MODAL VALORAR -->
 <div class="modal-overlay" id="reviewModal">
   <div class="modal">
     <div class="modal-top"><h2>🎯 VALORAR JUEGO</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
@@ -464,7 +447,13 @@ function renderAllSliders() {
   for (const [groupName, sliders] of Object.entries(SLIDER_GROUPS)) {
     const block = document.createElement('div');
     block.className = 'slider-block';
-    block.innerHTML = `<div class="slider-block-title">${groupName === 'gameplay' ? '🎮 JUGABILIDAD' : groupName === 'design' ? '🧠 IA Y DISEÑO' : groupName === 'tech' ? '⚙️ APARTADO TÉCNICO' : groupName === 'audio' ? '🎵 AUDIO Y NARRATIVA' : '💰 VALOR Y CONTENIDO'}</div>`;
+    let title = '';
+    if (groupName === 'gameplay') title = '🎮 JUGABILIDAD';
+    else if (groupName === 'design') title = '🧠 IA Y DISEÑO';
+    else if (groupName === 'tech') title = '⚙️ APARTADO TÉCNICO';
+    else if (groupName === 'audio') title = '🎵 AUDIO Y NARRATIVA';
+    else title = '💰 VALOR Y CONTENIDO';
+    block.innerHTML = `<div class="slider-block-title">${title}</div>`;
     sliders.forEach(s => {
       sliderValues[s.id] = s.val;
       const item = document.createElement('div');
@@ -497,17 +486,27 @@ function updateOverall() {
   document.getElementById('overallFill').style.backgroundColor = color;
 }
 
+// ========== RAWG CON PROXY corsproxy.io ==========
 async function fetchRAWG(url) {
   try {
-    const res = await fetch(url);
+    const proxyUrl = 'https://corsproxy.io/?';
+    const finalUrl = proxyUrl + encodeURIComponent(url);
+    console.log('Fetching:', finalUrl);
+    const res = await fetch(finalUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch(e) { console.error(e); return { results: [] }; }
+    const data = await res.json();
+    console.log('RAWG response:', data);
+    return data;
+  } catch(e) {
+    console.error('RAWG error:', e);
+    return { results: [] };
+  }
 }
 
 async function loadGames() {
   document.getElementById('gamesGrid').innerHTML = '<div class="loading">Cargando juegos...</div>';
   const data = await fetchRAWG(`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=20&ordering=-released`);
+  console.log('Games loaded:', data);
   renderGames(data.results || []);
   loadTopGames();
 }
@@ -546,7 +545,7 @@ async function loadGamesAvg(games) {
     games.forEach(game => {
       const avg = data.find(a => a.game_id === game.id);
       const el = document.getElementById(`score-${game.id}`);
-      if (el && avg) {
+      if (el && avg && avg.avg_score) {
         const score = Math.round(avg.avg_score);
         el.className = `score ${score >= 75 ? 'green' : (score >= 50 ? 'yellow' : 'red')}`;
         el.innerText = score;
@@ -589,6 +588,4 @@ async function openGame(gameId, gameName, gameImage) {
 async function submitReview() {
   if (!currentUser) { alert('Inicia sesión primero'); closeModal(); openLoginModal(); return; }
   const reviewText = document.getElementById('reviewText').value.trim() || '';
-  const recommend = document.getElementById('recommendSelect').value === 'true';
-  const groups = ['gameplay', 'design', 'tech', 'audio', 'value'];
-  const groupKeys = { gameplay: ['combate','controles','curva','variedad'], design: ['ia','jefes','niveles','dificultad'], tech: ['graficos','arte','rendimiento','
+  const recommend = document.getElementById('recommendSelect').value === 'tr
