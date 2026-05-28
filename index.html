@@ -454,7 +454,7 @@ nav {
   border: none;
   padding: 0.4rem 1rem;
   font-weight: 800;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
   text-transform: uppercase;
   cursor: pointer;
   border-radius: 4px;
@@ -985,11 +985,7 @@ input[type=range]::-webkit-slider-thumb {
   <div class="nav-search">
   <input type="text" id="searchInput" placeholder="Buscar..." autocomplete="off" onkeydown="if(event.key==='Enter')doSearch()">
 </div>
-  <div class="nav-links">
-    <a href="#" onclick="showHome()">INICIO</a>
-    <a href="#">JUEGOS</a>
-    <a href="#">TOP</a>
-  </div>
+ 
   <div id="authArea"><button class="nav-btn-login" onclick="openAuthModal()">Entrar</button></div>
 </nav>
 
@@ -1022,7 +1018,9 @@ input[type=range]::-webkit-slider-thumb {
       <div class="section-header"><h2>Top 10</h2></div>
       <div id="topList" class="list-view"></div>
       <div class="sidebar-card"><div class="sidebar-card-header">Géneros</div><div class="sidebar-card-body"><div class="genre-list" id="genreList"></div></div></div>
-      <div class="sidebar-card"><div class="sidebar-card-header">¿Qué es CritiGames?</div><div class="sidebar-card-body"><p style="font-size:0.75rem">Notas calculadas exclusivamente de opiniones de jugadores reales.</p></div></div>
+      <div class="sidebar-card"><div class="sidebar-card-header">¿Qué es CritiGames?</div><div class="sidebar-card-body"><p style="font-size:0.95rem">En un internet donde las notas se compran, los análisis se patrocinan y las grandes compañías usan a los blogs para venderte juegos inacabados, <b>CritiGames</b> surge como una alternativa real.
+
+<br><br>Dejamos atrás la frustración de la manipulación mediática para dar paso a la honestidad pura. Un sitio creado por y para la comunidad, donde opinar de videojuegos vuelve a ser un acto libre, transparente y sin intermediarios. Tu bolsillo importa, tu voz también..</p></p></div></br></br></div>
     </div>
   </div>
 </div>
@@ -2065,7 +2063,7 @@ document.getElementById('gameModal')?.addEventListener('click',e=>{if(e.target==
 document.getElementById('authModal')?.addEventListener('click',e=>{if(e.target===document.getElementById('authModal')) closeAuthModal();});
 
 // Géneros
-const genres=['action','rpg','adventure','shooter','strategy','sports','horror','indie'];
+const genres=['acción','rpg','aventuras','shooter','estrategia','deportes','horror','indie'];
 document.getElementById('genreList').innerHTML=genres.map(g=>`<span class="genre-chip" onclick="filterByGenre('${g}')">${g.charAt(0).toUpperCase()+g.slice(1)}</span>`).join('');
 
 // ========== FUNCIONES DE EDICIÓN Y MODERACIÓN ==========
