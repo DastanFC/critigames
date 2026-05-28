@@ -1331,9 +1331,6 @@ let currentGame = null;
 let allGames = [];
 let allReviews = [];
 
-// ──────────────────────────────────────
-// HASH
-// ──────────────────────────────────────
 async function hashCode(code) {
   const encoder = new TextEncoder();
   const data = encoder.encode(code + 'playercore_salt');
@@ -1343,10 +1340,11 @@ async function hashCode(code) {
 }
 
 // ══════════════════════════════════════════════════
-// AUTH (resumido - mismo que antes)
+// AUTH
 // ══════════════════════════════════════════════════
 function openAuthModal() { document.getElementById('authModal').classList.add('open'); switchAuthTab('login'); clearAuthMessages(); }
 function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
+
 function switchAuthTab(tab) {
   document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
@@ -1356,6 +1354,7 @@ function switchAuthTab(tab) {
   document.getElementById('tabRecover').classList.toggle('active', tab === 'recover');
   clearAuthMessages();
 }
+
 function clearAuthMessages() {
   const err = document.getElementById('authError'); if(err) err.classList.remove('show');
   const suc = document.getElementById('authSuccess'); if(suc) suc.classList.remove('show');
@@ -1487,10 +1486,9 @@ document.addEventListener('click', e => { if(!e.target.closest('.nav-user-menu')
 
 function showAdminPanel() { if(!currentUser?.is_admin) return; document.getElementById('homeView').style.display = 'none'; document.getElementById('adminView').style.display = 'block'; closeDropdown(); }
 function showHome() { document.getElementById('homeView').style.display = 'block'; document.getElementById('adminView').style.display = 'none'; }
-function switchAdminTab(tab) { /* simplificado */ }
 
 // ══════════════════════════════════════════════════
-// GAME MODAL CON PESTAÑAS
+// GAME MODAL CON PESTAÑAS (CORREGIDO)
 // ══════════════════════════════════════════════════
 let activeGameTab = 'reviews';
 
@@ -1516,7 +1514,6 @@ function switchGameTab(tab) {
     writeTab.style.display = 'block';
     tabs[0].classList.remove('active');
     tabs[1].classList.add('active');
-    // Resetear sliders y formulario de escritura
     resetWriteForm();
   }
 }
@@ -1527,42 +1524,41 @@ async function openGameModal(game) {
   infoDiv.innerHTML = `
     ${game.background_image ? `<img class="modal-game-img" src="${game.background_image}">` : '<div class="modal-game-img" style="background:var(--gray-200);display:flex;align-items:center;justify-content:center">🎮</div>'}
     <div>
-      <div class="modal-game-title">${game.name}</div>
+      <div class="modal-game-title">${escapeHTML(game.name)}</div>
       <div class="modal-game-meta">${game.released?.slice(0,4) || ''} · ${game.genres?.map(g=>g.name).slice(0,3).join(', ') || ''}</div>
     </div>`;
   
   document.getElementById('gameModal').classList.add('open');
   document.body.style.overflow = 'hidden';
   
-  // Cargar reseñas en la pestaña de reseñas
   await loadGameReviewsIntoModal(game.id);
-  
-  // Resetear a pestaña de reseñas por defecto
   switchGameTab('reviews');
 }
 
+// FUNCIÓN CORREGIDA - Aquí estaba el problema
 async function loadGameReviewsIntoModal(gameId) {
   const container = document.getElementById('gameReviewsGrid');
+  if (!container) return;
+  
   container.innerHTML = '<div class="review-hint">Cargando reseñas...</div>';
   
   const sb = getSupabase();
   let reviews = [];
   
   if (sb) {
-    const { data } = await sb.from('reviews').select('*').eq('game_id', gameId.toString()).order('created_at', { ascending: false });
-    reviews = data || [];
-  } else {
-    // Demo reviews
-    reviews = allReviews.filter(r => r.game_id === gameId.toString());
-    if (reviews.length === 0 && gameId === 'crimson-desert-demo') {
-      reviews = [{
-        id: 'demo1', username: 'dastan', game_name: 'Crimson Desert', score: 83,
-        platform: 'PS5', title: 'Goty perfectamente.', 
-        pros: '+ El mundo es una auténtica barbaridad. Creo que no se ha visto nada igual en PS5 (los de PC estarán acostumbrados) pero el nivel de detalle que tiene este juego es una monstruosidad. Creo que es el mundo más vivo que he visto jamás y eso que llevo toda la vida jugando. Zonas, ciudades, animales, exploración, recompensas, cosas que hacer por el mapa... una barbaridad. A mi, que no me llamaba el género me tiene enamorado y lo mejor es que cada semana hay una actualización nueva con muchísimo contenido.',
-        cons: '- Historia mal contada y sin profundidad. - Enemigos repetitivos de a pie - Variedad de armas por el mapa, solo se premian los cofres. - Secundarias absurdas y repetitivas. - Cooldown en el dragón que es lo que más quieres usar. - Contenido post-game nuevo (de momento)',
-        recommend: true, created_at: new Date().toISOString()
-      }];
+    const { data, error } = await sb
+      .from('reviews')
+      .select('*')
+      .eq('game_id', String(gameId))
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error loading reviews:', error);
+      container.innerHTML = '<div class="review-hint">Error al cargar reseñas</div>';
+      return;
     }
+    reviews = data || [];
+    console.log(`🔍 Cargadas ${reviews.length} reseñas para game_id ${gameId}`);
   }
   
   if (reviews.length === 0) {
@@ -1571,14 +1567,13 @@ async function loadGameReviewsIntoModal(gameId) {
   }
   
   container.innerHTML = reviews.map(r => buildReviewCardHTML(r)).join('');
+  console.log('✅ Reseñas renderizadas correctamente');
 }
 
+// Función de renderizado de tarjeta de reseña
 function buildReviewCardHTML(r) {
   const scoreClass = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
   const date = new Date(r.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-  const isOwn = currentUser && currentUser.username === r.username;
-  const isAdmin = currentUser?.is_admin;
-  const canEdit = isOwn || isAdmin;
   
   return `
     <div class="review-card" id="review-card-${r.id}">
@@ -1586,7 +1581,7 @@ function buildReviewCardHTML(r) {
         <div class="review-author-info">
           <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
           <span class="review-date">${date}</span>
-          ${r.platform ? `<span class="review-platform-badge">${r.platform}</span>` : ''}
+          ${r.platform ? `<span class="review-platform-badge">${escapeHTML(r.platform)}</span>` : ''}
           ${r.recommend ? '<span class="review-recommend yes">✓ Recomienda</span>' : '<span class="review-recommend no">✕ No recomienda</span>'}
         </div>
         <div class="review-score-large ${scoreClass}">${r.score}</div>
@@ -1595,11 +1590,6 @@ function buildReviewCardHTML(r) {
       ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
       ${r.pros ? `<div class="review-pros">➕ ${escapeHTML(r.pros)}</div>` : ''}
       ${r.cons ? `<div class="review-cons">➖ ${escapeHTML(r.cons)}</div>` : ''}
-      ${canEdit ? `
-      <div class="review-card-actions">
-        <button class="review-card-action edit" onclick="editReviewFromModal('${r.id}')">✎ Editar</button>
-        <button class="review-card-action delete" onclick="deleteReviewFromModal('${r.id}', '${r.username}')">✕ Borrar</button>
-      </div>` : ''}
     </div>
   `;
 }
@@ -1618,14 +1608,7 @@ async function deleteReviewFromModal(reviewId, authorUsername) {
   if (currentGame) loadGameReviewsIntoModal(currentGame.id);
 }
 
-async function editReviewFromModal(reviewId) {
-  // Cambiar a pestaña de escritura y cargar datos para editar (simplificado)
-  switchGameTab('write');
-  showToast('Funcionalidad de edición - selecciona la reseña desde el panel principal');
-}
-
 function resetWriteForm() {
-  // Resetear sliders a valores por defecto
   Object.keys(sliderVals).forEach(key => {
     sliderVals[key] = 7;
     const slider = document.querySelector(`input[oninput*="${key}"]`);
@@ -1645,19 +1628,11 @@ function requireLoginOrOpenModal() {
   if (currentGame) {
     switchGameTab('write');
     openGameModal(currentGame);
-  } else {
-    openGameModalForWrite();
   }
 }
 
-function openGameModalForWrite() {
-  if (!currentGame) { showToast('Selecciona un juego primero'); return; }
-  openGameModal(currentGame);
-  switchGameTab('write');
-}
-
 // ══════════════════════════════════════════════════
-// SUBMIT REVIEW (actualizado)
+// SUBMIT REVIEW
 // ══════════════════════════════════════════════════
 async function submitReview() {
   if (!currentUser) { openAuthModal(); return; }
@@ -1679,7 +1654,7 @@ async function submitReview() {
   const review = {
     player_id: currentUser.id,
     username: currentUser.username,
-    game_id: currentGame.id.toString(),
+    game_id: String(currentGame.id),
     game_name: currentGame.name,
     game_image: currentGame.background_image || '',
     score,
@@ -1692,11 +1667,11 @@ async function submitReview() {
     created_at: new Date().toISOString()
   };
   
+  console.log('📝 Publicando reseña:', review);
+  
   const sb = getSupabase();
   if (!sb) {
-    review.id = 'demo-' + Date.now();
-    allReviews.unshift(review);
-    showToast('✓ Valoración publicada');
+    showToast('✓ Valoración publicada (demo)');
     if (currentGame) loadGameReviewsIntoModal(currentGame.id);
     switchGameTab('reviews');
     btn.disabled = false; btn.textContent = 'PUBLICAR VALORACIÓN';
@@ -1704,8 +1679,10 @@ async function submitReview() {
   }
   
   const { error } = await sb.from('reviews').insert(review);
-  if (error) { showToast('Error: ' + error.message, true); }
-  else {
+  if (error) { 
+    showToast('Error: ' + error.message, true);
+    console.error('Error al insertar:', error);
+  } else {
     showToast('✓ Valoración publicada');
     if (currentGame) loadGameReviewsIntoModal(currentGame.id);
     switchGameTab('reviews');
@@ -1719,19 +1696,13 @@ async function submitReview() {
 async function loadReviews() {
   const sb = getSupabase();
   if (!sb) {
-    allReviews = getDemoReviews();
-    renderReviewsList(allReviews);
+    allReviews = [];
+    renderReviewsList([]);
     return;
   }
   const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(30);
   allReviews = data || [];
   renderReviewsList(allReviews);
-}
-
-function getDemoReviews() {
-  return [
-    { id:'d1', username:'dastan', game_name:'Crimson Desert', score:83, platform:'PS5', title:'Goty perfectamente.', pros:'+ El mundo es una auténtica barbaridad. Creo que no se ha visto nada igual en PS5...', cons:'- Historia mal contada y sin profundidad. - Enemigos repetitivos...', recommend:true, created_at: new Date().toISOString() }
-  ];
 }
 
 function renderReviewsList(reviews) {
@@ -1747,11 +1718,11 @@ function buildHomeReviewHTML(r) {
   const cls = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
   const date = new Date(r.created_at).toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
   return `
-  <div class="review-item">
+  <div class="review-item" onclick="openGameModalById(${r.game_id}, '${escapeHTML(r.game_name)}')">
     <div class="review-header">
       <span class="review-author ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
       <span class="review-date">${date}</span>
-      ${r.platform ? `<span class="review-platform">${r.platform}</span>` : ''}
+      ${r.platform ? `<span class="review-platform">${escapeHTML(r.platform)}</span>` : ''}
       <span class="review-score-badge ${cls}">${r.score}</span>
       ${r.recommend ? '<span style="font-size:.7rem;color:var(--green-dark);font-family:\'Barlow Condensed\',sans-serif;font-weight:700">✓ Recomienda</span>' : '<span style="font-size:.7rem;color:var(--red-dark)">✕ No recomienda</span>'}
     </div>
@@ -1773,7 +1744,6 @@ async function fetchGames(url) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   } catch(e) {
-    console.warn('Direct fetch failed, trying CORS proxy');
     const res2 = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
     if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
     return res2.json();
@@ -1782,9 +1752,6 @@ async function fetchGames(url) {
 
 async function loadGames(platform = null, genre = null) {
   const grid = document.getElementById('gamesGrid');
-  const featured = document.getElementById('featuredGrid');
-  const topList = document.getElementById('topList');
-  
   grid.innerHTML = '<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div></div></div>'.repeat(8);
   
   try {
@@ -1804,44 +1771,92 @@ async function loadGames(platform = null, genre = null) {
   }
 }
 
-function renderFeatured(games) {
+async function renderFeatured(games) {
   const grid = document.getElementById('featuredGrid');
   if (!grid) return;
-  grid.innerHTML = games.map(g => `
-    <div class="featured-card" onclick="openGameModal(${JSON.stringify(g).replace(/"/g, '&quot;')})">
-      ${g.background_image ? `<img class="featured-card-img" src="${g.background_image}" loading="lazy">` : `<div class="featured-card-img-placeholder">🎮</div>`}
-      <div class="featured-card-body">
-        <div class="featured-card-label">▶ DESTACADO</div>
-        <div class="featured-card-title">${escapeHTML(g.name)}</div>
-        <div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ') || ''}</div>
-        <div class="featured-card-score-row">
-          <div class="score small na">N/A</div>
-          <div class="featured-card-score-info">
-            <span class="featured-card-score-verdict">Sin valoraciones</span>
-            <span class="featured-card-score-count">Sé el primero</span>
+  
+  // Obtener puntuaciones de Supabase
+  const sb = getSupabase();
+  let gameScores = {};
+  if (sb) {
+    const { data: reviews } = await sb.from('reviews').select('*');
+    if (reviews) {
+      reviews.forEach(r => {
+        if (!gameScores[r.game_id]) gameScores[r.game_id] = { sum: 0, count: 0 };
+        gameScores[r.game_id].sum += r.score;
+        gameScores[r.game_id].count++;
+      });
+    }
+  }
+  
+  grid.innerHTML = games.slice(0,4).map(g => {
+    const scoreData = gameScores[g.id.toString()];
+    const avgScore = scoreData ? Math.round(scoreData.sum / scoreData.count) : null;
+    const cls = avgScore ? (avgScore >= 75 ? 'green' : avgScore >= 50 ? 'yellow' : 'red') : 'na';
+    const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones';
+    const countText = avgScore ? `Basado en ${scoreData.count} opiniones` : 'Sé el primero';
+    
+    return `
+      <div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'>
+        ${g.background_image ? `<img class="featured-card-img" src="${g.background_image}" loading="lazy">` : `<div class="featured-card-img-placeholder">🎮</div>`}
+        <div class="featured-card-body">
+          <div class="featured-card-label">▶ DESTACADO</div>
+          <div class="featured-card-title">${escapeHTML(g.name)}</div>
+          <div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ') || ''}</div>
+          <div class="featured-card-score-row">
+            <div class="score small ${cls}">${avgScore || 'N/A'}</div>
+            <div class="featured-card-score-info">
+              <span class="featured-card-score-verdict">${verdict}</span>
+              <span class="featured-card-score-count">${countText}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
-function renderGrid(games) {
+async function renderGrid(games) {
   const grid = document.getElementById('gamesGrid');
-  grid.innerHTML = games.map(g => `
-    <div class="game-card" onclick="openGameModal(${JSON.stringify(g).replace(/"/g, '&quot;')})">
-      ${g.background_image ? `<img class="game-card-img" src="${g.background_image}" loading="lazy">` : `<div class="game-card-img-placeholder">🎮</div>`}
-      <div class="game-card-body">
-        <div class="game-card-platforms">${getPlatformTags(g.parent_platforms || g.platforms)}</div>
-        <div class="game-card-title">${escapeHTML(g.name)}</div>
-        <div class="game-card-meta">${g.released?.slice(0,4) || '—'} · ${g.genres?.map(x=>x.name).slice(0,1).join('') || ''}</div>
+  
+  // Obtener puntuaciones de Supabase
+  const sb = getSupabase();
+  let gameScores = {};
+  if (sb) {
+    const { data: reviews } = await sb.from('reviews').select('*');
+    if (reviews) {
+      reviews.forEach(r => {
+        if (!gameScores[r.game_id]) gameScores[r.game_id] = { sum: 0, count: 0 };
+        gameScores[r.game_id].sum += r.score;
+        gameScores[r.game_id].count++;
+      });
+    }
+  }
+  
+  grid.innerHTML = games.map(g => {
+    const scoreData = gameScores[g.id.toString()];
+    const avgScore = scoreData ? Math.round(scoreData.sum / scoreData.count) : null;
+    const cls = avgScore ? (avgScore >= 75 ? 'green' : avgScore >= 50 ? 'yellow' : 'red') : 'na';
+    const countText = avgScore ? `${scoreData.count} opiniones` : 'Sin votos';
+    
+    return `
+      <div class="game-card" onclick='openGameModal(${JSON.stringify(g)})'>
+        ${g.background_image ? `<img class="game-card-img" src="${g.background_image}" loading="lazy">` : `<div class="game-card-img-placeholder">🎮</div>`}
+        <div class="game-card-body">
+          <div class="game-card-platforms">${getPlatformTags(g.parent_platforms || g.platforms)}</div>
+          <div class="game-card-title">${escapeHTML(g.name)}</div>
+          <div class="game-card-meta">${g.released?.slice(0,4) || '—'} · ${g.genres?.map(x=>x.name).slice(0,1).join('') || ''}</div>
+        </div>
+        <div class="game-card-footer">
+          <div>
+            <div class="game-card-footer-label">PlayerCore</div>
+            <div class="game-card-footer-sub">${countText}</div>
+          </div>
+          <div class="score small ${cls}">${avgScore || 'N/A'}</div>
+        </div>
       </div>
-      <div class="game-card-footer">
-        <div><div class="game-card-footer-label">PlayerCore</div><div class="game-card-footer-sub">Sin votos</div></div>
-        <div class="score small na">N/A</div>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function getPlatformTags(platforms) {
@@ -1853,7 +1868,7 @@ function getPlatformTags(platforms) {
 function renderTopList(games) {
   const list = document.getElementById('topList');
   list.innerHTML = games.slice(0,10).map((g,i) => `
-    <div class="list-item" onclick="openGameModal(${JSON.stringify(g).replace(/"/g, '&quot;')})">
+    <div class="list-item" onclick='openGameModal(${JSON.stringify(g)})'>
       <span class="list-rank">${i+1}</span>
       ${g.background_image ? `<img class="list-img" src="${g.background_image}" loading="lazy">` : `<div class="list-img-ph">🎮</div>`}
       <div class="list-info"><div class="list-title">${escapeHTML(g.name)}</div><div class="list-meta">${g.genres?.map(x=>x.name).slice(0,2).join(' · ') || ''}</div></div>
@@ -1888,7 +1903,7 @@ document.querySelectorAll('.sub-nav a').forEach(link => {
 });
 
 // ══════════════════════════════════════════════════
-// SLIDERS (intactos)
+// SLIDERS
 // ══════════════════════════════════════════════════
 const SLIDER_DEFS = {
   gameplay: [
@@ -1996,6 +2011,16 @@ async function loadBanner() {
 }
 function dismissBanner() { document.getElementById('globalBanner').classList.remove('active'); }
 
+// Admin panel simplificado
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach((t,i) => {
+    const tabs = ['dashboard','reviews','users','banner','settings'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('admin-' + tab).classList.add('active');
+}
+
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
@@ -2006,7 +2031,7 @@ loadGames();
 loadReviews();
 loadBanner();
 
-// Cerrar modal al hacer clic fuera
+// Cerrar modales al hacer clic fuera
 document.getElementById('gameModal').addEventListener('click', e => {
   if (e.target === document.getElementById('gameModal')) closeGameModal();
 });
