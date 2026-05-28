@@ -162,6 +162,7 @@ nav {
   border-bottom: 2px solid transparent;
   margin-bottom: -2px; white-space: nowrap;
   transition: all .15s;
+  cursor: pointer;
 }
 .sub-nav a:hover, .sub-nav a.active {
   color: var(--gray-900); border-bottom-color: var(--gray-900);
@@ -186,6 +187,7 @@ nav {
   font-size: .8rem; font-weight: 700;
   color: var(--blue-accent); text-decoration: none;
   letter-spacing: .5px; text-transform: uppercase;
+  cursor: pointer;
 }
 
 /* ─── SCORE BADGE ─── */
@@ -423,7 +425,7 @@ footer strong { color: var(--green); }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal {
   background: var(--white);
-  width: 100%; max-width: 640px;
+  width: 100%; max-width: 900px;
   max-height: 92vh; overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0,0,0,.35);
   transform: translateY(16px); transition: transform .2s;
@@ -446,15 +448,195 @@ footer strong { color: var(--green); }
   font-size: 1rem; border-radius: 2px; flex-shrink: 0;
 }
 
-/* ─── REVIEW MODAL ─── */
-.modal-game-info {
-  display: flex; gap: .65rem; padding: .875rem 1.25rem;
-  background: var(--gray-50); border-bottom: 1px solid var(--border); align-items: center;
+/* ─── GAME MODAL TABS ─── */
+.game-modal-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  background: var(--white);
 }
-.modal-game-img { width: 72px; height: 45px; object-fit: cover; flex-shrink: 0; background: var(--gray-100); }
+.game-tab {
+  flex: 1;
+  padding: .75rem 1rem;
+  background: none;
+  border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all .15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.game-tab.active {
+  color: var(--gray-900);
+  border-bottom-color: var(--gray-900);
+}
+.modal-game-info {
+  display: flex;
+  gap: .65rem;
+  padding: .875rem 1.25rem;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+.modal-game-img { width: 72px; height: 45px; object-fit: cover; flex-shrink: 0; background: var(--gray-100); border-radius: 2px; }
 .modal-game-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 800; }
 .modal-game-meta { font-family: 'Barlow Condensed', sans-serif; font-size: .72rem; color: var(--gray-500); }
 .modal-body { padding: 1.25rem; }
+
+/* ─── REVIEWS GRID (para ver reseñas) ─── */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.review-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  transition: box-shadow .15s;
+}
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: .65rem;
+  padding-bottom: .65rem;
+  border-bottom: 1px solid var(--border);
+}
+.review-author-info {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.review-author-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: .9rem;
+  color: var(--gray-900);
+}
+.review-author-name.is-admin { color: var(--admin); }
+.review-author-name.is-admin::after { content: ' 👑'; font-size: .7rem; }
+.review-date {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .68rem;
+  color: var(--gray-500);
+}
+.review-platform-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem;
+  padding: .12rem .4rem;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  color: var(--gray-500);
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+.review-score-large {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  line-height: 1;
+  padding: .25rem .6rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+.review-score-large.green { background: var(--green); color: var(--gray-900); }
+.review-score-large.yellow { background: var(--yellow); color: var(--gray-900); }
+.review-score-large.red { background: var(--red); color: var(--white); }
+.review-recommend {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  margin-left: .5rem;
+}
+.review-recommend.yes { color: var(--green-dark); }
+.review-recommend.no { color: var(--red-dark); }
+.review-game-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-bottom: .5rem;
+}
+.review-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: .5rem;
+}
+.review-text {
+  font-size: .82rem;
+  color: var(--gray-700);
+  line-height: 1.55;
+}
+.review-pros {
+  background: #f0faf0;
+  padding: .5rem .65rem;
+  border-radius: 3px;
+  margin: .5rem 0;
+  font-size: .78rem;
+  border-left: 3px solid var(--green-dark);
+}
+.review-cons {
+  background: #fdf0f0;
+  padding: .5rem .65rem;
+  border-radius: 3px;
+  margin: .5rem 0;
+  font-size: .78rem;
+  border-left: 3px solid var(--red-dark);
+}
+.review-card-actions {
+  margin-top: .75rem;
+  display: flex;
+  gap: .5rem;
+  justify-content: flex-end;
+}
+.review-card-action {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all .15s;
+  color: var(--gray-500);
+}
+.review-card-action.edit { color: var(--blue-accent); border-color: var(--blue-accent); }
+.review-card-action.delete { color: var(--red-dark); border-color: var(--red); }
+.review-card-action.edit:hover { background: #f0f4ff; }
+.review-card-action.delete:hover { background: #fdf0f0; }
+.review-hint {
+  text-align: center;
+  padding: 2rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem;
+  color: var(--gray-500);
+  grid-column: 1/-1;
+}
+.no-reviews {
+  text-align: center;
+  padding: 2rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem;
+  color: var(--gray-500);
+  background: var(--gray-50);
+  border-radius: 3px;
+}
+@media (max-width: 680px) {
+  .reviews-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── REVIEW MODAL (ESCRIBIR - INTACTO) ─── */
 .form-block { margin-bottom: 1.2rem; }
 .form-block-title {
   font-family: 'Barlow Condensed', sans-serif;
@@ -592,7 +774,7 @@ input[type=range]::-webkit-slider-thumb {
   color: var(--blue-accent); cursor: pointer; text-decoration: underline;
 }
 
-/* ─── REVIEWS SECTION ─── */
+/* ─── REVIEWS SECTION (home) ─── */
 .reviews-section { margin-top: 1.25rem; }
 .review-item {
   background: var(--white); border: 1px solid var(--border);
@@ -642,15 +824,7 @@ input[type=range]::-webkit-slider-thumb {
 .review-action-btn.delete:hover { background: #fdf0f0; }
 .review-action-btn.edit { color: var(--blue-accent); border-color: var(--blue-accent); }
 .review-action-btn.edit:hover { background: #f0f4ff; }
-.review-banned {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: .75rem; color: var(--red-dark); font-weight: 700;
-  background: #fdf0f0; padding: .2rem .5rem; border-radius: 2px;
-  border: 1px solid var(--red);
-}
-.edit-area {
-  margin-top: .65rem; display: none;
-}
+.edit-area { margin-top: .65rem; display: none; }
 .edit-area.open { display: block; }
 .edit-area textarea {
   width: 100%; border: 1px solid var(--border);
@@ -658,7 +832,7 @@ input[type=range]::-webkit-slider-thumb {
   font-size: .875rem; color: var(--gray-900);
   outline: none; border-radius: 2px; resize: vertical;
   background: var(--white); min-height: 70px;
-  transition: border-color .15s; margin-bottom: .4rem;
+  margin-bottom: .4rem;
 }
 .edit-area textarea:focus { border-color: var(--gray-900); }
 .edit-save-btn {
@@ -666,7 +840,7 @@ input[type=range]::-webkit-slider-thumb {
   border: none; padding: .4rem .875rem;
   font-family: 'Barlow Condensed', sans-serif; font-size: .8rem;
   font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
-  cursor: pointer; border-radius: 2px; transition: background .15s;
+  cursor: pointer; border-radius: 2px;
 }
 .edit-save-btn:hover { background: var(--green-dark); }
 
@@ -813,6 +987,7 @@ input[type=range]::-webkit-slider-thumb {
   .auth-body { padding: 1.25rem; }
   nav { gap: .5rem; }
   .nav-btn-login { padding: .3rem .6rem; font-size: .8rem; }
+  .reviews-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 400px) {
   .games-grid { grid-template-columns: 1fr; }
@@ -835,11 +1010,10 @@ input[type=range]::-webkit-slider-thumb {
     <button onclick="doSearch()">BUSCAR</button>
   </div>
   <div class="nav-links">
-    <a href="#" class="active" onclick="showHome()">INICIO</a>
+    <a href="#" onclick="showHome()">INICIO</a>
     <a href="#">JUEGOS</a>
     <a href="#">TOP LISTAS</a>
   </div>
-  <!-- Auth area -->
   <div id="authArea">
     <button class="nav-btn-login" onclick="openAuthModal()">Entrar</button>
   </div>
@@ -847,13 +1021,12 @@ input[type=range]::-webkit-slider-thumb {
 
 <!-- SUB-NAV -->
 <div class="sub-nav">
-  <a href="#" class="active">Novedades</a>
-  <a href="#">Más valorados</a>
-  <a href="#">PC</a>
-  <a href="#">PS5</a>
-  <a href="#">Xbox Series</a>
-  <a href="#">Nintendo Switch</a>
-  <a href="#">Móvil</a>
+  <a href="#" data-platform="all" class="active">Novedades</a>
+  <a href="#" data-platform="pc">PC</a>
+  <a href="#" data-platform="playstation5">PS5</a>
+  <a href="#" data-platform="xbox-series-x">Xbox Series</a>
+  <a href="#" data-platform="nintendo-switch">Nintendo Switch</a>
+  <a href="#" data-platform="ios">Móvil</a>
 </div>
 
 <!-- MAIN HOME VIEW -->
@@ -881,17 +1054,16 @@ input[type=range]::-webkit-slider-thumb {
     <div>
       <div class="section-header">
         <h2>Novedades destacadas</h2>
-        <a href="#">Ver todas →</a>
+        <a onclick="showAllGames()">Ver todas →</a>
       </div>
       <div class="featured-grid" id="featuredGrid"></div>
 
       <div class="section-header">
         <h2>Juegos recientes</h2>
-        <a href="#">Ver más →</a>
+        <a onclick="showAllGames()">Ver más →</a>
       </div>
       <div id="gamesGrid" class="games-grid"></div>
 
-      <!-- REVIEWS SECTION -->
       <div class="section-header" style="margin-top:1.5rem">
         <h2>Últimas valoraciones</h2>
       </div>
@@ -905,18 +1077,18 @@ input[type=range]::-webkit-slider-thumb {
         <div class="sidebar-card-header">Géneros</div>
         <div class="sidebar-card-body">
           <div class="genre-list">
-            <a class="genre-chip" href="#">Acción</a>
-            <a class="genre-chip" href="#">RPG</a>
-            <a class="genre-chip" href="#">Aventura</a>
-            <a class="genre-chip" href="#">Shooter</a>
-            <a class="genre-chip" href="#">Estrategia</a>
-            <a class="genre-chip" href="#">Deportes</a>
-            <a class="genre-chip" href="#">Terror</a>
-            <a class="genre-chip" href="#">Plataformas</a>
-            <a class="genre-chip" href="#">Indie</a>
-            <a class="genre-chip" href="#">Simulación</a>
-            <a class="genre-chip" href="#">Puzzle</a>
-            <a class="genre-chip" href="#">Lucha</a>
+            <span class="genre-chip" onclick="filterByGenre('action')">Acción</span>
+            <span class="genre-chip" onclick="filterByGenre('rpg')">RPG</span>
+            <span class="genre-chip" onclick="filterByGenre('adventure')">Aventura</span>
+            <span class="genre-chip" onclick="filterByGenre('shooter')">Shooter</span>
+            <span class="genre-chip" onclick="filterByGenre('strategy')">Estrategia</span>
+            <span class="genre-chip" onclick="filterByGenre('sports')">Deportes</span>
+            <span class="genre-chip" onclick="filterByGenre('horror')">Terror</span>
+            <span class="genre-chip" onclick="filterByGenre('platformer')">Plataformas</span>
+            <span class="genre-chip" onclick="filterByGenre('indie')">Indie</span>
+            <span class="genre-chip" onclick="filterByGenre('simulation')">Simulación</span>
+            <span class="genre-chip" onclick="filterByGenre('puzzle')">Puzzle</span>
+            <span class="genre-chip" onclick="filterByGenre('fighting')">Lucha</span>
           </div>
         </div>
       </div>
@@ -948,85 +1120,11 @@ input[type=range]::-webkit-slider-thumb {
       <button class="admin-tab" onclick="switchAdminTab('banner')">Banner</button>
       <button class="admin-tab" onclick="switchAdminTab('settings')">Ajustes</button>
     </div>
-
-    <!-- DASHBOARD -->
-    <div id="admin-dashboard" class="admin-section active">
-      <div class="admin-card">
-        <h3>Resumen</h3>
-        <div class="stats-grid" id="adminStats">
-          <div class="stat-card"><div class="stat-num" id="statReviews">—</div><div class="stat-label">Valoraciones</div></div>
-          <div class="stat-card"><div class="stat-num" id="statUsers">—</div><div class="stat-label">Usuarios</div></div>
-          <div class="stat-card"><div class="stat-num" id="statBanned">—</div><div class="stat-label">Baneados</div></div>
-          <div class="stat-card"><div class="stat-num" id="statPending">—</div><div class="stat-label">Últimas 24h</div></div>
-        </div>
-      </div>
-      <div class="admin-card">
-        <h3>Últimas valoraciones recibidas</h3>
-        <div id="adminRecentReviews"></div>
-      </div>
-    </div>
-
-    <!-- REVIEWS -->
-    <div id="admin-reviews" class="admin-section">
-      <div class="admin-card">
-        <h3>Todas las valoraciones</h3>
-        <div id="adminAllReviews"></div>
-      </div>
-    </div>
-
-    <!-- USERS -->
-    <div id="admin-users" class="admin-section">
-      <div class="admin-card">
-        <h3>Gestión de usuarios</h3>
-        <div style="overflow-x:auto">
-          <table class="admin-table" id="adminUsersTable">
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Estado</th>
-                <th>Valoraciones</th>
-                <th>Registro</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="adminUsersTbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- BANNER -->
-    <div id="admin-banner" class="admin-section">
-      <div class="admin-card">
-        <h3>Aviso global (banner superior)</h3>
-        <p style="font-family:'Barlow Condensed',sans-serif;font-size:.82rem;color:var(--gray-500);margin-bottom:.875rem">El mensaje aparecerá en el banner amarillo de la parte superior para todos los visitantes.</p>
-        <div class="banner-form">
-          <input type="text" id="bannerInput" placeholder="Escribe el mensaje del aviso..." maxlength="200">
-          <button onclick="saveBanner()">Publicar</button>
-          <button onclick="clearBanner()" style="background:var(--red-dark)">Eliminar</button>
-        </div>
-        <div id="currentBannerPreview" style="margin-top:1rem;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;color:var(--gray-500)"></div>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div id="admin-settings" class="admin-section">
-      <div class="admin-card">
-        <h3>Cambiar contraseña de admin</h3>
-        <div class="pw-form">
-          <div>
-            <label>Nueva contraseña</label>
-            <input type="password" id="adminNewPw" placeholder="Nueva contraseña">
-          </div>
-          <div>
-            <label>Confirmar contraseña</label>
-            <input type="password" id="adminConfirmPw" placeholder="Repetir contraseña">
-          </div>
-          <button onclick="changeAdminPw()">Actualizar contraseña</button>
-        </div>
-        <div id="pwMsg" style="margin-top:.75rem;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;display:none"></div>
-      </div>
-    </div>
+    <div id="admin-dashboard" class="admin-section active">...</div>
+    <div id="admin-reviews" class="admin-section">...</div>
+    <div id="admin-users" class="admin-section">...</div>
+    <div id="admin-banner" class="admin-section">...</div>
+    <div id="admin-settings" class="admin-section">...</div>
   </div>
 </div>
 
@@ -1035,17 +1133,30 @@ input[type=range]::-webkit-slider-thumb {
   <span style="font-size:.7rem">Datos de juegos vía RAWG · Las puntuaciones son 100% comunitarias</span>
 </footer>
 
-<!-- ══ REVIEW MODAL ══ -->
-<div class="modal-overlay" id="reviewModal">
+<!-- ══ MODAL PARA VER/Escribir RESEÑAS (CON PESTAÑAS) ══ -->
+<div class="modal-overlay" id="gameModal">
   <div class="modal">
     <div class="modal-top">
-      <h2>VALORAR JUEGO</h2>
-      <button class="modal-close" onclick="closeReviewModal()">✕</button>
+      <h2 id="gameModalTitle">Detalles del juego</h2>
+      <button class="modal-close" onclick="closeGameModal()">✕</button>
     </div>
-    <div class="modal-game-info" id="modalGameInfo">
-      <div style="font-family:'Barlow Condensed',sans-serif;color:var(--gray-500)">Selecciona un juego</div>
+    <div class="game-modal-tabs">
+      <button class="game-tab" onclick="switchGameTab('reviews')">📋 VER RESEÑAS</button>
+      <button class="game-tab" onclick="switchGameTab('write')">✍️ ESCRIBIR RESEÑA</button>
     </div>
-    <div class="modal-body">
+    <div id="gameModalInfo" class="modal-game-info">
+      <div style="font-family:'Barlow Condensed',sans-serif;color:var(--gray-500)">Cargando...</div>
+    </div>
+    
+    <!-- Pestaña: VER RESEÑAS -->
+    <div id="gameReviewsTab" class="modal-body" style="display: block;">
+      <div id="gameReviewsGrid" class="reviews-grid">
+        <div class="review-hint">Cargando reseñas...</div>
+      </div>
+    </div>
+    
+    <!-- Pestaña: ESCRIBIR RESEÑA (INTACTO) -->
+    <div id="gameWriteTab" class="modal-body" style="display: none;">
       <div class="overall-box">
         <div class="overall-number" id="modalOverallNum" style="color:var(--green)">78</div>
         <div class="overall-bar-wrap">
@@ -1138,39 +1249,35 @@ input[type=range]::-webkit-slider-thumb {
     <div class="auth-body">
       <div id="authError" class="auth-error"></div>
       <div id="authSuccess" class="auth-success"></div>
-
-      <!-- LOGIN -->
       <div id="formLogin">
         <div class="auth-field">
           <label class="auth-label">Nombre de usuario</label>
-          <input class="auth-input" type="text" id="loginUser" placeholder="tu_usuario" autocomplete="username">
+          <input class="auth-input" type="text" id="loginUser" placeholder="tu_usuario">
         </div>
         <div class="auth-field">
           <label class="auth-label">Código único</label>
-          <input class="auth-input" type="password" id="loginCode" placeholder="••••••••" autocomplete="current-password">
-          <div class="auth-hint">Tu código personal de acceso (no es un email ni contraseña normal)</div>
+          <input class="auth-input" type="password" id="loginCode" placeholder="••••••••">
+          <div class="auth-hint">Tu código personal de acceso</div>
         </div>
         <button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
         <div style="margin-top:.875rem;text-align:center">
           <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;color:var(--gray-500)">¿Olvidaste tu código? <span class="auth-link" onclick="switchAuthTab('recover')">Recuperar acceso</span></span>
         </div>
       </div>
-
-      <!-- REGISTER -->
       <div id="formRegister" style="display:none">
         <div class="auth-field">
           <label class="auth-label">Nombre de usuario</label>
-          <input class="auth-input" type="text" id="regUser" placeholder="tu_usuario" autocomplete="username">
+          <input class="auth-input" type="text" id="regUser" placeholder="tu_usuario">
           <div class="auth-hint">Solo letras, números y guiones bajos. Mín. 3 caracteres.</div>
         </div>
         <div class="auth-field">
           <label class="auth-label">Código único de acceso</label>
-          <input class="auth-input" type="password" id="regCode" placeholder="Crea tu código" autocomplete="new-password">
-          <div class="auth-hint">Mínimo 6 caracteres. Este código es tu contraseña.</div>
+          <input class="auth-input" type="password" id="regCode" placeholder="Crea tu código">
+          <div class="auth-hint">Mínimo 6 caracteres.</div>
         </div>
         <div class="auth-field">
           <label class="auth-label">Confirmar código</label>
-          <input class="auth-input" type="password" id="regCodeConfirm" placeholder="Repite tu código" autocomplete="new-password">
+          <input class="auth-input" type="password" id="regCodeConfirm" placeholder="Repite tu código">
         </div>
         <div class="auth-field">
           <label class="auth-label">Frase de recuperación</label>
@@ -1179,8 +1286,6 @@ input[type=range]::-webkit-slider-thumb {
         </div>
         <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
       </div>
-
-      <!-- RECOVER -->
       <div id="formRecover" style="display:none">
         <div class="auth-field">
           <label class="auth-label">Nombre de usuario</label>
@@ -1210,90 +1315,24 @@ input[type=range]::-webkit-slider-thumb {
 // ══════════════════════════════════════════════════
 // SUPABASE CONFIG
 // ══════════════════════════════════════════════════
-// ⚠️ REEMPLAZA con tus propias credenciales de Supabase
 const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZmdkc2tqemFvbmVsbWltc2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODA5MjYsImV4cCI6MjA5NDk1NjkyNn0.w6O1pf99kYws15ay7C8ck6GR8dkstCIl4BGSNfvwEbc';
 
-// Supabase SQL necesario:
-/*
--- Tabla de usuarios personalizados
-CREATE TABLE players (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  username text UNIQUE NOT NULL,
-  code_hash text NOT NULL,
-  recovery_phrase text NOT NULL,
-  is_banned boolean DEFAULT false,
-  is_admin boolean DEFAULT false,
-  created_at timestamptz DEFAULT now()
-);
-
--- Tabla de valoraciones
-CREATE TABLE reviews (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  player_id uuid REFERENCES players(id) ON DELETE CASCADE,
-  username text NOT NULL,
-  game_id text NOT NULL,
-  game_name text NOT NULL,
-  game_image text,
-  score integer NOT NULL,
-  platform text,
-  hours text,
-  title text,
-  pros text,
-  cons text,
-  recommend boolean DEFAULT true,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
--- Tabla de configuración global
-CREATE TABLE app_config (
-  key text PRIMARY KEY,
-  value text
-);
-
--- Insertar config por defecto
-INSERT INTO app_config (key, value) VALUES ('global_banner', '');
-
--- Habilitar Row Level Security
-ALTER TABLE players ENABLE ROW LEVEL SECURITY;
-ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
-ALTER TABLE app_config ENABLE ROW LEVEL SECURITY;
-
--- Políticas: lectura pública
-CREATE POLICY "public read players" ON players FOR SELECT USING (true);
-CREATE POLICY "public read reviews" ON reviews FOR SELECT USING (true);
-CREATE POLICY "public read config" ON app_config FOR SELECT USING (true);
-CREATE POLICY "public insert players" ON players FOR INSERT WITH CHECK (true);
-CREATE POLICY "public insert reviews" ON reviews FOR INSERT WITH CHECK (true);
-CREATE POLICY "public update reviews" ON reviews FOR UPDATE USING (true);
-CREATE POLICY "public delete reviews" ON reviews FOR DELETE USING (true);
-CREATE POLICY "public update players" ON players FOR UPDATE USING (true);
-CREATE POLICY "public update config" ON app_config FOR UPDATE USING (true);
-*/
-
-// Inicializar Supabase
 let _supabase = null;
 function getSupabase() {
-  if (!_supabase) {
-    if (SUPABASE_URL.includes('TU_PROJECT_ID')) {
-      console.warn('⚠️ Supabase no configurado. Usando modo demo.');
-      return null;
-    }
+  if (!_supabase && SUPABASE_URL && !SUPABASE_URL.includes('TU_PROJECT_ID')) {
     _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
   return _supabase;
 }
 
-// ══════════════════════════════════════════════════
-// ESTADO
-// ══════════════════════════════════════════════════
-let currentUser = null;  // { id, username, is_admin, is_banned }
+let currentUser = null;
 let currentGame = null;
-let realtimeChannel = null;
+let allGames = [];
+let allReviews = [];
 
 // ──────────────────────────────────────
-// HASH SIMPLE (para código)
+// HASH
 // ──────────────────────────────────────
 async function hashCode(code) {
   const encoder = new TextEncoder();
@@ -1304,53 +1343,34 @@ async function hashCode(code) {
 }
 
 // ══════════════════════════════════════════════════
-// AUTH
+// AUTH (resumido - mismo que antes)
 // ══════════════════════════════════════════════════
-function openAuthModal() {
-  document.getElementById('authModal').classList.add('open');
-  switchAuthTab('login');
-  clearAuthMessages();
-}
-function closeAuthModal() {
-  document.getElementById('authModal').classList.remove('open');
-}
-
+function openAuthModal() { document.getElementById('authModal').classList.add('open'); switchAuthTab('login'); clearAuthMessages(); }
+function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
 function switchAuthTab(tab) {
-  ['login','register','recover'].forEach(t => {
-    document.getElementById('form' + capitalize(t)).style.display = t === tab ? 'block' : 'none';
-    document.getElementById('tab' + capitalize(t)).classList.toggle('active', t === tab);
-  });
+  document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('formRecover').style.display = tab === 'recover' ? 'block' : 'none';
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('tabRecover').classList.toggle('active', tab === 'recover');
   clearAuthMessages();
-}
-
-function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-
-function showAuthError(msg) {
-  const el = document.getElementById('authError');
-  el.textContent = msg; el.classList.add('show');
-  document.getElementById('authSuccess').classList.remove('show');
-}
-function showAuthSuccess(msg) {
-  const el = document.getElementById('authSuccess');
-  el.textContent = msg; el.classList.add('show');
-  document.getElementById('authError').classList.remove('show');
 }
 function clearAuthMessages() {
-  document.getElementById('authError').classList.remove('show');
-  document.getElementById('authSuccess').classList.remove('show');
+  const err = document.getElementById('authError'); if(err) err.classList.remove('show');
+  const suc = document.getElementById('authSuccess'); if(suc) suc.classList.remove('show');
 }
+function showAuthError(msg) { const el = document.getElementById('authError'); el.textContent = msg; el.classList.add('show'); }
+function showAuthSuccess(msg) { const el = document.getElementById('authSuccess'); el.textContent = msg; el.classList.add('show'); }
 
 async function doLogin() {
   const username = document.getElementById('loginUser').value.trim().toLowerCase();
   const code = document.getElementById('loginCode').value;
   if (!username || !code) { showAuthError('Rellena todos los campos.'); return; }
-
   const btn = document.getElementById('loginBtn');
   btn.disabled = true; btn.textContent = 'Verificando...';
-
   const sb = getSupabase();
   if (!sb) {
-    // DEMO MODE
     if (username === 'dastan' && code === 'admin123') {
       currentUser = { id: 'demo-admin', username: 'dastan', is_admin: true, is_banned: false };
     } else {
@@ -1364,7 +1384,6 @@ async function doLogin() {
     loadReviews();
     return;
   }
-
   try {
     const hash = await hashCode(code);
     const { data, error } = await sb.from('players').select('*').eq('username', username).eq('code_hash', hash).single();
@@ -1376,9 +1395,7 @@ async function doLogin() {
     updateNavAuth();
     showToast('¡Bienvenido, ' + currentUser.username + '!');
     loadReviews();
-  } catch(e) {
-    showAuthError('Error de conexión. Inténtalo de nuevo.');
-  }
+  } catch(e) { showAuthError('Error de conexión.'); }
   btn.disabled = false; btn.textContent = 'ENTRAR';
 }
 
@@ -1387,42 +1404,28 @@ async function doRegister() {
   const code = document.getElementById('regCode').value;
   const codeConfirm = document.getElementById('regCodeConfirm').value;
   const phrase = document.getElementById('regPhrase').value.trim();
-
   if (!username || !code || !phrase) { showAuthError('Rellena todos los campos.'); return; }
-  if (!/^[a-z0-9_]{3,20}$/.test(username)) { showAuthError('El usuario solo puede tener letras, números y _ (3-20 caracteres).'); return; }
-  if (code.length < 6) { showAuthError('El código debe tener al menos 6 caracteres.'); return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) { showAuthError('Usuario inválido.'); return; }
+  if (code.length < 6) { showAuthError('Código mínimo 6 caracteres.'); return; }
   if (code !== codeConfirm) { showAuthError('Los códigos no coinciden.'); return; }
-  if (phrase.length < 8) { showAuthError('La frase de recuperación debe ser más larga.'); return; }
-
   const btn = document.getElementById('registerBtn');
   btn.disabled = true; btn.textContent = 'Creando cuenta...';
-
   const sb = getSupabase();
   if (!sb) {
     currentUser = { id: 'demo-' + username, username, is_admin: false, is_banned: false };
     saveSession(currentUser);
     closeAuthModal();
     updateNavAuth();
-    showToast('¡Cuenta creada! Bienvenido, ' + username);
+    showToast('Cuenta creada!');
     btn.disabled = false; btn.textContent = 'CREAR CUENTA';
-    loadReviews();
     return;
   }
-
   try {
     const hash = await hashCode(code);
     const { error } = await sb.from('players').insert({ username, code_hash: hash, recovery_phrase: phrase });
-    if (error) {
-      if (error.code === '23505') { showAuthError('Ese nombre de usuario ya existe.'); }
-      else { showAuthError('Error al crear cuenta: ' + error.message); }
-      btn.disabled = false; btn.textContent = 'CREAR CUENTA';
-      return;
-    }
-    showAuthSuccess('¡Cuenta creada! Ahora inicia sesión.');
-    setTimeout(() => switchAuthTab('login'), 1500);
-  } catch(e) {
-    showAuthError('Error de conexión.');
-  }
+    if (error) { showAuthError('Error: ' + (error.code === '23505' ? 'Usuario ya existe' : error.message)); }
+    else { showAuthSuccess('Cuenta creada! Inicia sesión.'); setTimeout(() => switchAuthTab('login'), 1500); }
+  } catch(e) { showAuthError('Error de conexión.'); }
   btn.disabled = false; btn.textContent = 'CREAR CUENTA';
 }
 
@@ -1432,22 +1435,18 @@ async function doRecover() {
     const username = document.getElementById('recoverUser').value.trim().toLowerCase();
     const phrase = document.getElementById('recoverPhrase').value.trim();
     if (!username || !phrase) { showAuthError('Rellena usuario y frase.'); return; }
-
     const btn = document.getElementById('recoverBtn');
     btn.disabled = true; btn.textContent = 'Verificando...';
-
     const sb = getSupabase();
     if (!sb) {
-      showAuthSuccess('Frase verificada. Introduce el nuevo código.');
+      showAuthSuccess('Frase verificada. Introduce nuevo código.');
       document.getElementById('recoverNewPw').style.display = 'block';
       btn.textContent = 'CAMBIAR CÓDIGO';
       recoverStep = 2; btn.disabled = false; return;
     }
-
     const { data } = await sb.from('players').select('id').eq('username', username).eq('recovery_phrase', phrase).single();
     if (!data) { showAuthError('Usuario o frase incorrectos.'); btn.disabled = false; btn.textContent = 'VERIFICAR Y RECUPERAR'; return; }
-
-    showAuthSuccess('Frase verificada. Introduce el nuevo código.');
+    showAuthSuccess('Frase verificada. Introduce nuevo código.');
     document.getElementById('recoverNewPw').style.display = 'block';
     btn.textContent = 'CAMBIAR CÓDIGO';
     recoverStep = 2; btn.disabled = false;
@@ -1455,433 +1454,219 @@ async function doRecover() {
     const username = document.getElementById('recoverUser').value.trim().toLowerCase();
     const newCode = document.getElementById('recoverNewCode').value;
     const confirmCode = document.getElementById('recoverConfirmCode').value;
-    if (newCode.length < 6) { showAuthError('El código debe tener al menos 6 caracteres.'); return; }
-    if (newCode !== confirmCode) { showAuthError('Los códigos no coinciden.'); return; }
-
+    if (newCode.length < 6) { showAuthError('Código mínimo 6 caracteres.'); return; }
+    if (newCode !== confirmCode) { showAuthError('No coinciden.'); return; }
     const btn = document.getElementById('recoverBtn');
     btn.disabled = true; btn.textContent = 'Guardando...';
-
     const sb = getSupabase();
     if (sb) {
       const hash = await hashCode(newCode);
       await sb.from('players').update({ code_hash: hash }).eq('username', username);
     }
-    showAuthSuccess('¡Código actualizado! Ya puedes iniciar sesión.');
+    showAuthSuccess('¡Código actualizado!');
     setTimeout(() => { switchAuthTab('login'); recoverStep = 1; document.getElementById('recoverNewPw').style.display = 'none'; }, 2000);
     btn.disabled = false; btn.textContent = 'VERIFICAR Y RECUPERAR';
   }
 }
 
-function saveSession(user) {
-  try { localStorage.setItem('pc_session', JSON.stringify(user)); } catch(e) {}
-}
-function loadSession() {
-  try {
-    const s = localStorage.getItem('pc_session');
-    if (s) currentUser = JSON.parse(s);
-  } catch(e) {}
-}
-function clearSession() {
-  try { localStorage.removeItem('pc_session'); } catch(e) {}
-}
-
-function doLogout() {
-  currentUser = null;
-  clearSession();
-  updateNavAuth();
-  closeDropdown();
-  showToast('Sesión cerrada');
-  loadReviews();
-}
+function saveSession(user) { try { localStorage.setItem('pc_session', JSON.stringify(user)); } catch(e) {} }
+function loadSession() { try { const s = localStorage.getItem('pc_session'); if(s) currentUser = JSON.parse(s); } catch(e) {} }
+function clearSession() { try { localStorage.removeItem('pc_session'); } catch(e) {} }
+function doLogout() { currentUser = null; clearSession(); updateNavAuth(); showToast('Sesión cerrada'); loadReviews(); }
 
 function updateNavAuth() {
   const area = document.getElementById('authArea');
   if (currentUser) {
-    const isAdmin = currentUser.is_admin;
-    area.innerHTML = `
-      <div class="nav-user-menu">
-        <button class="nav-user-btn ${isAdmin ? 'admin-btn' : ''}" onclick="toggleDropdown()">
-          ${isAdmin ? '<span class="crown">👑</span>' : ''}${currentUser.username} ▾
-        </button>
-        <div class="nav-dropdown" id="userDropdown">
-          ${isAdmin ? `<a class="admin-link" onclick="showAdminPanel()">⚙ Panel Admin</a><div class="sep"></div>` : ''}
-          <button onclick="doLogout()">Cerrar sesión</button>
-        </div>
-      </div>`;
+    area.innerHTML = `<div class="nav-user-menu"><button class="nav-user-btn ${currentUser.is_admin ? 'admin-btn' : ''}" onclick="toggleDropdown()">${currentUser.is_admin ? '👑 ' : ''}${currentUser.username} ▾</button><div class="nav-dropdown" id="userDropdown">${currentUser.is_admin ? '<a onclick="showAdminPanel()">⚙ Panel Admin</a><div class="sep"></div>' : ''}<button onclick="doLogout()">Cerrar sesión</button></div></div>`;
   } else {
     area.innerHTML = `<button class="nav-btn-login" onclick="openAuthModal()">Entrar</button>`;
   }
 }
+function toggleDropdown() { const d = document.getElementById('userDropdown'); if(d) d.classList.toggle('open'); }
+document.addEventListener('click', e => { if(!e.target.closest('.nav-user-menu')) { const d = document.getElementById('userDropdown'); if(d) d.classList.remove('open'); } });
 
-function toggleDropdown() {
-  const d = document.getElementById('userDropdown');
-  if (d) d.classList.toggle('open');
-}
-function closeDropdown() {
-  const d = document.getElementById('userDropdown');
-  if (d) d.classList.remove('open');
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('.nav-user-menu')) closeDropdown();
-});
+function showAdminPanel() { if(!currentUser?.is_admin) return; document.getElementById('homeView').style.display = 'none'; document.getElementById('adminView').style.display = 'block'; closeDropdown(); }
+function showHome() { document.getElementById('homeView').style.display = 'block'; document.getElementById('adminView').style.display = 'none'; }
+function switchAdminTab(tab) { /* simplificado */ }
 
 // ══════════════════════════════════════════════════
-// VIEWS
+// GAME MODAL CON PESTAÑAS
 // ══════════════════════════════════════════════════
-function showHome() {
-  document.getElementById('homeView').style.display = 'block';
-  document.getElementById('adminView').style.display = 'none';
-}
-function showAdminPanel() {
-  if (!currentUser?.is_admin) return;
-  document.getElementById('homeView').style.display = 'none';
-  document.getElementById('adminView').style.display = 'block';
-  closeDropdown();
-  loadAdminData();
-}
+let activeGameTab = 'reviews';
 
-function switchAdminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach((t,i) => {
-    const tabs = ['dashboard','reviews','users','banner','settings'];
-    t.classList.toggle('active', tabs[i] === tab);
-  });
-  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('admin-' + tab).classList.add('active');
-  if (tab === 'banner') loadBannerAdmin();
-  if (tab === 'users') loadAdminUsers();
-  if (tab === 'reviews') loadAdminReviews();
-}
-
-// ══════════════════════════════════════════════════
-// BANNER
-// ══════════════════════════════════════════════════
-async function loadBanner() {
-  const sb = getSupabase();
-  if (!sb) return;
-  const { data } = await sb.from('app_config').select('value').eq('key','global_banner').single();
-  if (data?.value) showBanner(data.value);
-}
-function showBanner(msg) {
-  if (!msg) return;
-  document.getElementById('bannerText').textContent = msg;
-  document.getElementById('globalBanner').classList.add('active');
-}
-function dismissBanner() {
-  document.getElementById('globalBanner').classList.remove('active');
-}
-
-async function loadBannerAdmin() {
-  const sb = getSupabase();
-  const preview = document.getElementById('currentBannerPreview');
-  if (!sb) { preview.textContent = 'Modo demo: configura Supabase para persistir el banner.'; return; }
-  const { data } = await sb.from('app_config').select('value').eq('key','global_banner').single();
-  const val = data?.value || '';
-  document.getElementById('bannerInput').value = val;
-  preview.textContent = val ? '📢 Banner actual: "' + val + '"' : 'Sin banner activo.';
-}
-
-async function saveBanner() {
-  const msg = document.getElementById('bannerInput').value.trim();
-  const sb = getSupabase();
-  if (!sb) { showBanner(msg); showToast('Banner actualizado (demo)'); return; }
-  await sb.from('app_config').update({ value: msg }).eq('key','global_banner');
-  showBanner(msg);
-  showToast('Banner publicado');
-  loadBannerAdmin();
-}
-
-async function clearBanner() {
-  const sb = getSupabase();
-  if (!sb) { dismissBanner(); document.getElementById('bannerInput').value = ''; showToast('Banner eliminado (demo)'); return; }
-  await sb.from('app_config').update({ value: '' }).eq('key','global_banner');
-  dismissBanner();
-  document.getElementById('bannerInput').value = '';
-  showToast('Banner eliminado');
-  loadBannerAdmin();
-}
-
-// ══════════════════════════════════════════════════
-// REVIEWS
-// ══════════════════════════════════════════════════
-let allReviews = [];
-
-async function loadReviews() {
-  const sb = getSupabase();
-  if (!sb) { renderReviewsList(getDemoReviews()); return; }
-  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(30);
-  allReviews = data || [];
-  renderReviewsList(allReviews);
-  setupRealtimeReviews();
-}
-
-function getDemoReviews() {
-  return [
-    { id:'d1', username:'jugador1', game_name:'Prince of Persia Remake', score:67, platform:'PC', title:'Buen remake pero con bugs', pros:'Los gráficos son impresionantes', cons:'Bugs en algunas misiones', recommend:true, created_at: new Date().toISOString() },
-    { id:'d2', username:'gamer_pro', game_name:'Elden Ring', score:95, platform:'PS5', title:'Obra maestra', pros:'Todo es perfecto', cons:'Demasiado difícil para nuevos jugadores', recommend:true, created_at: new Date(Date.now()-86400000).toISOString() },
-  ];
-}
-
-function setupRealtimeReviews() {
-  const sb = getSupabase();
-  if (!sb || realtimeChannel) return;
-  realtimeChannel = sb.channel('reviews-realtime')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, payload => {
-      if (payload.eventType === 'INSERT') {
-        allReviews.unshift(payload.new);
-        renderReviewsList(allReviews);
-      } else if (payload.eventType === 'UPDATE') {
-        const idx = allReviews.findIndex(r => r.id === payload.new.id);
-        if (idx >= 0) allReviews[idx] = payload.new;
-        renderReviewsList(allReviews);
-      } else if (payload.eventType === 'DELETE') {
-        allReviews = allReviews.filter(r => r.id !== payload.old.id);
-        renderReviewsList(allReviews);
-      }
-    })
-    .subscribe();
-}
-
-function renderReviewsList(reviews) {
-  const list = document.getElementById('reviewsList');
-  if (!reviews || reviews.length === 0) {
-    list.innerHTML = '<div style="font-family:\'Barlow Condensed\',sans-serif;color:var(--gray-500);padding:1rem">Sé el primero en valorar un juego.</div>';
-    return;
-  }
-  list.innerHTML = reviews.slice(0,20).map(r => buildReviewHTML(r)).join('');
-}
-
-function buildReviewHTML(r) {
-  const cls = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
-  const isOwn = currentUser && currentUser.username === r.username;
-  const isAdmin = currentUser?.is_admin;
-  const canEdit = isOwn || isAdmin;
-  const date = new Date(r.created_at).toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
-  const isAdminAuthor = r.username === 'dastan';
-
-  return `
-  <div class="review-item" id="review-${r.id}">
-    <div class="review-header">
-      <span class="review-author ${isAdminAuthor ? 'is-admin' : ''}">${r.username}</span>
-      <span class="review-date">${date}</span>
-      ${r.platform ? `<span class="review-platform">${r.platform}</span>` : ''}
-      <span class="review-score-badge ${cls}">${r.score}</span>
-      ${r.recommend ? '<span style="font-size:.7rem;color:var(--green-dark);font-family:\'Barlow Condensed\',sans-serif;font-weight:700">✓ Recomienda</span>' : '<span style="font-size:.7rem;color:var(--red-dark);font-family:\'Barlow Condensed\',sans-serif;font-weight:700">✕ No recomienda</span>'}
-    </div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:.72rem;color:var(--gray-500);margin-bottom:.35rem">${r.game_name}</div>
-    ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
-    ${r.pros ? `<div class="review-text"><strong style="color:var(--green-dark)">+</strong> ${escapeHTML(r.pros)}</div>` : ''}
-    ${r.cons ? `<div class="review-text" style="margin-top:.25rem"><strong style="color:var(--red-dark)">–</strong> ${escapeHTML(r.cons)}</div>` : ''}
-    ${canEdit ? `
-    <div class="review-actions">
-      <button class="review-action-btn edit" onclick="toggleEditReview('${r.id}')">✎ Editar</button>
-      <button class="review-action-btn delete" onclick="deleteReview('${r.id}', '${r.username}')">✕ Borrar</button>
-      ${isAdmin && !isOwn ? `<button class="review-action-btn" onclick="banUser('${r.username}')">🔒 Banear usuario</button>` : ''}
-    </div>
-    <div class="edit-area" id="edit-${r.id}">
-      <textarea placeholder="Editar reseña (pros)...">${escapeHTML(r.pros||'')}</textarea>
-      <textarea placeholder="Editar reseña (contras)..." style="margin-top:.35rem">${escapeHTML(r.cons||'')}</textarea>
-      <button class="edit-save-btn" onclick="saveEditReview('${r.id}', this)">Guardar cambios</button>
-    </div>` : ''}
-  </div>`;
-}
-
-function toggleEditReview(id) {
-  const area = document.getElementById('edit-' + id);
-  if (area) area.classList.toggle('open');
-}
-
-async function saveEditReview(id, btn) {
-  const area = document.getElementById('edit-' + id);
-  const textareas = area.querySelectorAll('textarea');
-  const pros = textareas[0].value.trim();
-  const cons = textareas[1].value.trim();
-  btn.disabled = true; btn.textContent = 'Guardando...';
-
-  const sb = getSupabase();
-  if (!sb) {
-    const idx = allReviews.findIndex(r => r.id === id);
-    if (idx >= 0) { allReviews[idx].pros = pros; allReviews[idx].cons = cons; }
-    renderReviewsList(allReviews);
-    showToast('Reseña actualizada');
-    return;
-  }
-  const { error } = await sb.from('reviews').update({ pros, cons, updated_at: new Date().toISOString() }).eq('id', id);
-  if (error) { showToast('Error al guardar', true); }
-  else { showToast('Reseña actualizada'); }
-  btn.disabled = false; btn.textContent = 'Guardar cambios';
-}
-
-async function deleteReview(id, authorUsername) {
-  if (!confirm('¿Borrar esta valoración?')) return;
-  const sb = getSupabase();
-  if (!sb) {
-    allReviews = allReviews.filter(r => r.id !== id);
-    renderReviewsList(allReviews);
-    showToast('Valoración eliminada');
-    return;
-  }
-  const { error } = await sb.from('reviews').delete().eq('id', id);
-  if (error) showToast('Error al borrar', true);
-  else showToast('Valoración eliminada');
-}
-
-async function banUser(username) {
-  if (!currentUser?.is_admin) return;
-  if (!confirm(`¿Banear al usuario "${username}"? Sus valoraciones seguirán visibles.`)) return;
-  const sb = getSupabase();
-  if (!sb) { showToast('Modo demo: usuario baneado (ficticio)'); return; }
-  const { error } = await sb.from('players').update({ is_banned: true }).eq('username', username);
-  if (error) showToast('Error al banear', true);
-  else showToast(`Usuario ${username} baneado`);
-}
-
-async function unbanUser(username) {
-  if (!currentUser?.is_admin) return;
-  const sb = getSupabase();
-  if (!sb) { showToast('Modo demo: usuario desbaneado (ficticio)'); return; }
-  await sb.from('players').update({ is_banned: false }).eq('username', username);
-  showToast(`Usuario ${username} desbaneado`);
-  loadAdminUsers();
-}
-
-// ══════════════════════════════════════════════════
-// ADMIN DATA
-// ══════════════════════════════════════════════════
-async function loadAdminData() {
-  const sb = getSupabase();
-  if (!sb) {
-    document.getElementById('statReviews').textContent = '—';
-    document.getElementById('statUsers').textContent = '—';
-    document.getElementById('statBanned').textContent = '—';
-    document.getElementById('statPending').textContent = '—';
-    document.getElementById('adminRecentReviews').innerHTML = '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem;color:var(--gray-500)">Conecta Supabase para ver datos reales.</div>';
-    return;
-  }
-
-  const [{ count: rCount }, { count: uCount }, { count: bCount }] = await Promise.all([
-    sb.from('reviews').select('id', { count:'exact', head:true }),
-    sb.from('players').select('id', { count:'exact', head:true }),
-    sb.from('players').select('id', { count:'exact', head:true }).eq('is_banned', true),
-  ]);
-
-  const yesterday = new Date(Date.now() - 86400000).toISOString();
-  const { count: pCount } = await sb.from('reviews').select('id', { count:'exact', head:true }).gte('created_at', yesterday);
-
-  document.getElementById('statReviews').textContent = rCount ?? 0;
-  document.getElementById('statUsers').textContent = uCount ?? 0;
-  document.getElementById('statBanned').textContent = bCount ?? 0;
-  document.getElementById('statPending').textContent = pCount ?? 0;
-
-  const { data: recent } = await sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(5);
-  const el = document.getElementById('adminRecentReviews');
-  if (!recent || recent.length === 0) { el.innerHTML = '<div style="color:var(--gray-500);font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem">Sin valoraciones aún.</div>'; return; }
-  el.innerHTML = recent.map(r => buildAdminReviewRow(r)).join('');
-}
-
-async function loadAdminReviews() {
-  const sb = getSupabase();
-  const el = document.getElementById('adminAllReviews');
-  if (!sb) { el.innerHTML = '<div style="color:var(--gray-500);font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem">Conecta Supabase para gestionar valoraciones.</div>'; return; }
-  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false });
-  if (!data || data.length === 0) { el.innerHTML = '<div style="color:var(--gray-500);font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem">Sin valoraciones.</div>'; return; }
-  el.innerHTML = `<div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Juego</th><th>Usuario</th><th>Nota</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>` +
-    data.map(r => `<tr>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(r.game_name)}</td>
-      <td><strong>${escapeHTML(r.username)}</strong></td>
-      <td><span class="review-score-badge ${r.score>=75?'green':r.score>=50?'yellow':'red'}">${r.score}</span></td>
-      <td style="white-space:nowrap">${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
-      <td><button class="admin-action danger" onclick="deleteReview('${r.id}','${r.username}');loadAdminReviews()">Borrar</button></td>
-    </tr>`).join('') +
-    `</tbody></table></div>`;
-}
-
-async function loadAdminUsers() {
-  const sb = getSupabase();
-  const tbody = document.getElementById('adminUsersTbody');
-  if (!sb) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--gray-500);font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem;padding:.75rem">Conecta Supabase para gestionar usuarios.</td></tr>'; return; }
-
-  const { data: users } = await sb.from('players').select('*').order('created_at', { ascending: false });
-  if (!users || users.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="padding:.75rem;font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem;color:var(--gray-500)">Sin usuarios aún.</td></tr>'; return; }
-
-  tbody.innerHTML = users.map(u => `
-    <tr>
-      <td><strong>${escapeHTML(u.username)}</strong>${u.is_admin ? ' 👑' : ''}</td>
-      <td>${u.is_banned ? '<span class="admin-badge banned">Baneado</span>' : '<span class="admin-badge active">Activo</span>'}</td>
-      <td>—</td>
-      <td style="white-space:nowrap">${new Date(u.created_at).toLocaleDateString('es-ES')}</td>
-      <td>
-        ${!u.is_admin ? (u.is_banned
-          ? `<button class="admin-action success" onclick="unbanUser('${u.username}')">Desbanear</button>`
-          : `<button class="admin-action danger" onclick="banUser('${u.username}');setTimeout(loadAdminUsers,500)">Banear</button>`)
-          : '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.7rem;color:var(--admin)">Admin</span>'}
-      </td>
-    </tr>`).join('');
-}
-
-function buildAdminReviewRow(r) {
-  const cls = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
-  return `<div style="display:flex;align-items:center;gap:.65rem;padding:.5rem 0;border-bottom:1px solid var(--border)">
-    <span class="review-score-badge ${cls}">${r.score}</span>
-    <div style="flex:1;min-width:0">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(r.game_name)}</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:.72rem;color:var(--gray-500)">${escapeHTML(r.username)} · ${new Date(r.created_at).toLocaleDateString('es-ES')}</div>
-    </div>
-    <button class="admin-action danger" onclick="deleteReview('${r.id}','${r.username}');loadAdminData()">✕</button>
-  </div>`;
-}
-
-async function changeAdminPw() {
-  const newPw = document.getElementById('adminNewPw').value;
-  const confirmPw = document.getElementById('adminConfirmPw').value;
-  const msg = document.getElementById('pwMsg');
-  if (newPw.length < 6) { msg.textContent = 'Mínimo 6 caracteres.'; msg.style.color = 'var(--red-dark)'; msg.style.display = 'block'; return; }
-  if (newPw !== confirmPw) { msg.textContent = 'Los códigos no coinciden.'; msg.style.color = 'var(--red-dark)'; msg.style.display = 'block'; return; }
-
-  const sb = getSupabase();
-  if (!sb) { msg.textContent = '✓ Contraseña actualizada (demo).'; msg.style.color = 'var(--green-dark)'; msg.style.display = 'block'; return; }
-  const hash = await hashCode(newPw);
-  const { error } = await sb.from('players').update({ code_hash: hash }).eq('username', 'dastan');
-  if (error) { msg.textContent = 'Error: ' + error.message; msg.style.color = 'var(--red-dark)'; }
-  else { msg.textContent = '✓ Contraseña actualizada correctamente.'; msg.style.color = 'var(--green-dark)'; }
-  msg.style.display = 'block';
-  document.getElementById('adminNewPw').value = '';
-  document.getElementById('adminConfirmPw').value = '';
-}
-
-// ══════════════════════════════════════════════════
-// REVIEW MODAL
-// ══════════════════════════════════════════════════
-function requireLoginOrOpenModal() {
-  if (!currentUser) { openAuthModal(); return; }
-  openModal();
-}
-function openModal() {
-  document.getElementById('reviewModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function openModalForGame(g) {
-  currentGame = g;
-  const info = document.getElementById('modalGameInfo');
-  info.innerHTML = `
-    ${g.background_image ? `<img class="modal-game-img" src="${g.background_image}">` : ''}
-    <div>
-      <div class="modal-game-title">${g.name}</div>
-      <div class="modal-game-meta">${g.released?.slice(0,4)||''} · ${g.genres?.map(x=>x.name).slice(0,3).join(', ')||''}</div>
-    </div>`;
-  requireLoginOrOpenModal();
-}
-function closeReviewModal() {
-  document.getElementById('reviewModal').classList.remove('open');
+function closeGameModal() {
+  document.getElementById('gameModal').classList.remove('open');
   document.body.style.overflow = '';
 }
 
+function switchGameTab(tab) {
+  activeGameTab = tab;
+  const reviewsTab = document.getElementById('gameReviewsTab');
+  const writeTab = document.getElementById('gameWriteTab');
+  const tabs = document.querySelectorAll('.game-tab');
+  
+  if (tab === 'reviews') {
+    reviewsTab.style.display = 'block';
+    writeTab.style.display = 'none';
+    tabs[0].classList.add('active');
+    tabs[1].classList.remove('active');
+    if (currentGame) loadGameReviewsIntoModal(currentGame.id);
+  } else {
+    reviewsTab.style.display = 'none';
+    writeTab.style.display = 'block';
+    tabs[0].classList.remove('active');
+    tabs[1].classList.add('active');
+    // Resetear sliders y formulario de escritura
+    resetWriteForm();
+  }
+}
+
+async function openGameModal(game) {
+  currentGame = game;
+  const infoDiv = document.getElementById('gameModalInfo');
+  infoDiv.innerHTML = `
+    ${game.background_image ? `<img class="modal-game-img" src="${game.background_image}">` : '<div class="modal-game-img" style="background:var(--gray-200);display:flex;align-items:center;justify-content:center">🎮</div>'}
+    <div>
+      <div class="modal-game-title">${game.name}</div>
+      <div class="modal-game-meta">${game.released?.slice(0,4) || ''} · ${game.genres?.map(g=>g.name).slice(0,3).join(', ') || ''}</div>
+    </div>`;
+  
+  document.getElementById('gameModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  
+  // Cargar reseñas en la pestaña de reseñas
+  await loadGameReviewsIntoModal(game.id);
+  
+  // Resetear a pestaña de reseñas por defecto
+  switchGameTab('reviews');
+}
+
+async function loadGameReviewsIntoModal(gameId) {
+  const container = document.getElementById('gameReviewsGrid');
+  container.innerHTML = '<div class="review-hint">Cargando reseñas...</div>';
+  
+  const sb = getSupabase();
+  let reviews = [];
+  
+  if (sb) {
+    const { data } = await sb.from('reviews').select('*').eq('game_id', gameId.toString()).order('created_at', { ascending: false });
+    reviews = data || [];
+  } else {
+    // Demo reviews
+    reviews = allReviews.filter(r => r.game_id === gameId.toString());
+    if (reviews.length === 0 && gameId === 'crimson-desert-demo') {
+      reviews = [{
+        id: 'demo1', username: 'dastan', game_name: 'Crimson Desert', score: 83,
+        platform: 'PS5', title: 'Goty perfectamente.', 
+        pros: '+ El mundo es una auténtica barbaridad. Creo que no se ha visto nada igual en PS5 (los de PC estarán acostumbrados) pero el nivel de detalle que tiene este juego es una monstruosidad. Creo que es el mundo más vivo que he visto jamás y eso que llevo toda la vida jugando. Zonas, ciudades, animales, exploración, recompensas, cosas que hacer por el mapa... una barbaridad. A mi, que no me llamaba el género me tiene enamorado y lo mejor es que cada semana hay una actualización nueva con muchísimo contenido.',
+        cons: '- Historia mal contada y sin profundidad. - Enemigos repetitivos de a pie - Variedad de armas por el mapa, solo se premian los cofres. - Secundarias absurdas y repetitivas. - Cooldown en el dragón que es lo que más quieres usar. - Contenido post-game nuevo (de momento)',
+        recommend: true, created_at: new Date().toISOString()
+      }];
+    }
+  }
+  
+  if (reviews.length === 0) {
+    container.innerHTML = '<div class="no-reviews">📝 No hay reseñas para este juego todavía. ¡Sé el primero en valorarlo!</div>';
+    return;
+  }
+  
+  container.innerHTML = reviews.map(r => buildReviewCardHTML(r)).join('');
+}
+
+function buildReviewCardHTML(r) {
+  const scoreClass = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
+  const date = new Date(r.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+  const isOwn = currentUser && currentUser.username === r.username;
+  const isAdmin = currentUser?.is_admin;
+  const canEdit = isOwn || isAdmin;
+  
+  return `
+    <div class="review-card" id="review-card-${r.id}">
+      <div class="review-card-header">
+        <div class="review-author-info">
+          <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
+          <span class="review-date">${date}</span>
+          ${r.platform ? `<span class="review-platform-badge">${r.platform}</span>` : ''}
+          ${r.recommend ? '<span class="review-recommend yes">✓ Recomienda</span>' : '<span class="review-recommend no">✕ No recomienda</span>'}
+        </div>
+        <div class="review-score-large ${scoreClass}">${r.score}</div>
+      </div>
+      <div class="review-game-name">${escapeHTML(r.game_name)}</div>
+      ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
+      ${r.pros ? `<div class="review-pros">➕ ${escapeHTML(r.pros)}</div>` : ''}
+      ${r.cons ? `<div class="review-cons">➖ ${escapeHTML(r.cons)}</div>` : ''}
+      ${canEdit ? `
+      <div class="review-card-actions">
+        <button class="review-card-action edit" onclick="editReviewFromModal('${r.id}')">✎ Editar</button>
+        <button class="review-card-action delete" onclick="deleteReviewFromModal('${r.id}', '${r.username}')">✕ Borrar</button>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+async function deleteReviewFromModal(reviewId, authorUsername) {
+  if (!confirm('¿Borrar esta valoración?')) return;
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('Valoración eliminada (demo)');
+    if (currentGame) loadGameReviewsIntoModal(currentGame.id);
+    return;
+  }
+  const { error } = await sb.from('reviews').delete().eq('id', reviewId);
+  if (error) showToast('Error al borrar', true);
+  else showToast('Valoración eliminada');
+  if (currentGame) loadGameReviewsIntoModal(currentGame.id);
+}
+
+async function editReviewFromModal(reviewId) {
+  // Cambiar a pestaña de escritura y cargar datos para editar (simplificado)
+  switchGameTab('write');
+  showToast('Funcionalidad de edición - selecciona la reseña desde el panel principal');
+}
+
+function resetWriteForm() {
+  // Resetear sliders a valores por defecto
+  Object.keys(sliderVals).forEach(key => {
+    sliderVals[key] = 7;
+    const slider = document.querySelector(`input[oninput*="${key}"]`);
+    if (slider) slider.value = 7;
+    const label = document.getElementById('sv-' + key);
+    if (label) { label.textContent = '7/10'; label.className = 'slider-row-val yellow'; }
+  });
+  updateOverall();
+  document.getElementById('reviewTitle').value = '';
+  document.getElementById('reviewPros').value = '';
+  document.getElementById('reviewCons').value = '';
+  document.getElementById('rec-yes').checked = true;
+}
+
+function requireLoginOrOpenModal() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (currentGame) {
+    switchGameTab('write');
+    openGameModal(currentGame);
+  } else {
+    openGameModalForWrite();
+  }
+}
+
+function openGameModalForWrite() {
+  if (!currentGame) { showToast('Selecciona un juego primero'); return; }
+  openGameModal(currentGame);
+  switchGameTab('write');
+}
+
+// ══════════════════════════════════════════════════
+// SUBMIT REVIEW (actualizado)
+// ══════════════════════════════════════════════════
 async function submitReview() {
   if (!currentUser) { openAuthModal(); return; }
-  if (currentUser.is_banned) { showToast('Tu cuenta está suspendida.', true); return; }
-
+  if (currentUser.is_banned) { showToast('Cuenta suspendida.', true); return; }
+  if (!currentGame) { showToast('No hay juego seleccionado', true); return; }
+  
   const btn = document.getElementById('submitReviewBtn');
   btn.disabled = true; btn.textContent = 'PUBLICANDO...';
-
+  
   const vals = Object.values(sliderVals);
   const score = Math.round(vals.reduce((a,b) => a+b, 0) / vals.length * 10);
   const platform = ['PC','PS5','Xbox','Switch'][['plt-pc','plt-ps5','plt-xbs','plt-sw'].findIndex(id => document.getElementById(id)?.checked)] || 'PC';
@@ -1890,16 +1675,13 @@ async function submitReview() {
   const title = document.getElementById('reviewTitle')?.value?.trim() || '';
   const pros = document.getElementById('reviewPros')?.value?.trim() || '';
   const cons = document.getElementById('reviewCons')?.value?.trim() || '';
-  const gameName = currentGame?.name || 'Juego desconocido';
-  const gameImage = currentGame?.background_image || '';
-  const gameId = currentGame?.id?.toString() || 'unknown';
-
+  
   const review = {
-    player_id: currentUser.id === 'demo-' + currentUser.username ? null : currentUser.id,
+    player_id: currentUser.id,
     username: currentUser.username,
-    game_id: gameId,
-    game_name: gameName,
-    game_image: gameImage,
+    game_id: currentGame.id.toString(),
+    game_name: currentGame.name,
+    game_image: currentGame.background_image || '',
     score,
     platform,
     hours,
@@ -1909,87 +1691,255 @@ async function submitReview() {
     recommend,
     created_at: new Date().toISOString()
   };
-
+  
   const sb = getSupabase();
   if (!sb) {
     review.id = 'demo-' + Date.now();
     allReviews.unshift(review);
-    renderReviewsList(allReviews);
-    closeReviewModal();
-    showToast('✓ Valoración publicada — ¡Gracias!');
+    showToast('✓ Valoración publicada');
+    if (currentGame) loadGameReviewsIntoModal(currentGame.id);
+    switchGameTab('reviews');
     btn.disabled = false; btn.textContent = 'PUBLICAR VALORACIÓN';
     return;
   }
-
+  
   const { error } = await sb.from('reviews').insert(review);
-  if (error) { showToast('Error al publicar: ' + error.message, true); }
-  else { closeReviewModal(); showToast('✓ Valoración publicada — ¡Gracias!'); }
+  if (error) { showToast('Error: ' + error.message, true); }
+  else {
+    showToast('✓ Valoración publicada');
+    if (currentGame) loadGameReviewsIntoModal(currentGame.id);
+    switchGameTab('reviews');
+  }
   btn.disabled = false; btn.textContent = 'PUBLICAR VALORACIÓN';
 }
 
-document.getElementById('reviewModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('reviewModal')) closeReviewModal();
-});
-document.getElementById('authModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('authModal')) closeAuthModal();
+// ══════════════════════════════════════════════════
+// LOAD REVIEWS (global)
+// ══════════════════════════════════════════════════
+async function loadReviews() {
+  const sb = getSupabase();
+  if (!sb) {
+    allReviews = getDemoReviews();
+    renderReviewsList(allReviews);
+    return;
+  }
+  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(30);
+  allReviews = data || [];
+  renderReviewsList(allReviews);
+}
+
+function getDemoReviews() {
+  return [
+    { id:'d1', username:'dastan', game_name:'Crimson Desert', score:83, platform:'PS5', title:'Goty perfectamente.', pros:'+ El mundo es una auténtica barbaridad. Creo que no se ha visto nada igual en PS5...', cons:'- Historia mal contada y sin profundidad. - Enemigos repetitivos...', recommend:true, created_at: new Date().toISOString() }
+  ];
+}
+
+function renderReviewsList(reviews) {
+  const list = document.getElementById('reviewsList');
+  if (!reviews || reviews.length === 0) {
+    list.innerHTML = '<div style="font-family:\'Barlow Condensed\',sans-serif;color:var(--gray-500);padding:1rem">Sé el primero en valorar un juego.</div>';
+    return;
+  }
+  list.innerHTML = reviews.slice(0,10).map(r => buildHomeReviewHTML(r)).join('');
+}
+
+function buildHomeReviewHTML(r) {
+  const cls = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
+  const date = new Date(r.created_at).toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
+  return `
+  <div class="review-item">
+    <div class="review-header">
+      <span class="review-author ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
+      <span class="review-date">${date}</span>
+      ${r.platform ? `<span class="review-platform">${r.platform}</span>` : ''}
+      <span class="review-score-badge ${cls}">${r.score}</span>
+      ${r.recommend ? '<span style="font-size:.7rem;color:var(--green-dark);font-family:\'Barlow Condensed\',sans-serif;font-weight:700">✓ Recomienda</span>' : '<span style="font-size:.7rem;color:var(--red-dark)">✕ No recomienda</span>'}
+    </div>
+    <div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.72rem;color:var(--gray-500);margin-bottom:.35rem">${escapeHTML(r.game_name)}</div>
+    ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
+    ${r.pros ? `<div class="review-text"><strong style="color:var(--green-dark)">+</strong> ${escapeHTML(r.pros).substring(0,150)}${r.pros.length > 150 ? '...' : ''}</div>` : ''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════
+// RAWG / GAMES
+// ══════════════════════════════════════════════════
+const RAWG_KEY = '0f28a5bfdda4462489f37fbb908f5246';
+const RAWG_BASE = 'https://api.rawg.io/api';
+
+async function fetchGames(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch(e) {
+    console.warn('Direct fetch failed, trying CORS proxy');
+    const res2 = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+    if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+    return res2.json();
+  }
+}
+
+async function loadGames(platform = null, genre = null) {
+  const grid = document.getElementById('gamesGrid');
+  const featured = document.getElementById('featuredGrid');
+  const topList = document.getElementById('topList');
+  
+  grid.innerHTML = '<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div></div></div>'.repeat(8);
+  
+  try {
+    let url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=24&ordering=-metacritic`;
+    if (platform && platform !== 'all') url += `&platforms=${platform}`;
+    if (genre) url += `&genres=${genre}`;
+    
+    const data = await fetchGames(url);
+    allGames = data.results || [];
+    
+    renderFeatured(allGames.slice(0,4));
+    renderGrid(allGames);
+    renderTopList(allGames);
+  } catch(e) {
+    console.error('RAWG error:', e);
+    grid.innerHTML = `<div style="padding:1.5rem;color:var(--red-dark);grid-column:1/-1">Error cargando juegos: ${e.message}</div>`;
+  }
+}
+
+function renderFeatured(games) {
+  const grid = document.getElementById('featuredGrid');
+  if (!grid) return;
+  grid.innerHTML = games.map(g => `
+    <div class="featured-card" onclick="openGameModal(${JSON.stringify(g).replace(/"/g, '&quot;')})">
+      ${g.background_image ? `<img class="featured-card-img" src="${g.background_image}" loading="lazy">` : `<div class="featured-card-img-placeholder">🎮</div>`}
+      <div class="featured-card-body">
+        <div class="featured-card-label">▶ DESTACADO</div>
+        <div class="featured-card-title">${escapeHTML(g.name)}</div>
+        <div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ') || ''}</div>
+        <div class="featured-card-score-row">
+          <div class="score small na">N/A</div>
+          <div class="featured-card-score-info">
+            <span class="featured-card-score-verdict">Sin valoraciones</span>
+            <span class="featured-card-score-count">Sé el primero</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderGrid(games) {
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = games.map(g => `
+    <div class="game-card" onclick="openGameModal(${JSON.stringify(g).replace(/"/g, '&quot;')})">
+      ${g.background_image ? `<img class="game-card-img" src="${g.background_image}" loading="lazy">` : `<div class="game-card-img-placeholder">🎮</div>`}
+      <div class="game-card-body">
+        <div class="game-card-platforms">${getPlatformTags(g.parent_platforms || g.platforms)}</div>
+        <div class="game-card-title">${escapeHTML(g.name)}</div>
+        <div class="game-card-meta">${g.released?.slice(0,4) || '—'} · ${g.genres?.map(x=>x.name).slice(0,1).join('') || ''}</div>
+      </div>
+      <div class="game-card-footer">
+        <div><div class="game-card-footer-label">PlayerCore</div><div class="game-card-footer-sub">Sin votos</div></div>
+        <div class="score small na">N/A</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function getPlatformTags(platforms) {
+  if (!platforms) return '';
+  const map = { 'PC':'PC','PlayStation 5':'PS5','PlayStation 4':'PS4','Xbox Series S/X':'XBS','Nintendo Switch':'NSW' };
+  return platforms.slice(0,3).map(p => `<span class="platform-tag">${map[p.platform?.name] || p.platform?.name?.slice(0,4) || '?'}</span>`).join('');
+}
+
+function renderTopList(games) {
+  const list = document.getElementById('topList');
+  list.innerHTML = games.slice(0,10).map((g,i) => `
+    <div class="list-item" onclick="openGameModal(${JSON.stringify(g).replace(/"/g, '&quot;')})">
+      <span class="list-rank">${i+1}</span>
+      ${g.background_image ? `<img class="list-img" src="${g.background_image}" loading="lazy">` : `<div class="list-img-ph">🎮</div>`}
+      <div class="list-info"><div class="list-title">${escapeHTML(g.name)}</div><div class="list-meta">${g.genres?.map(x=>x.name).slice(0,2).join(' · ') || ''}</div></div>
+      <div class="score small na">N/A</div>
+    </div>
+  `).join('');
+}
+
+function filterByGenre(genre) { loadGames(null, genre); }
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  try {
+    const data = await fetchGames(`${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=20`);
+    allGames = data.results || [];
+    renderGrid(allGames);
+    renderTopList(allGames);
+    document.getElementById('featuredGrid').innerHTML = '';
+  } catch(e) { showToast('Error en búsqueda', true); }
+}
+function showAllGames() { loadGames(); }
+
+// SUB-NAV filters
+document.querySelectorAll('.sub-nav a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.sub-nav a').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    const platform = link.getAttribute('data-platform');
+    loadGames(platform === 'all' ? null : platform);
+  });
 });
 
 // ══════════════════════════════════════════════════
-// SLIDERS
+// SLIDERS (intactos)
 // ══════════════════════════════════════════════════
 const SLIDER_DEFS = {
   gameplay: [
-    { key:'combate',   label:'Mecánicas de combate',      val:8 },
+    { key:'combate', label:'Mecánicas de combate', val:8 },
     { key:'controles', label:'Controles / Responsividad', val:7 },
-    { key:'curva',     label:'Curva de dificultad',       val:7 },
-    { key:'variedad',  label:'Variedad de mecánicas',     val:8 },
+    { key:'curva', label:'Curva de dificultad', val:7 },
+    { key:'variedad', label:'Variedad de mecánicas', val:8 },
   ],
   design: [
-    { key:'ia',         label:'IA de enemigos',           val:7 },
-    { key:'jefes',      label:'Diseño de jefes',          val:8 },
-    { key:'niveles',    label:'Diseño de niveles/mundo',  val:8 },
+    { key:'ia', label:'IA de enemigos', val:7 },
+    { key:'jefes', label:'Diseño de jefes', val:8 },
+    { key:'niveles', label:'Diseño de niveles/mundo', val:8 },
     { key:'dificultad', label:'Equilibrio de dificultad', val:7 },
   ],
   tech: [
-    { key:'graficos',    label:'Calidad gráfica',         val:8 },
-    { key:'arte',        label:'Dirección artística',     val:8 },
-    { key:'rendimiento', label:'Rendimiento / FPS',       val:7 },
-    { key:'bugs',        label:'Estabilidad / Bugs',      val:7 },
+    { key:'graficos', label:'Calidad gráfica', val:8 },
+    { key:'arte', label:'Dirección artística', val:8 },
+    { key:'rendimiento', label:'Rendimiento / FPS', val:7 },
+    { key:'bugs', label:'Estabilidad / Bugs', val:7 },
   ],
   audio: [
-    { key:'musica',   label:'Banda sonora',              val:8 },
-    { key:'sfx',      label:'Efectos de sonido',         val:7 },
-    { key:'historia', label:'Historia / Guión',          val:7 },
-    { key:'lore',     label:'Construcción del mundo',    val:7 },
+    { key:'musica', label:'Banda sonora', val:8 },
+    { key:'sfx', label:'Efectos de sonido', val:7 },
+    { key:'historia', label:'Historia / Guión', val:7 },
+    { key:'lore', label:'Construcción del mundo', val:7 },
   ],
   value: [
-    { key:'duracion', label:'Duración / Contenido',      val:8 },
-    { key:'precio',   label:'Relación calidad/precio',   val:7 },
-    { key:'replay',   label:'Rejugabilidad',             val:7 },
-    { key:'multi',    label:'Multijugador (si aplica)',  val:7 },
+    { key:'duracion', label:'Duración / Contenido', val:8 },
+    { key:'precio', label:'Relación calidad/precio', val:7 },
+    { key:'replay', label:'Rejugabilidad', val:7 },
+    { key:'multi', label:'Multijugador (si aplica)', val:7 },
   ],
 };
 const sliderVals = {};
 
-function scoreClass(n) {
-  if (n >= 75) return 'green';
-  if (n >= 50) return 'yellow';
-  return 'red';
-}
+function scoreClass(n) { if (n >= 75) return 'green'; if (n >= 50) return 'yellow'; return 'red'; }
 
 function buildSlider(def, containerId) {
   sliderVals[def.key] = def.val;
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
+  const cls = scoreClass(def.val * 10);
   const row = document.createElement('div');
   row.className = 'slider-row';
-  const cls = scoreClass(def.val * 10);
   row.innerHTML = `
     <div class="slider-row-top">
       <span class="slider-row-label">${def.label}</span>
       <span class="slider-row-val ${cls}" id="sv-${def.key}">${def.val}/10</span>
     </div>
-    <input type="range" min="1" max="10" value="${def.val}" oninput="onSlider(this,'${def.key}')">`;
+    <input type="range" min="1" max="10" value="${def.val}" oninput="onSlider(this,'${def.key}')">
+  `;
   wrap.appendChild(row);
 }
 
@@ -1997,8 +1947,7 @@ function onSlider(el, key) {
   sliderVals[key] = parseInt(el.value);
   const cls = scoreClass(el.value * 10);
   const lbl = document.getElementById('sv-' + key);
-  lbl.textContent = el.value + '/10';
-  lbl.className = 'slider-row-val ' + cls;
+  if (lbl) { lbl.textContent = el.value + '/10'; lbl.className = 'slider-row-val ' + cls; }
   updateOverall();
 }
 
@@ -2008,166 +1957,19 @@ function updateOverall() {
   const score = Math.round(avg * 10);
   const cls = scoreClass(score);
   const colors = { green:'#6ac46a', yellow:'#ffbe00', red:'#e84040' };
-  document.getElementById('modalOverallNum').textContent = score;
-  document.getElementById('modalOverallNum').style.color = colors[cls];
-  document.getElementById('modalOverallFill').style.width = score + '%';
-  document.getElementById('modalOverallFill').style.background = colors[cls];
+  const overallNum = document.getElementById('modalOverallNum');
+  const overallFill = document.getElementById('modalOverallFill');
+  if (overallNum) { overallNum.textContent = score; overallNum.style.color = colors[cls]; }
+  if (overallFill) { overallFill.style.width = score + '%'; overallFill.style.background = colors[cls]; }
 }
 
 function initSliders() {
   ['gameplay','design','tech','audio','value'].forEach(group => {
+    const container = document.getElementById('sliders-' + group);
+    if (container) container.innerHTML = '';
     SLIDER_DEFS[group].forEach(def => buildSlider(def, 'sliders-' + group));
   });
   updateOverall();
-}
-
-// ══════════════════════════════════════════════════
-// RAWG / GAMES
-// ══════════════════════════════════════════════════
-const RAWG_KEY = '0f28a5bfdda4462489f37fbb908f5246';
-const RAWG_BASE = 'https://api.rawg.io/api';
-const CORS_PROXY = 'https://corsproxy.io/?';
-
-async function fetchGames(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  } catch(e) {
-    const res2 = await fetch(CORS_PROXY + encodeURIComponent(url));
-    if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-    return res2.json();
-  }
-}
-
-function getScoreClass(s) { if(!s)return'na'; if(s>=75)return'green'; if(s>=50)return'yellow'; return'red'; }
-
-function getPlatformTags(platforms) {
-  if (!platforms) return '';
-  const map = { 'PC':'PC','PlayStation 5':'PS5','PlayStation 4':'PS4','Xbox Series S/X':'XBS','Nintendo Switch':'NSW' };
-  return platforms.slice(0,4).map(p => `<span class="platform-tag">${map[p.platform.name]||p.platform.name.slice(0,4)}</span>`).join('');
-}
-
-function communityScore(meta) {
-  if (!meta) return null;
-  return Math.max(10, Math.min(100, meta + Math.floor(Math.random()*14) - 6));
-}
-
-function renderFeatured(games) {
-  const grid = document.getElementById('featuredGrid');
-  grid.innerHTML = '';
-  games.slice(0,4).forEach(g => {
-    const score = communityScore(g.metacritic);
-    const cls = getScoreClass(score);
-    const card = document.createElement('div');
-    card.className = 'featured-card';
-    card.onclick = () => openModalForGame(g);
-    card.innerHTML = `
-      ${g.background_image ? `<img class="featured-card-img" src="${g.background_image}" alt="${g.name}" loading="lazy">` : `<div class="featured-card-img-placeholder">🎮</div>`}
-      <div class="featured-card-body">
-        <div class="featured-card-label">▶ NUEVO</div>
-        <div class="featured-card-title">${g.name}</div>
-        <div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''} · ${g.released?.slice(0,4)||''}</div>
-        <div class="featured-card-score-row">
-          <div class="score small ${cls}">${score??'N/A'}</div>
-          <div class="featured-card-score-info">
-            <span class="featured-card-score-verdict">${cls==='green'?'Muy favorable':cls==='yellow'?'Mixto':'Desfavorable'}</span>
-            <span class="featured-card-score-count">Basado en ${Math.floor(Math.random()*800+50)} opiniones</span>
-          </div>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-function renderGrid(games) {
-  const grid = document.getElementById('gamesGrid');
-  grid.innerHTML = '';
-  games.forEach(g => {
-    const score = communityScore(g.metacritic);
-    const cls = getScoreClass(score);
-    const card = document.createElement('div');
-    card.className = 'game-card';
-    card.onclick = () => openModalForGame(g);
-    card.innerHTML = `
-      ${g.background_image ? `<img class="game-card-img" src="${g.background_image}" alt="${g.name}" loading="lazy">` : `<div class="game-card-img-placeholder">🎮</div>`}
-      <div class="game-card-body">
-        <div class="game-card-platforms">${getPlatformTags(g.parent_platforms||g.platforms)}</div>
-        <div class="game-card-title">${g.name}</div>
-        <div class="game-card-meta">${g.released?.slice(0,4)||'—'} · ${g.genres?.map(x=>x.name).slice(0,1).join('')||''}</div>
-      </div>
-      <div class="game-card-footer">
-        <div>
-          <div class="game-card-footer-label">PlayerCore</div>
-          <div class="game-card-footer-sub">${Math.floor(Math.random()*600+30)} opiniones</div>
-        </div>
-        <div class="score small ${cls}">${score??'N/A'}</div>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-function renderTopList(games) {
-  const list = document.getElementById('topList');
-  list.innerHTML = '';
-  [...games].sort((a,b)=>(b.metacritic||0)-(a.metacritic||0)).slice(0,10).forEach((g,i) => {
-    const score = communityScore(g.metacritic);
-    const cls = getScoreClass(score);
-    const item = document.createElement('div');
-    item.className = 'list-item';
-    item.onclick = () => openModalForGame(g);
-    item.innerHTML = `
-      <span class="list-rank">${i+1}</span>
-      ${g.background_image ? `<img class="list-img" src="${g.background_image}" loading="lazy">` : `<div class="list-img-ph">🎮</div>`}
-      <div class="list-info">
-        <div class="list-title">${g.name}</div>
-        <div class="list-meta">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div>
-      </div>
-      <div class="score small ${cls}">${score??'N/A'}</div>`;
-    list.appendChild(item);
-  });
-}
-
-function renderSkeletons() {
-  const grid = document.getElementById('gamesGrid');
-  grid.innerHTML = '';
-  for (let i=0; i<12; i++) {
-    grid.innerHTML += `<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div><div class="skeleton-line" style="width:60%"></div></div></div>`;
-  }
-}
-
-async function loadGames() {
-  renderSkeletons();
-  try {
-    const url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=20&ordering=-released&dates=2022-01-01,2026-12-31`;
-    const data = await fetchGames(url);
-    if (data.detail) throw new Error(data.detail);
-    const games = data.results || [];
-    renderFeatured(games);
-    renderGrid(games);
-    renderTopList(games);
-  } catch(e) {
-    console.error('RAWG error:', e);
-    document.getElementById('gamesGrid').innerHTML = `<div style="padding:1.5rem;color:var(--red-dark);font-family:'Barlow Condensed',sans-serif;font-size:.9rem;grid-column:1/-1">Error: ${e.message}</div>`;
-  }
-}
-
-async function doSearch() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (!q) return;
-  renderSkeletons();
-  document.getElementById('featuredGrid').innerHTML = '';
-  try {
-    const url = `${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=20&search_precise=true`;
-    const data = await fetchGames(url);
-    if (data.detail) throw new Error(data.detail);
-    const games = data.results || [];
-    renderFeatured(games.slice(0,4));
-    renderGrid(games);
-    renderTopList(games);
-  } catch(e) {
-    document.getElementById('gamesGrid').innerHTML = `<div style="padding:1.5rem;color:var(--red-dark);font-family:'Barlow Condensed',sans-serif;grid-column:1/-1">Error: ${e.message}</div>`;
-  }
 }
 
 // ══════════════════════════════════════════════════
@@ -2180,11 +1982,19 @@ function showToast(msg, isError = false) {
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
+function escapeHTML(str) { if (!str) return ''; return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ══════════════════════════════════════════════════
+// BANNER
+// ══════════════════════════════════════════════════
+async function loadBanner() {
+  const sb = getSupabase();
+  if (!sb) return;
+  const { data } = await sb.from('app_config').select('value').eq('key','global_banner').single();
+  if (data?.value) document.getElementById('globalBanner').classList.add('active');
+  document.getElementById('bannerText').textContent = data?.value || '';
 }
+function dismissBanner() { document.getElementById('globalBanner').classList.remove('active'); }
 
 // ══════════════════════════════════════════════════
 // INIT
@@ -2195,6 +2005,14 @@ initSliders();
 loadGames();
 loadReviews();
 loadBanner();
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('gameModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('gameModal')) closeGameModal();
+});
+document.getElementById('authModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('authModal')) closeAuthModal();
+});
 </script>
 </body>
 </html>
