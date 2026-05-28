@@ -320,6 +320,9 @@ nav {
   width: 100%;
   overflow: hidden;
 }
+#gamesGrid.featured-grid {
+  margin-bottom: 0;
+}
 .featured-card {
   background: var(--white);
   display: flex;
@@ -870,6 +873,7 @@ input[type=range]::-webkit-slider-thumb {
   .reviews-grid { grid-template-columns: 1fr; }
   .featured-grid { grid-template-columns: 1fr; }
   .games-grid { grid-template-columns: repeat(2, 1fr); }
+  #gamesGrid.featured-grid { grid-template-columns: 1fr; }
   .nav-links { display: none; }
   .community-banner { flex-direction: column; align-items: flex-start; }
   .community-banner-btn { margin-left: 0; width: 100%; text-align: center; }
@@ -1021,7 +1025,7 @@ input[type=range]::-webkit-slider-thumb {
       <div class="section-header"><h2>Destacados</h2><a onclick="showAllGames()">Ver todas →</a></div>
       <div class="featured-grid" id="featuredGrid"></div>
       <div class="section-header"><h2>Juegos recientes</h2><a onclick="showAllGames()">Ver más →</a></div>
-      <div id="gamesGrid" class="games-grid"></div>
+      <div id="gamesGrid" class="featured-grid"></div>
     </div>
     <div>
       <div class="section-header"><h2>Top 10</h2></div>
@@ -1265,28 +1269,13 @@ async function renderGrid(games) {
     }
   }
   
-  // Diseño en cuadrícula normal (como estaba originalmente)
   grid.innerHTML = games.map(g => {
     const scoreData = gameScores[String(g.id)];
     const avgScore = scoreData ? Math.round(scoreData.sum / scoreData.count) : null;
     const cls = avgScore ? (avgScore >= 75 ? 'green' : avgScore >= 50 ? 'yellow' : 'red') : 'na';
-    const countText = avgScore ? `${scoreData.count} opiniones` : 'Sin votos';
-    
-    return `<div class="game-card" onclick='openGameModal(${JSON.stringify(g)})'>
-      <img class="game-card-img" src="${g.background_image}" loading="lazy">
-      <div class="game-card-body">
-        <div class="game-card-platforms">${getPlatformTags(g.parent_platforms || g.platforms)}</div>
-        <div class="game-card-title">${escapeHTML(g.name)}</div>
-        <div class="game-card-meta">${g.released?.slice(0,4) || '—'} · ${g.genres?.map(x=>x.name).slice(0,1).join('') || ''}</div>
-      </div>
-      <div class="game-card-footer">
-        <div>
-          <div class="game-card-footer-label">CritiGames</div>
-          <div class="game-card-footer-sub">${countText}</div>
-        </div>
-        <div class="score small ${cls}">${avgScore || 'N/A'}</div>
-      </div>
-    </div>`;
+    const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones';
+    const countText = avgScore ? `${scoreData.count} opiniones` : 'Sé el primero';
+    return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ RECIENTE</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span><span class="featured-card-score-count">${countText}</span></div></div></div></div>`;
   }).join('');
 }
 
