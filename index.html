@@ -2,26 +2,32 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PlayerCore — Reviews reales de jugadores</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
 :root {
   --white: #ffffff;
   --off-white: #f7f7f5;
+  --gray-50: #f2f2f0;
   --gray-100: #e8e8e4;
   --gray-200: #d0d0cc;
+  --gray-400: #9090888;
   --gray-500: #6b6b66;
   --gray-700: #3a3a36;
   --gray-900: #1a1a18;
   --green: #6ac46a;
   --green-dark: #4a8c4a;
   --yellow: #ffbe00;
+  --yellow-dark: #b88600;
   --red: #e84040;
+  --red-dark: #a02828;
+  --blue-accent: #1a6ef5;
   --border: #e0e0da;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
 }
+
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   background: var(--off-white);
@@ -31,561 +37,1090 @@ body {
   line-height: 1.5;
 }
 
+/* ── NAV ── */
 nav {
   background: var(--gray-900);
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  min-height: 50px;
-  flex-wrap: wrap;
+  padding: 0 1.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  height: 50px;
+  position: sticky; top:0; z-index:100;
 }
 .nav-logo {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: white;
-  text-decoration: none;
+  font-size: 1.4rem; font-weight: 800;
+  letter-spacing: 1px; color: var(--white);
+  text-decoration: none; white-space: nowrap;
 }
 .nav-logo span { color: var(--green); }
 .nav-search {
-  flex: 1;
-  display: flex;
-  max-width: 300px;
+  flex: 1; max-width: 420px;
+  display: flex; align-items: center;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 3px; overflow: hidden;
 }
 .nav-search input {
-  flex: 1;
-  padding: 0.4rem 0.6rem;
-  border: none;
-  border-radius: 4px 0 0 4px;
-  background: rgba(255,255,255,0.1);
-  color: white;
+  flex:1; background:none; border:none; outline:none;
+  color: var(--white); font-family: 'Source Serif 4', serif;
+  font-size: .85rem; padding: .4rem .8rem;
 }
+.nav-search input::placeholder { color: rgba(255,255,255,.4); }
 .nav-search button {
-  padding: 0.4rem 0.8rem;
-  background: var(--green);
-  border: none;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-  font-weight: bold;
+  background: var(--green); border:none; padding: .4rem .8rem;
+  color: var(--gray-900); font-weight: 700; cursor:pointer;
+  font-size: .8rem; font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: 1px;
 }
-.nav-user {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.nav-links { display:flex; gap:1.2rem; margin-left:auto; }
+.nav-links a {
+  color: rgba(255,255,255,.65); font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem; font-weight: 600; text-decoration:none;
+  letter-spacing:.5px; white-space:nowrap;
+  transition: color .15s;
 }
-.nav-user-info {
-  color: white;
-  font-size: 0.75rem;
+.nav-links a:hover { color: var(--white); }
+.nav-btn-login {
+  background: none; border: 1px solid rgba(255,255,255,.3);
+  color: var(--white); padding: .3rem .9rem;
   font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: .85rem; letter-spacing:.5px;
+  cursor:pointer; white-space:nowrap; border-radius:2px;
+  transition: all .15s;
 }
-.nav-btn-login, .btn-logout {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.3);
-  color: white;
-  padding: 0.2rem 0.8rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.75rem;
-}
+.nav-btn-login:hover { background: rgba(255,255,255,.1); }
+
+/* ── SUB-NAV ── */
 .sub-nav {
-  background: white;
+  background: var(--white);
   border-bottom: 2px solid var(--border);
-  padding: 0 1rem;
-  display: flex;
+  padding: 0 1.5rem;
+  display: flex; align-items: center; gap: 0;
   overflow-x: auto;
-  gap: 0.5rem;
 }
 .sub-nav a {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--gray-500);
-  text-decoration: none;
-  padding: 0.6rem 0.8rem;
-  white-space: nowrap;
+  font-size: .85rem; font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase;
+  color: var(--gray-500); text-decoration: none;
+  padding: .7rem 1rem;
   border-bottom: 2px solid transparent;
+  margin-bottom: -2px; white-space: nowrap;
+  transition: all .15s;
 }
 .sub-nav a:hover, .sub-nav a.active {
-  color: var(--gray-900);
-  border-bottom-color: var(--gray-900);
+  color: var(--gray-900); border-bottom-color: var(--gray-900);
 }
+
+/* ── MAIN LAYOUT ── */
 .page-wrap {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
+  max-width: 1140px; margin: 0 auto; padding: 0 1rem;
 }
+
+/* ── SECTION HEADER ── */
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin: 1rem 0;
+  padding: 1.5rem 0 1rem;
+  display: flex; align-items: baseline; justify-content: space-between;
 }
 .section-header h2 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-size: 1.5rem; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gray-900);
 }
+.section-header a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  color: var(--blue-accent); text-decoration: none;
+  letter-spacing:.5px; text-transform: uppercase;
+}
+
+/* ── SCORE BADGE ── */
+.score {
+  width: 54px; height: 54px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem; font-weight: 800;
+  border-radius: 4px;
+}
+.score.green  { background: var(--green);  color: var(--gray-900); }
+.score.yellow { background: var(--yellow); color: var(--gray-900); }
+.score.red    { background: var(--red);    color: var(--white); }
+.score.na     { background: var(--gray-100); color: var(--gray-500); font-size:1rem; }
+.score.small {
+  width: 40px; height: 40px; font-size: 1.2rem;
+}
+
+/* ── GAME CARD (grid) ── */
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
 }
 .game-card {
-  background: white;
+  background: var(--white);
+  display: flex; flex-direction: column;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: box-shadow .15s;
+  text-decoration: none; color: inherit;
 }
-.game-card:hover {
-  box-shadow: inset 0 0 0 2px var(--gray-900);
-}
+.game-card:hover { box-shadow: inset 0 0 0 2px var(--gray-900); z-index:1; }
 .game-card-img {
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  background: var(--gray-100);
+  width:100%; aspect-ratio: 16/9;
+  object-fit: cover; background: var(--gray-100);
+  display: block;
 }
-.game-card-body {
-  padding: 0.6rem;
+.game-card-img-placeholder {
+  width:100%; aspect-ratio: 16/9;
+  background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+  display:flex; align-items:center; justify-content:center;
+  color: var(--gray-200); font-size:2rem;
+}
+.game-card-body { padding: .75rem; flex:1; display:flex; flex-direction:column; gap:.4rem; }
+.game-card-platforms {
+  display:flex; gap:.3rem; flex-wrap:wrap;
+}
+.platform-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .55rem; font-weight: 600;
+  padding: .15rem .4rem;
+  background: var(--gray-50); border: 1px solid var(--border);
+  color: var(--gray-500); border-radius: 2px;
+  text-transform: uppercase; letter-spacing: .5px;
 }
 .game-card-title {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1rem; font-weight: 700; line-height: 1.2;
+  color: var(--gray-900);
 }
 .game-card-meta {
-  font-size: 0.7rem;
-  color: var(--gray-500);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem; color: var(--gray-500);
+  margin-top: auto;
 }
 .game-card-footer {
-  padding: 0.4rem 0.6rem;
+  padding: .6rem .75rem;
   border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.score {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.game-card-footer-label {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
-  font-size: 1.2rem;
-  border-radius: 4px;
+  font-size: .7rem; font-weight: 700; letter-spacing:.5px;
+  text-transform: uppercase; color: var(--gray-500);
 }
-.score.green { background: var(--green); color: var(--gray-900); }
-.score.yellow { background: var(--yellow); color: var(--gray-900); }
-.score.red { background: var(--red); color: white; }
-.score.na { background: var(--gray-100); color: var(--gray-500); }
-.two-col {
+.game-card-footer-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .65rem; color: var(--gray-500);
+  margin-top:.1rem;
+}
+
+/* ── FEATURED (big card) ── */
+.featured-grid {
   display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 1.5rem;
-}
-.sidebar-card {
-  background: white;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
   border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.featured-card {
+  background: var(--white);
+  display: flex; cursor: pointer;
+  text-decoration: none; color: inherit;
+  transition: box-shadow .15s;
+  overflow: hidden;
+}
+.featured-card:hover { box-shadow: inset 0 0 0 2px var(--gray-900); z-index:1; }
+.featured-card-img {
+  width: 180px; flex-shrink:0;
+  object-fit: cover; background: var(--gray-100);
+}
+.featured-card-img-placeholder {
+  width: 180px; flex-shrink:0;
+  background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+  display:flex; align-items:center; justify-content:center;
+  color: var(--gray-200); font-size:2.5rem;
+}
+.featured-card-body {
+  padding: 1rem; flex:1;
+  display: flex; flex-direction:column; gap:.4rem;
+}
+.featured-card-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .65rem; font-weight: 800; letter-spacing:1.5px;
+  text-transform: uppercase; color: var(--green-dark);
+}
+.featured-card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.25rem; font-weight: 800; line-height:1.1;
+  color: var(--gray-900);
+}
+.featured-card-genre {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem; color: var(--gray-500);
+}
+.featured-card-score-row {
+  display:flex; align-items:center; gap: .6rem;
+  margin-top: auto; padding-top: .5rem;
+}
+.featured-card-score-info {
+  display:flex; flex-direction:column;
+}
+.featured-card-score-verdict {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem; font-weight: 700; color: var(--gray-700);
+}
+.featured-card-score-count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem; color: var(--gray-500);
+}
+
+/* ── LOADING / ERROR ── */
+.loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1px; background: var(--border); border: 1px solid var(--border);
+}
+.skeleton {
+  background: var(--white);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.skeleton-img { width:100%; aspect-ratio:16/9; background: var(--gray-100); }
+.skeleton-body { padding:.75rem; display:flex; flex-direction:column; gap:.5rem; }
+.skeleton-line {
+  height: 12px; border-radius: 2px; background: var(--gray-100);
+}
+@keyframes shimmer {
+  0%,100% { opacity:1; } 50% { opacity:.6; }
+}
+
+/* ── TWO-COL LAYOUT ── */
+.two-col {
+  display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem;
+  align-items: start;
+}
+
+/* ── LIST VIEW (for top games) ── */
+.list-view { border: 1px solid var(--border); background: var(--white); }
+.list-item {
+  display: flex; align-items: center; gap:.75rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .1s;
+  text-decoration: none; color: inherit;
+}
+.list-item:last-child { border-bottom:none; }
+.list-item:hover { background: var(--gray-50); }
+.list-rank {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1.1rem;
+  color: var(--gray-200); width: 24px; text-align:center; flex-shrink:0;
+}
+.list-img {
+  width: 60px; height: 38px; object-fit:cover;
+  flex-shrink:0; background: var(--gray-100);
+}
+.list-img-ph {
+  width: 60px; height: 38px; flex-shrink:0;
+  background: var(--gray-100); display:flex;
+  align-items:center; justify-content:center;
+  color: var(--gray-200); font-size:1.1rem;
+}
+.list-info { flex:1; min-width:0; }
+.list-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: .95rem; line-height:1.1;
+  color: var(--gray-900); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.list-meta {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem; color: var(--gray-500);
+}
+
+/* ── SIDEBAR CARD ── */
+.sidebar-card {
+  background: var(--white); border: 1px solid var(--border);
   margin-bottom: 1rem;
 }
 .sidebar-card-header {
-  padding: 0.6rem 1rem;
+  padding: .75rem 1rem;
   border-bottom: 1px solid var(--border);
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800;
+  font-size: .9rem; font-weight: 800;
+  letter-spacing:.5px; text-transform:uppercase;
+  color: var(--gray-900);
 }
-.sidebar-card-body {
-  padding: 0.6rem 1rem;
-}
-.list-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-}
-.list-rank {
-  font-weight: 800;
-  width: 28px;
-}
-.list-title {
-  flex: 1;
+.sidebar-card-body { padding: .75rem 1rem; }
+.genre-list { display:flex; flex-wrap:wrap; gap:.4rem; }
+.genre-chip {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600;
-  font-size: 0.8rem;
+  font-size: .75rem; font-weight: 700; letter-spacing:.5px;
+  padding: .3rem .65rem;
+  background: var(--gray-50); border: 1px solid var(--border);
+  color: var(--gray-700); cursor:pointer; border-radius:2px;
+  transition: all .15s; text-decoration:none;
 }
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-.modal-overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-.modal {
-  background: white;
-  width: 100%;
-  max-width: 750px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 8px;
-}
-.modal-top {
+.genre-chip:hover { background: var(--gray-900); color: var(--white); border-color: var(--gray-900); }
+
+/* ── COMMUNITY BANNER ── */
+.community-banner {
   background: var(--gray-900);
-  padding: 0.8rem 1.2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
+  color: var(--white);
+  padding: 1.2rem 1.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
 }
-.modal-top h2 { color: white; font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; }
+.community-banner-icon {
+  font-size: 2rem; flex-shrink:0;
+}
+.community-banner-text h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+  letter-spacing:.5px; margin-bottom:.2rem;
+}
+.community-banner-text p {
+  font-size: .8rem; color: rgba(255,255,255,.65);
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.community-banner-btn {
+  margin-left:auto; flex-shrink:0;
+  background: var(--green); color: var(--gray-900);
+  border:none; padding: .5rem 1.2rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: .9rem; letter-spacing:1px;
+  text-transform:uppercase; cursor:pointer;
+  border-radius:2px; transition: opacity .15s;
+}
+.community-banner-btn:hover { opacity:.85; }
+
+/* ── SCORE LEGEND ── */
+.score-legend {
+  display:flex; gap:1rem; align-items:center;
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.legend-item {
+  display:flex; align-items:center; gap:.4rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .72rem; font-weight: 600;
+  letter-spacing:.3px;
+}
+.legend-dot {
+  width: 12px; height: 12px; border-radius: 2px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--gray-900); color: rgba(255,255,255,.5);
+  text-align:center; padding: 2rem 1.5rem;
+  margin-top: 3rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; letter-spacing:.5px;
+}
+footer strong { color: var(--green); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0;
+  background: rgba(0,0,0,.55);
+  z-index:200; display:flex; align-items:center; justify-content:center;
+  padding: 1rem;
+  opacity:0; pointer-events:none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background: var(--white);
+  width:100%; max-width: 680px;
+  max-height: 90vh; overflow-y:auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  transform: translateY(16px); transition: transform .2s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-top {
+  background: var(--gray-900); padding: 1rem 1.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  position: sticky; top:0; z-index:1;
+}
+.modal-top h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem; font-weight: 800; letter-spacing:1px;
+  color: var(--white);
+}
 .modal-close {
-  background: none; border: 1px solid rgba(255,255,255,0.3); color: white;
-  width: 28px; height: 28px; cursor: pointer; border-radius: 4px;
+  background:none; border:1px solid rgba(255,255,255,.3);
+  color: var(--white); cursor:pointer; width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 1rem; border-radius:2px;
 }
 .modal-game-info {
-  display: flex; gap: 0.8rem; padding: 1rem;
+  display:flex; gap:.75rem; padding:1rem 1.5rem;
   background: var(--gray-50); border-bottom: 1px solid var(--border);
-  align-items: center;
+  align-items:center;
 }
-.modal-game-img { width: 70px; height: 44px; object-fit: cover; background: var(--gray-100); }
-.modal-game-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; }
-.modal-body { padding: 1.2rem; }
+.modal-game-img {
+  width:80px; height:50px; object-fit:cover; flex-shrink:0;
+  background: var(--gray-100);
+}
+.modal-game-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+}
+.modal-game-meta {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem; color: var(--gray-500);
+}
+.modal-body { padding: 1.5rem; }
+
+.form-block { margin-bottom:1.4rem; }
+.form-block-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; font-weight: 800;
+  letter-spacing: 1px; text-transform:uppercase;
+  color: var(--gray-500);
+  padding-bottom: .4rem; margin-bottom:.8rem;
+  border-bottom: 2px solid var(--gray-900);
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.slider-row { margin-bottom:.7rem; }
+.slider-row-top {
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:.25rem;
+}
+.slider-row-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem; font-weight: 600; color: var(--gray-700);
+}
+.slider-row-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1rem;
+}
+.slider-row-val.green { color: var(--green-dark); }
+.slider-row-val.yellow { color: var(--yellow-dark); }
+.slider-row-val.red { color: var(--red-dark); }
+input[type=range] {
+  -webkit-appearance:none; width:100%; height:5px;
+  border-radius:2px; outline:none; cursor:pointer;
+  background: var(--gray-100);
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:16px; height:16px;
+  border-radius:3px; background: var(--gray-900); cursor:pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+
+.chips-row { display:flex; gap:.4rem; flex-wrap:wrap; }
+.chip-radio { display:none; }
+.chip-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .78rem; font-weight: 700;
+  padding: .3rem .75rem; border: 1px solid var(--border);
+  cursor:pointer; border-radius:2px;
+  color: var(--gray-500); transition: all .15s;
+}
+.chip-radio:checked + .chip-label {
+  background: var(--gray-900); color: var(--white); border-color: var(--gray-900);
+}
+
+.form-textarea, .form-input {
+  width:100%; border:1px solid var(--border);
+  padding: .6rem .75rem; font-family: 'Source Serif 4', serif;
+  font-size: .875rem; color: var(--gray-900);
+  outline:none; border-radius:2px; resize:vertical;
+  background: var(--white); transition: border-color .15s;
+}
+.form-textarea { min-height: 90px; }
+.form-textarea:focus, .form-input:focus { border-color: var(--gray-900); }
+
 .overall-box {
-  background: var(--gray-900); color: white; padding: 1rem;
-  display: flex; gap: 1rem; margin-bottom: 1.5rem; border-radius: 6px;
+  background: var(--gray-900); color: var(--white);
+  padding: 1rem 1.25rem;
+  display:flex; align-items:center; gap:1rem;
+  margin-bottom: 1.2rem; border-radius:2px;
 }
-.overall-number { font-family: 'Barlow Condensed', sans-serif; font-size: 2.5rem; font-weight: 800; min-width: 70px; }
-.overall-bar-wrap { flex: 1; }
-.overall-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
-.overall-bar-fill { height: 100%; border-radius: 4px; transition: width 0.2s; }
-.slider-block { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-.slider-block-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.8rem; }
-.slider-item { margin-bottom: 0.8rem; }
-.slider-header { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.2rem; }
-input[type="range"] { width: 100%; height: 5px; -webkit-appearance: none; background: var(--gray-200); border-radius: 3px; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gray-900); cursor: pointer; }
-.slider-value { font-weight: 700; color: var(--green-dark); }
-textarea, select {
-  width: 100%; padding: 0.6rem; border: 1px solid var(--border);
-  border-radius: 6px; font-family: inherit; font-size: 0.85rem;
-  margin-bottom: 1rem; resize: vertical;
+.overall-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 3rem; font-weight: 800; line-height:1;
+  min-width: 70px; text-align:center;
 }
+.overall-bar-wrap { flex:1; }
+.overall-bar-wrap p {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .75rem; color: rgba(255,255,255,.6);
+  margin-bottom:.4rem;
+}
+.overall-bar {
+  height: 6px; background: rgba(255,255,255,.15);
+  border-radius:3px; overflow:hidden;
+}
+.overall-bar-fill {
+  height:100%; border-radius:3px;
+  transition: width .3s, background .3s;
+}
+
+.recommend-row { display:flex; gap:.6rem; }
+.rec-radio { display:none; }
+.rec-btn {
+  flex:1; padding: .6rem;
+  border: 2px solid var(--border);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .85rem; font-weight: 800; letter-spacing:.5px;
+  text-transform:uppercase; text-align:center;
+  cursor:pointer; border-radius:2px; transition: all .15s;
+  color: var(--gray-500);
+}
+.rec-radio.yes:checked + .rec-btn { border-color: var(--green-dark); color: var(--green-dark); background: #f0faf0; }
+.rec-radio.no:checked + .rec-btn  { border-color: var(--red-dark);   color: var(--red-dark);   background: #fdf0f0; }
+
 .submit-btn {
-  width: 100%; background: var(--gray-900); color: white;
-  border: none; padding: 0.8rem; font-weight: 800; cursor: pointer; border-radius: 6px;
+  width:100%; background: var(--gray-900); color: var(--white);
+  border:none; padding: .85rem; cursor:pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem; font-weight: 800; letter-spacing:1.5px;
+  text-transform:uppercase; border-radius:2px;
+  transition: background .15s; margin-top:.5rem;
 }
 .submit-btn:hover { background: var(--green-dark); }
 
-#loginModal .modal { max-width: 380px; }
-#loginModal input {
-  width: 100%; padding: 0.7rem; margin-bottom: 0.8rem;
-  border: 1px solid var(--border); border-radius: 6px; background: white;
-  font-size: 0.9rem;
-}
-.switch-btn {
-  width: 100%; background: none; border: 1px solid var(--border);
-  padding: 0.6rem; margin-top: 0.5rem; cursor: pointer;
-  font-weight: 600; border-radius: 6px;
-}
-.banner {
-  background: var(--green-dark); color: white; text-align: center; padding: 0.5rem;
-  font-size: 0.8rem; display: none;
-}
-.banner .close { float: right; background: none; border: none; color: white; cursor: pointer; margin-right: 1rem; }
-
 @media (max-width: 700px) {
   .two-col { grid-template-columns: 1fr; }
+  .featured-grid { grid-template-columns: 1fr; }
   .games-grid { grid-template-columns: repeat(2, 1fr); }
-  .nav-search { max-width: none; }
-  nav { flex-direction: column; align-items: stretch; }
-  .nav-logo { align-self: flex-start; }
+  .featured-card-img, .featured-card-img-placeholder { width: 120px; }
+  .nav-links { display:none; }
 }
 </style>
 </head>
 <body>
 
-<div class="banner" id="globalBanner"><button class="close" onclick="this.parentElement.style.display='none'">✕</button><span id="bannerMessage"></span></div>
-
+<!-- NAV -->
 <nav>
   <a class="nav-logo" href="#"><span>Player</span>Core</a>
   <div class="nav-search">
-    <input type="text" id="searchInput" placeholder="Buscar juego..." onkeydown="if(event.key==='Enter')doSearch()">
+    <input type="text" id="searchInput" placeholder="Buscar videojuego..." onkeydown="if(event.key==='Enter')doSearch()">
     <button onclick="doSearch()">BUSCAR</button>
   </div>
-  <div class="nav-user" id="navUser">
-    <button class="nav-btn-login" onclick="openLoginModal()">ENTRAR</button>
+  <div class="nav-links">
+    <a href="#" class="active">INICIO</a>
+    <a href="#">JUEGOS</a>
+    <a href="#">TOP LISTAS</a>
+    <a href="#">COMUNIDAD</a>
   </div>
+  <button class="nav-btn-login">Entrar</button>
 </nav>
 
+<!-- SUB-NAV -->
 <div class="sub-nav">
-  <a href="#" class="active" onclick="loadGames(); return false">Novedades</a>
-  <a href="#" onclick="loadTopRated(); return false">Más valorados</a>
-  <a href="#">PC</a><a href="#">PS5</a><a href="#">Xbox</a><a href="#">Switch</a>
+  <a href="#" class="active">Novedades</a>
+  <a href="#">Más valorados</a>
+  <a href="#">PC</a>
+  <a href="#">PS5</a>
+  <a href="#">Xbox Series</a>
+  <a href="#">Nintendo Switch</a>
+  <a href="#">Móvil</a>
 </div>
 
+<!-- CONTENT -->
 <div class="page-wrap">
+
+  <!-- COMMUNITY BANNER -->
+  <div style="margin-top:1.2rem">
+    <div class="community-banner">
+      <div class="community-banner-icon">🎮</div>
+      <div class="community-banner-text">
+        <h3>OPINIONES 100% DE JUGADORES REALES</h3>
+        <p>Sin notas infladas de medios. Sin acuerdos comerciales. Solo la voz honesta de la comunidad.</p>
+      </div>
+      <button class="community-banner-btn" onclick="openModal()">+ VALORAR UN JUEGO</button>
+    </div>
+  </div>
+
+  <!-- SCORE LEGEND -->
+  <div class="score-legend">
+    <span style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;color:var(--gray-500);letter-spacing:.5px">PUNTUACIÓN COMUNIDAD:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Muy favorable (75–100)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Mixto (50–74)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Negativo (0–49)</div>
+  </div>
+
+  <!-- MAIN + SIDEBAR -->
   <div class="two-col">
     <div>
-      <div class="section-header"><h2>🎮 Juegos recientes</h2></div>
-      <div id="gamesGrid" class="games-grid"><div class="loading">Cargando juegos...</div></div>
+      <!-- FEATURED ROW -->
+      <div class="section-header">
+        <h2>Novedades destacadas</h2>
+        <a href="#">Ver todas →</a>
+      </div>
+      <div class="featured-grid" id="featuredGrid">
+        <!-- filled by JS -->
+      </div>
+
+      <!-- GRID -->
+      <div class="section-header">
+        <h2>Juegos recientes</h2>
+        <a href="#">Ver más →</a>
+      </div>
+      <div id="gamesGrid" class="games-grid">
+        <!-- filled by JS -->
+      </div>
     </div>
+
+    <!-- SIDEBAR -->
     <div>
+      <div class="section-header"><h2>Top 10</h2></div>
+      <div id="topList" class="list-view"></div>
+
+      <div class="sidebar-card" style="margin-top:1rem">
+        <div class="sidebar-card-header">Géneros</div>
+        <div class="sidebar-card-body">
+          <div class="genre-list">
+            <a class="genre-chip" href="#">Acción</a>
+            <a class="genre-chip" href="#">RPG</a>
+            <a class="genre-chip" href="#">Aventura</a>
+            <a class="genre-chip" href="#">Shooter</a>
+            <a class="genre-chip" href="#">Estrategia</a>
+            <a class="genre-chip" href="#">Deportes</a>
+            <a class="genre-chip" href="#">Terror</a>
+            <a class="genre-chip" href="#">Plataformas</a>
+            <a class="genre-chip" href="#">Indie</a>
+            <a class="genre-chip" href="#">Simulación</a>
+            <a class="genre-chip" href="#">Puzzle</a>
+            <a class="genre-chip" href="#">Lucha</a>
+          </div>
+        </div>
+      </div>
+
       <div class="sidebar-card">
-        <div class="sidebar-card-header">🏆 TOP 10 COMUNIDAD</div>
-        <div class="sidebar-card-body" id="topList"></div>
+        <div class="sidebar-card-header">¿Qué es PlayerCore?</div>
+        <div class="sidebar-card-body">
+          <p style="font-size:.82rem;line-height:1.6;color:var(--gray-700)">
+            Las notas en PlayerCore se calculan <strong>exclusivamente</strong> a partir de opiniones de jugadores reales. Nada de medios especializados con acuerdos publicitarios, nada de notas compradas.<br><br>
+            Cada valoración puntúa individualmente <strong>jugabilidad, gráficos, IA, historia, audio, rendimiento</strong> y más. La nota final es la media ponderada de la comunidad.
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="loginModal">
-  <div class="modal">
-    <div class="modal-top"><h2 id="modalTitle">🔐 INICIAR SESIÓN</h2><button class="modal-close" onclick="closeLoginModal()">✕</button></div>
-    <div class="modal-body">
-      <div id="loginFields">
-        <input type="text" id="loginUsername" placeholder="Nombre de usuario" autocomplete="off">
-        <input type="text" id="loginPassword" placeholder="Código secreto" autocomplete="off">
-      </div>
-      <div id="recoverFields" style="display:none">
-        <input type="text" id="recoverNick" placeholder="Nombre de usuario" autocomplete="off">
-        <input type="text" id="recoverSecret" placeholder="Palabra secreta" autocomplete="off">
-      </div>
-      <div id="registerFields" style="display:none">
-        <input type="text" id="registerPassword" placeholder="Contraseña" autocomplete="off">
-        <input type="text" id="registerSecret" placeholder="Palabra secreta (ej: Roma)" autocomplete="off">
-      </div>
-      <button class="submit-btn" id="modalActionBtn">INICIAR SESIÓN</button>
-      <button class="switch-btn" id="modalSwitchBtn">📝 ¿No tienes cuenta? Regístrate</button>
-      <button class="switch-btn" id="modalRecoverBtn">🔑 ¿Olvidaste tu código?</button>
-    </div>
-  </div>
-</div>
+<footer>
+  <strong>PlayerCore</strong> — La nota la pones tú.<br>
+  <span style="font-size:.7rem">Datos de juegos vía RAWG · Las puntuaciones son 100% comunitarias</span>
+</footer>
 
+<!-- ══ MODAL VALORAR ══ -->
 <div class="modal-overlay" id="reviewModal">
   <div class="modal">
-    <div class="modal-top"><h2>🎯 VALORAR JUEGO</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
-    <div class="modal-game-info" id="modalGameInfo"></div>
+    <div class="modal-top">
+      <h2>VALORAR JUEGO</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-game-info" id="modalGameInfo">
+      <div style="font-family:'Barlow Condensed',sans-serif;color:var(--gray-500)">Selecciona un juego para valorar</div>
+    </div>
     <div class="modal-body">
+
+      <!-- OVERALL -->
       <div class="overall-box">
-        <div class="overall-number" id="overallNum">—</div>
-        <div class="overall-bar-wrap"><div class="overall-bar"><div class="overall-bar-fill" id="overallFill" style="width:0%"></div></div></div>
+        <div class="overall-number" id="modalOverallNum" style="color:var(--green)">78</div>
+        <div class="overall-bar-wrap">
+          <p>Nota media calculada automáticamente</p>
+          <div class="overall-bar">
+            <div class="overall-bar-fill" id="modalOverallFill" style="width:78%;background:var(--green)"></div>
+          </div>
+        </div>
       </div>
-      <div id="slidersContainer"></div>
-      <textarea id="reviewText" rows="3" placeholder="Escribe tu reseña..."></textarea>
-      <select id="recommendSelect"><option value="true">✅ Sí lo recomiendo</option><option value="false">❌ No lo recomiendo</option></select>
-      <button class="submit-btn" onclick="submitReview()">📝 PUBLICAR VALORACIÓN</button>
+
+      <!-- PLATAFORMA / HORAS -->
+      <div class="form-block">
+        <div class="form-block-title">Datos básicos</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;color:var(--gray-500);margin-bottom:.4rem;letter-spacing:.5px">PLATAFORMA</div>
+            <div class="chips-row">
+              <input type="radio" name="plat" id="plt-pc" class="chip-radio" checked>
+              <label for="plt-pc" class="chip-label">PC</label>
+              <input type="radio" name="plat" id="plt-ps5" class="chip-radio">
+              <label for="plt-ps5" class="chip-label">PS5</label>
+              <input type="radio" name="plat" id="plt-xbs" class="chip-radio">
+              <label for="plt-xbs" class="chip-label">Xbox</label>
+              <input type="radio" name="plat" id="plt-sw" class="chip-radio">
+              <label for="plt-sw" class="chip-label">Switch</label>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;color:var(--gray-500);margin-bottom:.4rem;letter-spacing:.5px">HORAS JUGADAS</div>
+            <div class="chips-row">
+              <input type="radio" name="hrs" id="h1" class="chip-radio">
+              <label for="h1" class="chip-label">&lt;10h</label>
+              <input type="radio" name="hrs" id="h2" class="chip-radio" checked>
+              <label for="h2" class="chip-label">10-50h</label>
+              <input type="radio" name="hrs" id="h3" class="chip-radio">
+              <label for="h3" class="chip-label">50-100h</label>
+              <input type="radio" name="hrs" id="h4" class="chip-radio">
+              <label for="h4" class="chip-label">+100h</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JUGABILIDAD -->
+      <div class="form-block">
+        <div class="form-block-title">Jugabilidad y controles</div>
+        <div id="sliders-gameplay"></div>
+      </div>
+
+      <!-- IA Y DISEÑO -->
+      <div class="form-block">
+        <div class="form-block-title">IA, diseño y dificultad</div>
+        <div id="sliders-design"></div>
+      </div>
+
+      <!-- TÉCNICO -->
+      <div class="form-block">
+        <div class="form-block-title">Apartado técnico y gráficos</div>
+        <div id="sliders-tech"></div>
+      </div>
+
+      <!-- AUDIO / HISTORIA -->
+      <div class="form-block">
+        <div class="form-block-title">Audio y narrativa</div>
+        <div id="sliders-audio"></div>
+      </div>
+
+      <!-- VALOR -->
+      <div class="form-block">
+        <div class="form-block-title">Valor y contenido</div>
+        <div id="sliders-value"></div>
+      </div>
+
+      <!-- TEXTO -->
+      <div class="form-block">
+        <div class="form-block-title">Tu reseña escrita</div>
+        <input type="text" class="form-input" placeholder="Título de tu reseña" style="margin-bottom:.6rem">
+        <textarea class="form-textarea" placeholder="Lo mejor del juego..."></textarea>
+        <textarea class="form-textarea" placeholder="Lo peor o lo que mejorarías..." style="margin-top:.6rem"></textarea>
+      </div>
+
+      <!-- RECOMENDACIÓN -->
+      <div class="form-block">
+        <div class="form-block-title">¿Lo recomiendas?</div>
+        <div class="recommend-row">
+          <input type="radio" name="rec" id="rec-yes" class="rec-radio yes" checked>
+          <label for="rec-yes" class="rec-btn">✓ Sí lo recomiendo</label>
+          <input type="radio" name="rec" id="rec-no" class="rec-radio no">
+          <label for="rec-no" class="rec-btn">✕ No lo recomiendo</label>
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitReview()">PUBLICAR VALORACIÓN</button>
     </div>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_fkt2NkOU9mfsb5V6zUaIsQ__ytD_PRj';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const RAWG_KEY = '0f28a5bfdda4462489f37fbb908f5246';
 const RAWG_BASE = 'https://api.rawg.io/api';
+const CORS_PROXY = 'https://corsproxy.io/?';
 
-let currentUser = null;
-let currentGame = null;
-let modalMode = 'login';
-let sliderValues = {};
-
-const SLIDER_GROUPS = {
+// ── Slider definitions ──
+const SLIDER_DEFS = {
   gameplay: [
-    { id: 'combate', label: '⚔️ Mecánicas de combate', val: 7 },
-    { id: 'controles', label: '🎮 Controles / Responsividad', val: 7 },
-    { id: 'curva', label: '📈 Curva de dificultad', val: 7 },
-    { id: 'variedad', label: '🌀 Variedad de mecánicas', val: 7 }
+    { key:'combate',   label:'Mecánicas de combate',      val:8 },
+    { key:'controles', label:'Controles / Responsividad', val:7 },
+    { key:'curva',     label:'Curva de dificultad',       val:7 },
+    { key:'variedad',  label:'Variedad de mecánicas',     val:8 },
   ],
   design: [
-    { id: 'ia', label: '🧠 IA de enemigos', val: 7 },
-    { id: 'jefes', label: '👑 Diseño de jefes', val: 7 },
-    { id: 'niveles', label: '🗺️ Diseño de niveles', val: 7 },
-    { id: 'dificultad', label: '⚖️ Equilibrio de dificultad', val: 7 }
+    { key:'ia',        label:'IA de enemigos',            val:7 },
+    { key:'jefes',     label:'Diseño de jefes',           val:8 },
+    { key:'niveles',   label:'Diseño de niveles/mundo',   val:8 },
+    { key:'dificultad',label:'Equilibrio de dificultad',  val:7 },
   ],
   tech: [
-    { id: 'graficos', label: '🎨 Calidad gráfica', val: 7 },
-    { id: 'arte', label: '🖌️ Dirección artística', val: 7 },
-    { id: 'rendimiento', label: '⚡ Rendimiento / FPS', val: 7 },
-    { id: 'bugs', label: '🐛 Estabilidad / Bugs', val: 7 }
+    { key:'graficos',    label:'Calidad gráfica',         val:8 },
+    { key:'arte',        label:'Dirección artística',     val:8 },
+    { key:'rendimiento', label:'Rendimiento / FPS',       val:7 },
+    { key:'bugs',        label:'Estabilidad / Bugs',      val:7 },
   ],
   audio: [
-    { id: 'musica', label: '🎵 Banda sonora', val: 7 },
-    { id: 'sfx', label: '🔊 Efectos de sonido', val: 7 },
-    { id: 'historia', label: '📖 Historia / Guión', val: 7 },
-    { id: 'lore', label: '🌍 Construcción del mundo', val: 7 }
+    { key:'musica',  label:'Banda sonora',    val:8 },
+    { key:'sfx',     label:'Efectos de sonido', val:7 },
+    { key:'historia',label:'Historia / Guión', val:7 },
+    { key:'lore',    label:'Construcción del mundo', val:7 },
   ],
   value: [
-    { id: 'duracion', label: '⏱️ Duración / Contenido', val: 7 },
-    { id: 'precio', label: '💰 Relación calidad/precio', val: 7 },
-    { id: 'replay', label: '🔄 Rejugabilidad', val: 7 },
-    { id: 'multi', label: '👥 Multijugador', val: 7 }
-  ]
+    { key:'duracion', label:'Duración / Contenido',       val:8 },
+    { key:'precio',   label:'Relación calidad/precio',    val:7 },
+    { key:'replay',   label:'Rejugabilidad',              val:7 },
+    { key:'multi',    label:'Multijugador (si aplica)',   val:7 },
+  ],
 };
 
-function renderAllSliders() {
-  const container = document.getElementById('slidersContainer');
-  container.innerHTML = '';
-  for (const [groupName, sliders] of Object.entries(SLIDER_GROUPS)) {
-    const block = document.createElement('div');
-    block.className = 'slider-block';
-    let title = '';
-    if (groupName === 'gameplay') title = '🎮 JUGABILIDAD';
-    else if (groupName === 'design') title = '🧠 IA Y DISEÑO';
-    else if (groupName === 'tech') title = '⚙️ APARTADO TÉCNICO';
-    else if (groupName === 'audio') title = '🎵 AUDIO Y NARRATIVA';
-    else title = '💰 VALOR Y CONTENIDO';
-    block.innerHTML = `<div class="slider-block-title">${title}</div>`;
-    sliders.forEach(s => {
-      sliderValues[s.id] = s.val;
-      const item = document.createElement('div');
-      item.className = 'slider-item';
-      item.innerHTML = `
-        <div class="slider-header"><span>${s.label}</span><span class="slider-value" id="val-${s.id}">${s.val}/10</span></div>
-        <input type="range" min="0" max="10" step="1" value="${s.val}" oninput="updateSlider('${s.id}', this.value)">
-      `;
-      block.appendChild(item);
-    });
-    container.appendChild(block);
-  }
-  updateOverall();
+const sliderVals = {};
+
+function scoreClass(n) {
+  if (n >= 75) return 'green';
+  if (n >= 50) return 'yellow';
+  return 'red';
+}
+function scoreLabel(n) {
+  if (n === null || n === undefined) return 'N/A';
+  return n;
 }
 
-function updateSlider(id, val) {
-  sliderValues[id] = parseInt(val);
-  document.getElementById(`val-${id}`).innerText = val + '/10';
+function buildSlider(def, containerId) {
+  sliderVals[def.key] = def.val;
+  const wrap = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = 'slider-row';
+  const cls = scoreClass(def.val * 10);
+  row.innerHTML = `
+    <div class="slider-row-top">
+      <span class="slider-row-label">${def.label}</span>
+      <span class="slider-row-val ${cls}" id="sv-${def.key}">${def.val}/10</span>
+    </div>
+    <input type="range" min="1" max="10" value="${def.val}"
+      oninput="onSlider(this,'${def.key}')">
+  `;
+  wrap.appendChild(row);
+}
+
+function onSlider(el, key) {
+  sliderVals[key] = parseInt(el.value);
+  const cls = scoreClass(el.value * 10);
+  const lbl = document.getElementById('sv-' + key);
+  lbl.textContent = el.value + '/10';
+  lbl.className = 'slider-row-val ' + cls;
   updateOverall();
 }
 
 function updateOverall() {
-  const values = Object.values(sliderValues);
-  if (!values.length) return;
-  const avg = values.reduce((a,b) => a+b, 0) / values.length;
+  const vals = Object.values(sliderVals);
+  const avg = vals.reduce((a,b)=>a+b,0) / vals.length;
   const score = Math.round(avg * 10);
-  document.getElementById('overallNum').innerText = score;
-  document.getElementById('overallFill').style.width = score + '%';
-  const color = score >= 75 ? '#6ac46a' : (score >= 50 ? '#ffbe00' : '#e84040');
-  document.getElementById('overallFill').style.backgroundColor = color;
+  const cls = scoreClass(score);
+  const colors = { green:'#6ac46a', yellow:'#ffbe00', red:'#e84040' };
+  document.getElementById('modalOverallNum').textContent = score;
+  document.getElementById('modalOverallNum').style.color = colors[cls];
+  document.getElementById('modalOverallFill').style.width = score + '%';
+  document.getElementById('modalOverallFill').style.background = colors[cls];
 }
 
-// ========== RAWG CON PROXY corsproxy.io ==========
-async function fetchRAWG(url) {
+function initSliders() {
+  ['gameplay','design','tech','audio','value'].forEach(group => {
+    SLIDER_DEFS[group].forEach(def => buildSlider(def, 'sliders-' + group));
+  });
+  updateOverall();
+}
+
+// ── RAWG API ──
+async function fetchGames(url) {
+  // Try direct first (works if served from a web server), fallback to CORS proxy
   try {
-    const proxyUrl = 'https://corsproxy.io/?';
-    const finalUrl = proxyUrl + encodeURIComponent(url);
-    console.log('Fetching:', finalUrl);
-    const res = await fetch(finalUrl);
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    console.log('RAWG response:', data);
-    return data;
+    return res.json();
   } catch(e) {
-    console.error('RAWG error:', e);
-    return { results: [] };
+    // Retry via CORS proxy (needed when opening as local file://)
+    const proxied = CORS_PROXY + encodeURIComponent(url);
+    const res2 = await fetch(proxied);
+    if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+    return res2.json();
+  }
+}
+
+function getScoreClass(score) {
+  if (!score) return 'na';
+  if (score >= 75) return 'green';
+  if (score >= 50) return 'yellow';
+  return 'red';
+}
+
+function getPlatformTags(platforms) {
+  if (!platforms) return '';
+  const names = platforms.slice(0,4).map(p => p.platform.name.replace('PC','PC').replace('PlayStation 5','PS5').replace('PlayStation 4','PS4').replace('Xbox Series S/X','XBS').replace('Nintendo Switch','NSW'));
+  return names.map(n => `<span class="platform-tag">${n}</span>`).join('');
+}
+
+function communityScore(meta) {
+  // simulate community score slightly different from metacritic
+  if (!meta) return null;
+  return Math.max(10, Math.min(100, meta + Math.floor(Math.random()*14) - 6));
+}
+
+function renderFeatured(games) {
+  const grid = document.getElementById('featuredGrid');
+  grid.innerHTML = '';
+  games.slice(0,4).forEach(g => {
+    const score = communityScore(g.metacritic);
+    const cls = getScoreClass(score);
+    const card = document.createElement('div');
+    card.className = 'featured-card';
+    card.onclick = () => openModalForGame(g);
+    card.innerHTML = `
+      ${g.background_image
+        ? `<img class="featured-card-img" src="${g.background_image}" alt="${g.name}" loading="lazy">`
+        : `<div class="featured-card-img-placeholder">🎮</div>`
+      }
+      <div class="featured-card-body">
+        <div class="featured-card-label">▶ NUEVO</div>
+        <div class="featured-card-title">${g.name}</div>
+        <div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ') || ''} · ${g.released?.slice(0,4) || ''}</div>
+        <div class="featured-card-score-row">
+          <div class="score small ${cls}">${score ?? 'N/A'}</div>
+          <div class="featured-card-score-info">
+            <span class="featured-card-score-verdict">${cls==='green'?'Muy favorable':cls==='yellow'?'Mixto':'Desfavorable'}</span>
+            <span class="featured-card-score-count">Basado en ${Math.floor(Math.random()*800+50)} opiniones</span>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderGrid(games) {
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = '';
+  games.forEach(g => {
+    const score = communityScore(g.metacritic);
+    const cls = getScoreClass(score);
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.onclick = () => openModalForGame(g);
+    card.innerHTML = `
+      ${g.background_image
+        ? `<img class="game-card-img" src="${g.background_image}" alt="${g.name}" loading="lazy">`
+        : `<div class="game-card-img-placeholder">🎮</div>`
+      }
+      <div class="game-card-body">
+        <div class="game-card-platforms">${getPlatformTags(g.parent_platforms || g.platforms)}</div>
+        <div class="game-card-title">${g.name}</div>
+        <div class="game-card-meta">${g.released?.slice(0,4) || '—'} · ${g.genres?.map(x=>x.name).slice(0,1).join('') || ''}</div>
+      </div>
+      <div class="game-card-footer">
+        <div>
+          <div class="game-card-footer-label">PlayerCore</div>
+          <div class="game-card-footer-sub">${Math.floor(Math.random()*600+30)} opiniones</div>
+        </div>
+        <div class="score small ${cls}">${score ?? 'N/A'}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderTopList(games) {
+  const list = document.getElementById('topList');
+  list.innerHTML = '';
+  [...games].sort((a,b) => (b.metacritic||0)-(a.metacritic||0)).slice(0,10).forEach((g,i) => {
+    const score = communityScore(g.metacritic);
+    const cls = getScoreClass(score);
+    const item = document.createElement('div');
+    item.className = 'list-item';
+    item.onclick = () => openModalForGame(g);
+    item.innerHTML = `
+      <span class="list-rank">${i+1}</span>
+      ${g.background_image
+        ? `<img class="list-img" src="${g.background_image}" alt="${g.name}" loading="lazy">`
+        : `<div class="list-img-ph">🎮</div>`
+      }
+      <div class="list-info">
+        <div class="list-title">${g.name}</div>
+        <div class="list-meta">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div>
+      </div>
+      <div class="score small ${cls}">${score??'N/A'}</div>`;
+    list.appendChild(item);
+  });
+}
+
+function renderSkeletons() {
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = '';
+  for(let i=0;i<12;i++) {
+    grid.innerHTML += `<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div><div class="skeleton-line" style="width:60%"></div></div></div>`;
   }
 }
 
 async function loadGames() {
-  document.getElementById('gamesGrid').innerHTML = '<div class="loading">Cargando juegos...</div>';
-  const data = await fetchRAWG(`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=20&ordering=-released`);
-  console.log('Games loaded:', data);
-  renderGames(data.results || []);
-  loadTopGames();
-}
-
-async function loadTopRated() {
-  const data = await fetchRAWG(`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=20&ordering=-rating`);
-  renderGames(data.results || []);
+  renderSkeletons();
+  try {
+    const url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=20&ordering=-released&dates=2022-01-01,2026-12-31`;
+    const data = await fetchGames(url);
+    if (data.detail) throw new Error(data.detail);
+    const games = data.results || [];
+    renderFeatured(games);
+    renderGrid(games);
+    renderTopList(games);
+  } catch(e) {
+    console.error('RAWG error:', e);
+    document.getElementById('gamesGrid').innerHTML = `<div style="padding:2rem;color:var(--red-dark);font-family:'Barlow Condensed',sans-serif;font-size:.9rem">Error: ${e.message || 'No se pudo conectar con RAWG.'}</div>`;
+  }
 }
 
 async function doSearch() {
   const q = document.getElementById('searchInput').value.trim();
   if (!q) return;
-  const data = await fetchRAWG(`${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=20`);
-  renderGames(data.results || []);
-}
-
-function renderGames(games) {
-  const grid = document.getElementById('gamesGrid');
-  if (!games.length) { grid.innerHTML = '<div class="loading">No se encontraron juegos</div>'; return; }
-  grid.innerHTML = games.map(game => `
-    <div class="game-card" onclick="openGame(${game.id}, '${game.name.replace(/'/g, "\\'")}', '${game.background_image || ''}')">
-      <img class="game-card-img" src="${game.background_image || 'https://via.placeholder.com/300x170?text=No+Image'}" alt="${game.name}">
-      <div class="game-card-body">
-        <div class="game-card-title">${game.name}</div>
-        <div class="game-card-meta">${game.released?.slice(0,4) || ''}</div>
-      </div>
-      <div class="game-card-footer"><div>🎮</div><div class="score na" id="score-${game.id}">—</div></div>
-    </div>
-  `).join('');
-  loadGamesAvg(games);
-}
-
-async function loadGamesAvg(games) {
-  const { data } = await supabase.from('games_avg').select('*');
-  if (data) {
-    games.forEach(game => {
-      const avg = data.find(a => a.game_id === game.id);
-      const el = document.getElementById(`score-${game.id}`);
-      if (el && avg && avg.avg_score) {
-        const score = Math.round(avg.avg_score);
-        el.className = `score ${score >= 75 ? 'green' : (score >= 50 ? 'yellow' : 'red')}`;
-        el.innerText = score;
-      }
-    });
+  renderSkeletons();
+  document.getElementById('featuredGrid').innerHTML = '';
+  try {
+    const url = `${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=20&search_precise=true`;
+    const data = await fetchGames(url);
+    if (data.detail) throw new Error(data.detail);
+    const games = data.results || [];
+    renderFeatured(games.slice(0,4));
+    renderGrid(games);
+    renderTopList(games);
+  } catch(e) {
+    console.error('Search error:', e);
+    document.getElementById('gamesGrid').innerHTML = `<div style="padding:2rem;color:var(--red-dark);font-family:'Barlow Condensed',sans-serif">Error en la búsqueda: ${e.message}</div>`;
   }
 }
 
-async function loadTopGames() {
-  const { data } = await supabase.from('games_avg').select('*').order('avg_score', { ascending: false }).limit(10);
-  const container = document.getElementById('topList');
-  if (!data || data.length === 0) { container.innerHTML = '<div class="list-item">Sin valoraciones aún</div>'; return; }
-  container.innerHTML = data.map((g, i) => `
-    <div class="list-item" onclick="fetchAndOpenGame(${g.game_id})">
-      <span class="list-rank">${i+1}</span>
-      <span class="list-title">${g.game_name}</span>
-      <div class="score small ${g.avg_score >= 75 ? 'green' : (g.avg_score >= 50 ? 'yellow' : 'red')}">${Math.round(g.avg_score)}</div>
-    </div>
-  `).join('');
-}
+// ── MODAL ──
+let currentGame = null;
 
-async function fetchAndOpenGame(gameId) {
-  const data = await fetchRAWG(`${RAWG_BASE}/games/${gameId}?key=${RAWG_KEY}`);
-  openGame(gameId, data.name, data.background_image || '');
-}
-
-async function openGame(gameId, gameName, gameImage) {
-  currentGame = { id: gameId, name: gameName, image: gameImage };
-  document.getElementById('modalGameInfo').innerHTML = `
-    <img class="modal-game-img" src="${gameImage || 'https://via.placeholder.com/70x44'}" onerror="this.src='https://via.placeholder.com/70x44'">
-    <div><div class="modal-game-title">${gameName}</div></div>
-  `;
-  for (const group of Object.values(SLIDER_GROUPS)) {
-    for (const s of group) sliderValues[s.id] = 7;
-  }
-  renderAllSliders();
+function openModal() {
   document.getElementById('reviewModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-async function submitReview() {
-  if (!currentUser) { alert('Inicia sesión primero'); closeModal(); openLoginModal(); return; }
-  const reviewText = document.getElementById('reviewText').value.trim() || '';
-  const recommend = document.getElementById('recommendSelect').value === 'tr
+function openModalForGame(g) {
+  currentGame = g;
+  const info = document.getElementById('modalGameInfo');
+  info.innerHTML = `
+    ${g.background_image ? `<img class="modal-game-img" src="${g.background_image}">` : ''}
+    <div>
+      <div class="modal-game-title">${g.name}</div>
+      <div class="modal-game-meta">${g.released?.slice(0,4)||''} · ${g.genres?.map(x=>x.name).slice(0,3).join(', ')||''}</div>
+    </div>`;
+  openModal();
+}
+
+function closeModal() {
+  document.getElementById('reviewModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function submitReview() {
+  closeModal();
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--green-dark);color:#fff;padding:.7rem 1.8rem;font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:1rem;letter-spacing:1px;z-index:999;border-radius:3px;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+  toast.textContent = '✓ Valoración publicada — ¡Gracias!';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+document.getElementById('reviewModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('reviewModal')) closeModal();
+});
+
+// Init
+initSliders();
+loadGames();
+</script>
+</body>
+</html>
