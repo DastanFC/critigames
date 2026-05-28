@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
 <title>CritiGames — Reviews reales de jugadores</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.35em' font-size='90'%3E🎮%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -1429,6 +1430,7 @@ async function loadGames(platform=null,genre=null){
   }
 }
 
+
 async function renderFeatured(games){
   const grid=document.getElementById('featuredGrid');
   if(!grid)return;
@@ -1469,8 +1471,8 @@ async function renderGrid(games) {
     const scoreData = gameScores[String(g.id)];
     const avgScore = scoreData ? Math.round(scoreData.sum / scoreData.count) : null;
     const cls = avgScore ? (avgScore >= 75 ? 'green' : avgScore >= 50 ? 'yellow' : 'red') : 'na';
-    const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones';
-    const countText = avgScore ? `${scoreData.count} opiniones` : 'Sé el primero';
+    const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones ';
+    const countText = avgScore ? `${scoreData.count} opiniones` : '¡Opina!';
     return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ RECIENTE</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span><span class="featured-card-score-count">${countText}</span></div></div></div></div>`;
   }).join('');
 }
