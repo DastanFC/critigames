@@ -1530,24 +1530,16 @@ async function openGameModal(game) {
   await loadGameReviewsIntoModal(String(game.id));
   switchGameTab('reviews');
 }
-function closeGameModal(){document.getElementById('gameModal').classList.remove('open'); document.body.style.overflow=''; currentGame=null;}
-function switchGameTab(tab){
-  const reviewsTab=document.getElementById('gameReviewsTab');
-  const writeTab=document.getElementById('gameWriteTab');
-  const tabs=document.querySelectorAll('.game-tab');
-  if(tab==='reviews'){
-    reviewsTab.style.display='block';
-    writeTab.style.display='none';
-    tabs[0].classList.add('active');
-    tabs[1].classList.remove('active');
-    if(currentGame) loadGameReviewsIntoModal(String(currentGame.id));
-  }else{
-    reviewsTab.style.display='none';
-    writeTab.style.display='block';
-    tabs[0].classList.remove('active');
-    tabs[1].classList.add('active');
-    resetWriteForm();
-  }
+function closeGameModal() {
+  document.getElementById('gameModal').classList.remove('open');
+  document.body.style.overflow = '';
+  // Restaurar el botón de enviar a su estado original
+  const submitBtn = document.getElementById('submitReviewBtn');
+  submitBtn.textContent = 'PUBLICAR RESEÑA';
+  submitBtn.onclick = () => submitReview();
+  submitBtn.disabled = false;
+  window.editingReviewId = null;
+  currentGame = null;
 }
 
 async function loadGameReviewsIntoModal(gameId){
@@ -1878,12 +1870,19 @@ function renderAdminUsers(users){
     <td>${u.is_admin?'Admin':'Usuario'}</td>
     <td style="text-align:center">${u.reviewCount}</td>
     <td>${new Date(u.created_at).toLocaleDateString()}</td>
-    <td>${!u.is_admin?`
+<td>
+  ${!u.is_admin ? `
+    <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
       ${u.is_banned
-        ?`<button class="admin-action success" onclick="toggleBanUser('${u.id}',false)">Desbanear</button>`
-        :`<button class="admin-action danger" onclick="toggleBanUser('${u.id}',true)">Banear</button>`}
-      <button class="admin-action danger" onclick="deleteUserReviews('${u.id}','${escapeHTML(u.username)}')" style="margin-left:0.3rem">Borrar reseñas</button>
-    `:'—'}</td>
+        ? `<button class="admin-action success" onclick="toggleBanUser('${u.id}',false)">Desbanear</button>`
+        : `<button class="admin-action danger" onclick="toggleBanUser('${u.id}',true)">Banear</button>`}
+      <button class="admin-action ${u.is_moderator ? 'success' : 'default'}" onclick="toggleModerator('${u.id}', ${!u.is_moderator})" style="${u.is_moderator ? 'border-color: var(--green-dark);' : ''}">
+        ${u.is_moderator ? '🔧 Quitar moderador' : '🛡️ Hacer moderador'}
+      </button>
+      <button class="admin-action danger" onclick="deleteUserReviews('${u.id}','${escapeHTML(u.username)}')">Borrar reseñas</button>
+    </div>
+  ` : '<span style="font-size:0.65rem;color:var(--admin)">👑 Superadmin</span>'}
+</td>
   </tr>`).join('');
 }
 
@@ -2068,6 +2067,257 @@ document.getElementById('authModal')?.addEventListener('click',e=>{if(e.target==
 // Géneros
 const genres=['action','rpg','adventure','shooter','strategy','sports','horror','indie'];
 document.getElementById('genreList').innerHTML=genres.map(g=>`<span class="genre-chip" onclick="filterByGenre('${g}')">${g.charAt(0).toUpperCase()+g.slice(1)}</span>`).join('');
+
+// ========== FUNCIONES DE EDICIÓN Y MODERACIÓN ==========
+
+async function editReviewFn(reviewId) {
+  if (!currentUser) {
+    openAuthModal();
+    return;
+  }
+  
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('Demo: edición no disponible', true);
+    return;
+  }
+  
+  // Obtener los datos actuales de la reseña
+  const { data: review, error } = await sb.from('reviews').select('*').eq('id', reviewId).single();
+  if (error || !review) {
+    showToast('Error al cargar la reseña', true);
+    return;
+  }
+  
+  // Verificar permisos: el autor, admin o moderador pueden editar
+  const isAuthor = currentUser.id === review.player_id;
+  const isAdmin = currentUser.is_admin === true;
+  const isModerator = currentUser.is_moderator === true;
+  
+  if (!isAuthor && !isAdmin && !isModerator) {
+    showToast('No tienes permiso para editar esta reseña', true);
+    return;
+  }
+  
+  // Guardar el ID de la reseña que estamos editando
+  window.editingReviewId = reviewId;
+  window.editingOriginalData = review;
+  
+  // Abrir el modal y cargar los datos en el formulario
+  if (!currentGame || currentGame.id !== review.game_id) {
+    // Si el juego actual no es el de la reseña, lo cargamos
+    currentGame = { id: review.game_id, name: review.game_name, background_image: review.game_image };
+    const titleEl = document.getElementById('gameModalTitle');
+    if(titleEl) titleEl.textContent = review.game_name;
+    const infoDiv = document.getElementById('gameModalInfo');
+    infoDiv.innerHTML = `<img class="modal-game-img" src="${review.game_image || ''}"><div><div class="modal-game-title">${escapeHTML(review.game_name)}</div></div>`;
+  }
+  
+  // Abrir el modal y cambiar a la pestaña de escribir
+  document.getElementById('gameModal').classList.add('open');
+  switchGameTab('write');
+  
+  // Rellenar el formulario con los datos existentes
+  // Plataforma
+  const platformMap = { 'PC': 'plt-pc', 'PS5': 'plt-ps5', 'Xbox': 'plt-xbs', 'Switch': 'plt-sw' };
+  const platformId = platformMap[review.platform] || 'plt-pc';
+  document.getElementById(platformId).checked = true;
+  
+  // Horas
+  const hoursMap = { '<10h': 'h1', '10-50h': 'h2', '50-100h': 'h3', '+100h': 'h4' };
+  const hoursId = hoursMap[review.hours] || 'h2';
+  document.getElementById(hoursId).checked = true;
+  
+  // Título, pros, cons
+  document.getElementById('reviewTitle').value = review.title || '';
+  document.getElementById('reviewPros').value = review.pros || '';
+  document.getElementById('reviewCons').value = review.cons || '';
+  
+  // Recomendación
+  if (review.recommend === false) {
+    document.getElementById('rec-no').checked = true;
+  } else {
+    document.getElementById('rec-yes').checked = true;
+  }
+  
+  // Restaurar valores de los sliders (si los tenemos guardados en la reseña)
+  // Por ahora, como los sliders no se guardan individualmente, solo restauramos el score final
+  // y ajustamos los sliders aproximadamente
+  const targetScore = review.score;
+  // Resetear sliders a valores por defecto y luego ajustar
+  Object.keys(sliderVals).forEach(key => { sliderVals[key] = 7; });
+  updateOverall();
+  
+  // Cambiar el texto del botón de enviar para que diga "ACTUALIZAR RESEÑA"
+  const submitBtn = document.getElementById('submitReviewBtn');
+  submitBtn.textContent = 'ACTUALIZAR RESEÑA';
+  submitBtn.onclick = () => updateReviewFn(reviewId);
+  
+  showToast('Modo edición: modifica los datos y haz clic en Actualizar');
+}
+
+async function updateReviewFn(reviewId) {
+  if (!currentUser) {
+    openAuthModal();
+    return;
+  }
+  
+  const btn = document.getElementById('submitReviewBtn');
+  btn.disabled = true;
+  btn.textContent = 'GUARDANDO...';
+  
+  // Calcular la nueva puntuación basada en los sliders
+  const vals = Object.values(sliderVals);
+  const score = Math.round(vals.reduce((a,b) => a+b, 0) / vals.length * 10);
+  
+  // Obtener valores del formulario
+  const platform = ['PC','PS5','Xbox','Switch'][['plt-pc','plt-ps5','plt-xbs','plt-sw'].findIndex(id => document.getElementById(id)?.checked)] || 'PC';
+  const hours = ['<10h','10-50h','50-100h','+100h'][['h1','h2','h3','h4'].findIndex(id => document.getElementById(id)?.checked)] || '10-50h';
+  const recommend = document.getElementById('rec-yes')?.checked !== false;
+  const title = document.getElementById('reviewTitle')?.value.trim() || '';
+  const pros = document.getElementById('reviewPros')?.value.trim() || '';
+  const cons = document.getElementById('reviewCons')?.value.trim() || '';
+  
+  const isAdmin = currentUser.is_admin === true;
+  const isModerator = currentUser.is_moderator === true;
+  const editedBy = currentUser.username;
+  const editedRole = isAdmin ? 'admin' : (isModerator ? 'moderator' : 'user');
+  
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('Demo: actualización no disponible', true);
+    btn.disabled = false;
+    btn.textContent = 'PUBLICAR RESEÑA';
+    btn.onclick = () => submitReview();
+    return;
+  }
+  
+  const { error } = await sb.from('reviews').update({
+    score: score,
+    platform: platform,
+    hours: hours,
+    title: title,
+    pros: pros,
+    cons: cons,
+    recommend: recommend,
+    updated_at: new Date().toISOString(),
+    edited_by: editedBy,
+    edited_role: editedRole,
+    edited_at: new Date().toISOString()
+  }).eq('id', reviewId);
+  
+  if (error) {
+    showToast('Error al actualizar: ' + error.message, true);
+  } else {
+    showToast('✅ Reseña actualizada correctamente');
+    // Recargar las reseñas del juego actual
+    if (currentGame) await loadGameReviewsIntoModal(String(currentGame.id));
+    // Cambiar a la pestaña de reseñas
+    switchGameTab('reviews');
+  }
+  
+  // Restaurar el botón a su estado original
+  btn.disabled = false;
+  btn.textContent = 'PUBLICAR RESEÑA';
+  btn.onclick = () => submitReview();
+  window.editingReviewId = null;
+  window.editingOriginalData = null;
+}
+
+async function permanentDeleteReviewFn(reviewId) {
+  if (!currentUser) {
+    openAuthModal();
+    return;
+  }
+  
+  // Verificar que el usuario es el autor
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('Demo: borrado no disponible', true);
+    return;
+  }
+  
+  // Obtener la reseña para verificar el autor
+  const { data: review, error } = await sb.from('reviews').select('player_id, username').eq('id', reviewId).single();
+  if (error || !review) {
+    showToast('Error al encontrar la reseña', true);
+    return;
+  }
+  
+  const isAuthor = currentUser.id === review.player_id;
+  const isAdmin = currentUser.is_admin === true;
+  
+  if (!isAuthor && !isAdmin) {
+    showToast('Solo el autor puede borrar sus propias reseñas', true);
+    return;
+  }
+  
+  if (!confirm(`¿Borrar PERMANENTEMENTE esta reseña? Esta acción no se puede deshacer.`)) return;
+  
+  const { error: deleteError } = await sb.from('reviews').delete().eq('id', reviewId);
+  if (deleteError) {
+    showToast('Error al borrar: ' + deleteError.message, true);
+  } else {
+    showToast('🗑️ Reseña borrada permanentemente');
+    if (currentGame) await loadGameReviewsIntoModal(String(currentGame.id));
+  }
+}
+
+async function hideReviewByAdminFn(reviewId, username) {
+  if (!currentUser) {
+    openAuthModal();
+    return;
+  }
+  
+  if (!currentUser.is_admin) {
+    showToast('Solo los administradores pueden ocultar reseñas', true);
+    return;
+  }
+  
+  if (!confirm(`¿Ocultar la reseña de "${username}" con el aviso de infracción?\n\nLa reseña no se borrará, pero mostrará un mensaje de advertencia.`)) return;
+  
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('Demo: ocultar no disponible', true);
+    return;
+  }
+  
+  const { error } = await sb.from('reviews').update({
+    is_hidden: true,
+    hidden_by: currentUser.username,
+    hidden_role: 'admin',
+    hidden_at: new Date().toISOString(),
+    hidden_reason: 'Infracción de las normas de la comunidad'
+  }).eq('id', reviewId);
+  
+  if (error) {
+    showToast('Error al ocultar: ' + error.message, true);
+  } else {
+    showToast(`🔒 Reseña ocultada por ${currentUser.username}`);
+    if (currentGame) await loadGameReviewsIntoModal(String(currentGame.id));
+  }
+}
+
+async function toggleModerator(userId, makeModerator) {
+  const action = makeModerator ? 'dar rol de moderador a' : 'quitar rol de moderador a';
+  if (!confirm(`¿${action} este usuario?`)) return;
+  
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('Demo: función no disponible sin Supabase', true);
+    return;
+  }
+  
+  try {
+    const { error } = await sb.from('players').update({ is_moderator: makeModerator }).eq('id', userId);
+    if (error) throw error;
+    showToast(`Usuario ${makeModerator ? 'ahora es moderador' : 'ya no es moderador'}`);
+    loadAdminUsers(); // Recargar la tabla de usuarios
+  } catch (e) {
+    showToast('Error: ' + e.message, true);
+  }
+}
+
 </script>
 </body>
 </html>
