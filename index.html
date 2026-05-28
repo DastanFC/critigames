@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>PlayerCore — Reviews reales de jugadores</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>CritiGames — Reviews reales de jugadores</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --white: #ffffff;
@@ -75,66 +76,115 @@ nav {
 .nav-logo span { color: var(--green); }
 .nav-search {
   flex: 1;
-  display: flex; align-items: center;
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 3px; overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 4px;
+  overflow: hidden;
   min-width: 0;
 }
 .nav-search input {
-  flex: 1; min-width: 0;
-  background: none; border: none; outline: none;
-  color: var(--white); font-family: 'Roboto', sans-serif;
-  font-size: .95rem; padding: .4rem .7rem;
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--white);
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem;
+  padding: .45rem .7rem;
 }
-.nav-search input::placeholder { color: rgba(255,255,255,.4); }
+.nav-search input::placeholder {
+  color: rgba(255,255,255,0.6);
+  font-weight: 400;
+}
 .nav-search button {
-  background: var(--green); border: none; padding: .4rem .75rem;
-  color: var(--gray-900); font-weight: 700; cursor: pointer;
-  font-size: .8rem; font-family: 'Roboto', sans-serif;
-  letter-spacing: 1px; white-space: nowrap; flex-shrink: 0;
+  background: var(--green);
+  border: none;
+  padding: .45rem .85rem;
+  color: var(--gray-900);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: .8rem;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .nav-links { display: flex; gap: 1rem; margin-left: auto; flex-shrink: 0; }
 .nav-links a {
-  color: rgba(255,255,255,.65); font-family: 'Roboto', sans-serif;
-  font-size: .9rem; font-weight: 600; text-decoration: none;
-  letter-spacing: .5px; white-space: nowrap;
+  color: rgba(255,255,255,.65);
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: .5px;
+  white-space: nowrap;
   transition: color .15s;
 }
 .nav-links a:hover { color: var(--white); }
 .nav-btn-login {
-  background: none; border: 1px solid rgba(255,255,255,.3);
-  color: var(--white); padding: .3rem .8rem;
+  background: none;
+  border: 1px solid rgba(255,255,255,.4);
+  color: var(--white);
+  padding: .3rem .8rem;
   font-family: 'Roboto', sans-serif;
-  font-weight: 600; font-size: .85rem; letter-spacing: .5px;
-  cursor: pointer; white-space: nowrap; border-radius: 2px;
-  transition: all .15s; flex-shrink: 0;
+  font-weight: 600;
+  font-size: .85rem;
+  letter-spacing: .5px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: all .15s;
+  flex-shrink: 0;
 }
-.nav-btn-login:hover { background: rgba(255,255,255,.1); }
+.nav-btn-login:hover { background: rgba(255,255,255,.15); }
 .nav-user-menu { position: relative; flex-shrink: 0; }
 .nav-user-btn {
-  background: var(--green-dark); border: none;
-  color: var(--white); padding: .3rem .8rem;
+  background: var(--green-dark);
+  border: none;
+  color: var(--white);
+  padding: .3rem .8rem;
   font-family: 'Roboto', sans-serif;
-  font-weight: 700; font-size: .85rem; letter-spacing: .5px;
-  cursor: pointer; border-radius: 2px; display: flex;
-  align-items: center; gap: .4rem; white-space: nowrap;
+  font-weight: 700;
+  font-size: .85rem;
+  letter-spacing: .5px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  white-space: nowrap;
 }
 .nav-user-btn.admin-btn { background: var(--admin-dark); }
 .nav-user-btn .crown { font-size: .75rem; }
 .nav-dropdown {
-  position: absolute; right: 0; top: calc(100% + 6px);
-  background: var(--white); border: 1px solid var(--border);
-  box-shadow: var(--shadow); min-width: 160px;
-  z-index: 200; display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  min-width: 160px;
+  z-index: 200;
+  display: none;
+  border-radius: 4px;
 }
 .nav-dropdown.open { display: block; }
 .nav-dropdown a, .nav-dropdown button {
-  display: block; width: 100%; text-align: left;
-  padding: .6rem 1rem; border: none; background: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: .6rem 1rem;
+  border: none;
+  background: none;
   font-family: 'Roboto', sans-serif;
-  font-size: .85rem; font-weight: 600; color: var(--gray-700);
-  cursor: pointer; text-decoration: none;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+  text-decoration: none;
   transition: background .1s;
 }
 .nav-dropdown a:hover, .nav-dropdown button:hover { background: var(--gray-50); }
@@ -146,7 +196,9 @@ nav {
   background: var(--white);
   border-bottom: 2px solid var(--border);
   padding: 0 1rem;
-  display: flex; align-items: center; gap: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -154,47 +206,71 @@ nav {
 .sub-nav::-webkit-scrollbar { display: none; }
 .sub-nav a {
   font-family: 'Roboto', sans-serif;
-  font-size: .85rem; font-weight: 700;
-  letter-spacing: .5px; text-transform: uppercase;
-  color: var(--gray-500); text-decoration: none;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  text-decoration: none;
   padding: .7rem .9rem;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px; white-space: nowrap;
+  margin-bottom: -2px;
+  white-space: nowrap;
   transition: all .15s;
   cursor: pointer;
 }
 .sub-nav a:hover, .sub-nav a.active {
-  color: var(--gray-900); border-bottom-color: var(--gray-900);
+  color: var(--gray-900);
+  border-bottom-color: var(--gray-900);
 }
 
 /* ─── LAYOUT ─── */
 .page-wrap {
-  max-width: 1140px; margin: 0 auto; padding: 0 .875rem;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  overflow-x: hidden;
 }
 .section-header {
   padding: 1.25rem 0 .875rem;
-  display: flex; align-items: baseline; justify-content: space-between;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 .section-header h2 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.5rem; font-weight: 800;
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: var(--gray-900);
 }
 .section-header a {
   font-family: 'Roboto', sans-serif;
-  font-size: .8rem; font-weight: 700;
-  color: var(--blue-accent); text-decoration: none;
-  letter-spacing: .5px; text-transform: uppercase;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--blue-accent);
+  text-decoration: none;
+  letter-spacing: .5px;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
 /* ─── SCORE BADGE ─── */
 .score {
-  width: 54px; height: 54px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'Roboto', sans-serif;
-  font-size: 1.6rem; font-weight: 800; border-radius: 4px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  border-radius: 4px;
 }
 .score.green  { background: var(--green);  color: var(--gray-900); }
 .score.yellow { background: var(--yellow); color: var(--gray-900); }
@@ -209,57 +285,83 @@ nav {
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
+  overflow: hidden;
 }
 .game-card {
   background: var(--white);
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
   cursor: pointer;
   transition: box-shadow .15s;
-  text-decoration: none; color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 .game-card:hover { box-shadow: inset 0 0 0 2px var(--gray-900); z-index: 1; }
 .game-card-img {
-  width: 100%; aspect-ratio: 16/9;
-  object-fit: cover; background: var(--gray-100); display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: var(--gray-100);
+  display: block;
 }
 .game-card-img-placeholder {
-  width: 100%; aspect-ratio: 16/9;
-  background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
-  display: flex; align-items: center; justify-content: center;
-  color: var(--gray-200); font-size: 2rem;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #2a2a28, #3a3a36);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b6b66;
+  font-size: 2rem;
 }
 .game-card-body { padding: .65rem; flex: 1; display: flex; flex-direction: column; gap: .35rem; }
 .platform-tag {
   font-family: 'JetBrains Mono', monospace;
-  font-size: .5rem; font-weight: 600;
+  font-size: .5rem;
+  font-weight: 600;
   padding: .12rem .35rem;
-  background: var(--gray-50); border: 1px solid var(--border);
-  color: var(--gray-500); border-radius: 2px;
-  text-transform: uppercase; letter-spacing: .5px;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  color: var(--gray-500);
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
 }
 .game-card-platforms { display: flex; gap: .25rem; flex-wrap: wrap; }
 .game-card-title {
   font-family: 'Roboto', sans-serif;
-  font-size: .95rem; font-weight: 700; line-height: 1.2;
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.2;
   color: var(--gray-900);
+  word-break: break-word;
 }
 .game-card-meta {
   font-family: 'Roboto', sans-serif;
-  font-size: .72rem; color: var(--gray-500); margin-top: auto;
+  font-size: .72rem;
+  color: var(--gray-500);
+  margin-top: auto;
 }
 .game-card-footer {
   padding: .55rem .65rem;
   border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .game-card-footer-label {
   font-family: 'Roboto', sans-serif;
-  font-size: .7rem; font-weight: 700; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--gray-500);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
 }
 .game-card-footer-sub {
   font-family: 'Roboto', sans-serif;
-  font-size: .62rem; color: var(--gray-500); margin-top: .1rem;
+  font-size: .62rem;
+  color: var(--gray-500);
+  margin-top: .1rem;
 }
 
 /* ─── FEATURED ─── */
@@ -270,34 +372,56 @@ nav {
   background: var(--border);
   border: 1px solid var(--border);
   margin-bottom: 1.5rem;
+  overflow: hidden;
 }
 .featured-card {
   background: var(--white);
-  display: flex; cursor: pointer;
-  text-decoration: none; color: inherit;
-  transition: box-shadow .15s; overflow: hidden;
+  display: flex;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .15s;
+  overflow: hidden;
 }
 .featured-card:hover { box-shadow: inset 0 0 0 2px var(--gray-900); z-index: 1; }
-.featured-card-img { width: 140px; flex-shrink: 0; object-fit: cover; background: var(--gray-100); }
+.featured-card-img {
+  width: 140px;
+  height: 100%;
+  object-fit: cover;
+  background: var(--gray-100);
+  flex-shrink: 0;
+}
 .featured-card-img-placeholder {
-  width: 140px; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
-  display: flex; align-items: center; justify-content: center;
-  color: var(--gray-200); font-size: 2rem;
+  width: 140px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #2a2a28, #3a3a36);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b6b66;
+  font-size: 2rem;
 }
 .featured-card-body { padding: .875rem; flex: 1; display: flex; flex-direction: column; gap: .35rem; }
 .featured-card-label {
   font-family: 'Roboto', sans-serif;
-  font-size: .62rem; font-weight: 800; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--green-dark);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--green-dark);
 }
 .featured-card-title {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.1rem; font-weight: 800; line-height: 1.1; color: var(--gray-900);
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--gray-900);
+  word-break: break-word;
 }
 .featured-card-genre {
   font-family: 'Roboto', sans-serif;
-  font-size: .72rem; color: var(--gray-500);
+  font-size: .72rem;
+  color: var(--gray-500);
 }
 .featured-card-score-row { display: flex; align-items: center; gap: .5rem; margin-top: auto; padding-top: .4rem; }
 .featured-card-score-info { display: flex; flex-direction: column; }
@@ -317,135 +441,220 @@ nav {
 /* ─── LIST VIEW ─── */
 .list-view { border: 1px solid var(--border); background: var(--white); }
 .list-item {
-  display: flex; align-items: center; gap: .65rem;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
   padding: .65rem .875rem;
   border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .1s;
-  text-decoration: none; color: inherit;
+  cursor: pointer;
+  transition: background .1s;
+  text-decoration: none;
+  color: inherit;
 }
 .list-item:last-child { border-bottom: none; }
 .list-item:hover { background: var(--gray-50); }
 .list-rank {
   font-family: 'Roboto', sans-serif;
-  font-weight: 800; font-size: 1rem;
-  color: var(--gray-200); width: 20px; text-align: center; flex-shrink: 0;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--gray-200);
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
 }
 .list-img { width: 52px; height: 33px; object-fit: cover; flex-shrink: 0; background: var(--gray-100); }
 .list-img-ph {
-  width: 52px; height: 33px; flex-shrink: 0;
-  background: var(--gray-100); display: flex;
-  align-items: center; justify-content: center; color: var(--gray-200); font-size: 1rem;
+  width: 52px;
+  height: 33px;
+  flex-shrink: 0;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-200);
+  font-size: 1rem;
 }
 .list-info { flex: 1; min-width: 0; }
 .list-title {
   font-family: 'Roboto', sans-serif;
-  font-weight: 700; font-size: .9rem; line-height: 1.1;
-  color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-weight: 700;
+  font-size: .9rem;
+  line-height: 1.1;
+  color: var(--gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .list-meta { font-family: 'Roboto', sans-serif; font-size: .68rem; color: var(--gray-500); }
 
 /* ─── SIDEBAR CARD ─── */
-.sidebar-card { background: var(--white); border: 1px solid var(--border); margin-bottom: 1rem; }
+.sidebar-card { background: var(--white); border: 1px solid var(--border); margin-bottom: 1rem; border-radius: 4px; overflow: hidden; }
 .sidebar-card-header {
   padding: .65rem .875rem;
   border-bottom: 1px solid var(--border);
   font-family: 'Roboto', sans-serif;
-  font-size: .88rem; font-weight: 800;
-  letter-spacing: .5px; text-transform: uppercase; color: var(--gray-900);
+  font-size: .88rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-900);
 }
 .sidebar-card-body { padding: .65rem .875rem; }
 .genre-list { display: flex; flex-wrap: wrap; gap: .35rem; }
 .genre-chip {
   font-family: 'Roboto', sans-serif;
-  font-size: .72rem; font-weight: 700; letter-spacing: .5px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .5px;
   padding: .25rem .55rem;
-  background: var(--gray-50); border: 1px solid var(--border);
-  color: var(--gray-700); cursor: pointer; border-radius: 2px;
-  transition: all .15s; text-decoration: none;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  color: var(--gray-700);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all .15s;
+  text-decoration: none;
 }
 .genre-chip:hover { background: var(--gray-900); color: var(--white); border-color: var(--gray-900); }
 
 /* ─── COMMUNITY BANNER ─── */
 .community-banner {
-  background: var(--gray-900); color: var(--white);
+  background: var(--gray-900);
+  color: var(--white);
   padding: 1.1rem 1.25rem;
-  display: flex; align-items: center; gap: 1.2rem;
-  border: 1px solid var(--border); margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+  border-radius: 4px;
+  flex-wrap: wrap;
 }
 .community-banner-icon { font-size: 1.75rem; flex-shrink: 0; }
 .community-banner-text h3 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.05rem; font-weight: 800; letter-spacing: .5px; margin-bottom: .2rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  margin-bottom: .2rem;
 }
 .community-banner-text p {
-  font-size: .78rem; color: rgba(255,255,255,.65);
+  font-size: .78rem;
+  color: rgba(255,255,255,.65);
   font-family: 'Roboto', sans-serif;
 }
 .community-banner-btn {
-  margin-left: auto; flex-shrink: 0;
-  background: var(--green); color: var(--gray-900);
-  border: none; padding: .5rem 1.1rem;
+  margin-left: auto;
+  flex-shrink: 0;
+  background: var(--green);
+  color: var(--gray-900);
+  border: none;
+  padding: .5rem 1.1rem;
   font-family: 'Roboto', sans-serif;
-  font-weight: 800; font-size: .88rem; letter-spacing: 1px;
-  text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: opacity .15s;
+  font-weight: 800;
+  font-size: .88rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity .15s;
 }
 .community-banner-btn:hover { opacity: .85; }
 
 /* ─── SCORE LEGEND ─── */
 .score-legend {
-  display: flex; gap: .875rem; align-items: center; flex-wrap: wrap;
-  padding: .5rem 0; border-bottom: 1px solid var(--border); margin-bottom: .875rem;
+  display: flex;
+  gap: .875rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .875rem;
 }
 .legend-item {
-  display: flex; align-items: center; gap: .35rem;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
   font-family: 'Roboto', sans-serif;
-  font-size: .7rem; font-weight: 600; letter-spacing: .3px;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .3px;
 }
 .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
 
 /* ─── FOOTER ─── */
 footer {
-  background: var(--gray-900); color: rgba(255,255,255,.5);
-  text-align: center; padding: 2rem 1.5rem;
+  background: var(--gray-900);
+  color: rgba(255,255,255,.5);
+  text-align: center;
+  padding: 2rem 1.5rem;
   margin-top: 3rem;
   font-family: 'Roboto', sans-serif;
-  font-size: .8rem; letter-spacing: .5px;
+  font-size: .8rem;
+  letter-spacing: .5px;
 }
 footer strong { color: var(--green); }
 
 /* ─── MODAL BASE ─── */
 .modal-overlay {
-  position: fixed; inset: 0;
+  position: fixed;
+  inset: 0;
   background: rgba(0,0,0,.6);
-  z-index: 300; display: flex; align-items: center; justify-content: center;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: .75rem;
-  opacity: 0; pointer-events: none; transition: opacity .2s;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
 }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal {
   background: var(--white);
-  width: 100%; max-width: 900px;
-  max-height: 92vh; overflow-y: auto;
+  width: 100%;
+  max-width: 900px;
+  max-height: 92vh;
+  overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0,0,0,.35);
-  transform: translateY(16px); transition: transform .2s;
-  border-radius: 3px;
+  transform: translateY(16px);
+  transition: transform .2s;
+  border-radius: 8px;
 }
 .modal-overlay.open .modal { transform: translateY(0); }
 .modal-top {
-  background: var(--gray-900); padding: .875rem 1.25rem;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 1;
+  background: var(--gray-900);
+  padding: .875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-radius: 8px 8px 0 0;
 }
 .modal-top h2 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; color: var(--white);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--white);
 }
 .modal-close {
-  background: none; border: 1px solid rgba(255,255,255,.3);
-  color: var(--white); cursor: pointer; width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; border-radius: 2px; flex-shrink: 0;
+  background: none;
+  border: 1px solid rgba(255,255,255,.3);
+  color: var(--white);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
+.modal-close:hover { background: rgba(255,255,255,.1); }
 
 /* ─── GAME MODAL TABS ─── */
 .game-modal-tabs {
@@ -481,12 +690,19 @@ footer strong { color: var(--green); }
   border-bottom: 1px solid var(--border);
   align-items: center;
 }
-.modal-game-img { width: 72px; height: 45px; object-fit: cover; flex-shrink: 0; background: var(--gray-100); border-radius: 2px; }
+.modal-game-img {
+  width: 72px;
+  height: 45px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--gray-100);
+  border-radius: 4px;
+}
 .modal-game-title { font-family: 'Roboto', sans-serif; font-size: 1.05rem; font-weight: 800; }
 .modal-game-meta { font-family: 'Roboto', sans-serif; font-size: .72rem; color: var(--gray-500); }
 .modal-body { padding: 1.25rem; }
 
-/* ─── REVIEWS GRID (para ver reseñas) ─── */
+/* ─── REVIEWS GRID ─── */
 .reviews-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -497,6 +713,7 @@ footer strong { color: var(--green); }
   border: 1px solid var(--border);
   padding: 1rem;
   transition: box-shadow .15s;
+  border-radius: 4px;
 }
 .review-card-header {
   display: flex;
@@ -575,11 +792,12 @@ footer strong { color: var(--green); }
   font-size: .82rem;
   color: var(--gray-700);
   line-height: 1.55;
+  font-family: 'Roboto', sans-serif;
 }
 .review-pros {
   background: #f0faf0;
   padding: .5rem .65rem;
-  border-radius: 3px;
+  border-radius: 4px;
   margin: .5rem 0;
   font-size: .78rem;
   border-left: 3px solid var(--green-dark);
@@ -587,7 +805,7 @@ footer strong { color: var(--green); }
 .review-cons {
   background: #fdf0f0;
   padding: .5rem .65rem;
-  border-radius: 3px;
+  border-radius: 4px;
   margin: .5rem 0;
   font-size: .78rem;
   border-left: 3px solid var(--red-dark);
@@ -606,7 +824,7 @@ footer strong { color: var(--green); }
   border: 1px solid var(--border);
   background: none;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 4px;
   transition: all .15s;
   color: var(--gray-500);
 }
@@ -629,22 +847,37 @@ footer strong { color: var(--green); }
   font-size: .9rem;
   color: var(--gray-500);
   background: var(--gray-50);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 @media (max-width: 680px) {
   .reviews-grid { grid-template-columns: 1fr; }
+  .games-grid { grid-template-columns: repeat(2, 1fr); }
+  .featured-grid { grid-template-columns: 1fr; }
+  .featured-card-img, .featured-card-img-placeholder { width: 100px; }
+  .two-col { grid-template-columns: 1fr; gap: 0.75rem; }
+  .page-wrap { padding: 0 0.75rem; }
+  .community-banner { flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .community-banner-btn { margin-left: 0; width: 100%; text-align: center; }
+  .nav-links { display: none; }
+  .modal-body { padding: 1rem; }
+  .auth-body { padding: 1.25rem; }
 }
 
-/* ─── REVIEW MODAL (ESCRIBIR - INTACTO) ─── */
+/* ─── REVIEW MODAL (ESCRIBIR) ─── */
 .form-block { margin-bottom: 1.2rem; }
 .form-block-title {
   font-family: 'Roboto', sans-serif;
-  font-size: .78rem; font-weight: 800;
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: var(--gray-500);
-  padding-bottom: .35rem; margin-bottom: .7rem;
+  padding-bottom: .35rem;
+  margin-bottom: .7rem;
   border-bottom: 2px solid var(--gray-900);
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .slider-row { margin-bottom: .65rem; }
 .slider-row-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .2rem; }
@@ -654,38 +887,61 @@ footer strong { color: var(--green); }
 .slider-row-val.yellow { color: var(--yellow-dark); }
 .slider-row-val.red { color: var(--red-dark); }
 input[type=range] {
-  -webkit-appearance: none; width: 100%; height: 5px;
-  border-radius: 2px; outline: none; cursor: pointer; background: var(--gray-100);
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  background: var(--gray-100);
 }
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 18px; height: 18px;
-  border-radius: 3px; background: var(--gray-900); cursor: pointer;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background: var(--gray-900);
+  cursor: pointer;
   box-shadow: 0 1px 4px rgba(0,0,0,.2);
 }
 .chips-row { display: flex; gap: .35rem; flex-wrap: wrap; }
 .chip-radio { display: none; }
 .chip-label {
   font-family: 'Roboto', sans-serif;
-  font-size: .78rem; font-weight: 700;
-  padding: .3rem .7rem; border: 1px solid var(--border);
-  cursor: pointer; border-radius: 2px;
-  color: var(--gray-500); transition: all .15s;
+  font-size: .78rem;
+  font-weight: 700;
+  padding: .3rem .7rem;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--gray-500);
+  transition: all .15s;
 }
 .chip-radio:checked + .chip-label { background: var(--gray-900); color: var(--white); border-color: var(--gray-900); }
 .form-textarea, .form-input {
-  width: 100%; border: 1px solid var(--border);
-  padding: .55rem .7rem; font-family: 'Source Serif 4', serif;
-  font-size: .875rem; color: var(--gray-900);
-  outline: none; border-radius: 2px; resize: vertical;
-  background: var(--white); transition: border-color .15s;
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: .55rem .7rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .875rem;
+  color: var(--gray-900);
+  outline: none;
+  border-radius: 4px;
+  resize: vertical;
+  background: var(--white);
+  transition: border-color .15s;
 }
 .form-textarea { min-height: 80px; }
 .form-textarea:focus, .form-input:focus { border-color: var(--gray-900); }
 .overall-box {
-  background: var(--gray-900); color: var(--white);
+  background: var(--gray-900);
+  color: var(--white);
   padding: .875rem 1.1rem;
-  display: flex; align-items: center; gap: .875rem;
-  margin-bottom: 1.1rem; border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  margin-bottom: 1.1rem;
+  border-radius: 4px;
 }
 .overall-number { font-family: 'Roboto', sans-serif; font-size: 2.75rem; font-weight: 800; line-height: 1; min-width: 64px; text-align: center; }
 .overall-bar-wrap { flex: 1; }
@@ -695,209 +951,252 @@ input[type=range]::-webkit-slider-thumb {
 .recommend-row { display: flex; gap: .5rem; }
 .rec-radio { display: none; }
 .rec-btn {
-  flex: 1; padding: .55rem;
+  flex: 1;
+  padding: .55rem;
   border: 2px solid var(--border);
   font-family: 'Roboto', sans-serif;
-  font-size: .82rem; font-weight: 800; letter-spacing: .5px;
-  text-transform: uppercase; text-align: center;
-  cursor: pointer; border-radius: 2px; transition: all .15s; color: var(--gray-500);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .15s;
+  color: var(--gray-500);
 }
 .rec-radio.yes:checked + .rec-btn { border-color: var(--green-dark); color: var(--green-dark); background: #f0faf0; }
 .rec-radio.no:checked + .rec-btn  { border-color: var(--red-dark);   color: var(--red-dark);   background: #fdf0f0; }
 .submit-btn {
-  width: 100%; background: var(--gray-900); color: var(--white);
-  border: none; padding: .8rem; cursor: pointer;
+  width: 100%;
+  background: var(--gray-900);
+  color: var(--white);
+  border: none;
+  padding: .8rem;
+  cursor: pointer;
   font-family: 'Roboto', sans-serif;
-  font-size: .95rem; font-weight: 800; letter-spacing: 1.5px;
-  text-transform: uppercase; border-radius: 2px;
-  transition: background .15s; margin-top: .4rem;
+  font-size: .95rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: background .15s;
+  margin-top: .4rem;
 }
 .submit-btn:hover { background: var(--green-dark); }
 .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
 
 /* ─── AUTH MODAL ─── */
-.auth-modal { max-width: 420px; }
+.auth-modal { max-width: 420px; width: 100%; margin: 0 auto; }
 .auth-tabs { display: flex; border-bottom: 1px solid var(--border); }
 .auth-tab {
-  flex: 1; padding: .75rem; background: none; border: none; cursor: pointer;
-  font-family: 'Roboto', sans-serif; font-size: .9rem; font-weight: 700;
-  letter-spacing: .5px; text-transform: uppercase;
-  color: var(--gray-500); transition: all .15s;
-  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  flex: 1;
+  padding: .75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  transition: all .15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
 }
 .auth-tab.active { color: var(--gray-900); border-bottom-color: var(--gray-900); }
-.auth-body { padding: 1.5rem; }
+.auth-body {
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
 .auth-field { margin-bottom: 1rem; }
 .auth-label {
-  display: block; font-family: 'Roboto', sans-serif;
-  font-size: .75rem; font-weight: 700; letter-spacing: .5px;
-  color: var(--gray-500); margin-bottom: .3rem; text-transform: uppercase;
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--gray-500);
+  margin-bottom: .3rem;
+  text-transform: uppercase;
 }
 .auth-input {
-  width: 100%; border: 1px solid var(--border);
-  padding: .6rem .75rem; font-family: 'Source Serif 4', serif;
-  font-size: .9rem; color: var(--gray-900);
-  outline: none; border-radius: 2px; background: var(--white);
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: .6rem .75rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem;
+  color: var(--gray-900);
+  outline: none;
+  border-radius: 4px;
+  background: var(--white);
   transition: border-color .15s;
 }
 .auth-input:focus { border-color: var(--gray-900); }
 .auth-btn {
-  width: 100%; background: var(--gray-900); color: var(--white);
-  border: none; padding: .8rem; cursor: pointer;
+  width: 100%;
+  background: var(--gray-900);
+  color: var(--white);
+  border: none;
+  padding: .8rem;
+  cursor: pointer;
   font-family: 'Roboto', sans-serif;
-  font-size: .95rem; font-weight: 800; letter-spacing: 1.5px;
-  text-transform: uppercase; border-radius: 2px; transition: background .15s; margin-top: .5rem;
+  font-size: .95rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: background .15s;
+  margin-top: .5rem;
 }
 .auth-btn:hover { background: var(--green-dark); }
 .auth-btn:disabled { opacity: .5; cursor: not-allowed; }
 .auth-error {
-  background: #fdf0f0; border: 1px solid var(--red);
-  color: var(--red-dark); padding: .6rem .75rem;
-  font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 600;
-  border-radius: 2px; margin-bottom: .875rem; display: none;
+  background: #fdf0f0;
+  border: 1px solid var(--red);
+  color: var(--red-dark);
+  padding: .6rem .75rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-bottom: .875rem;
+  display: none;
 }
 .auth-error.show { display: block; }
 .auth-success {
-  background: #f0faf0; border: 1px solid var(--green-dark);
-  color: var(--green-dark); padding: .6rem .75rem;
-  font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 600;
-  border-radius: 2px; margin-bottom: .875rem; display: none;
+  background: #f0faf0;
+  border: 1px solid var(--green-dark);
+  color: var(--green-dark);
+  padding: .6rem .75rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-bottom: .875rem;
+  display: none;
 }
 .auth-success.show { display: block; }
 .auth-hint {
-  font-family: 'Roboto', sans-serif; font-size: .75rem;
-  color: var(--gray-500); margin-top: .3rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .7rem;
+  color: var(--gray-500);
+  margin-top: .3rem;
 }
 .auth-link {
-  font-family: 'Roboto', sans-serif; font-size: .82rem;
-  color: var(--blue-accent); cursor: pointer; text-decoration: underline;
-}
-
-/* ─── REVIEWS SECTION (home) ─── */
-.reviews-section { margin-top: 1.25rem; }
-.review-item {
-  background: var(--white); border: 1px solid var(--border);
-  margin-bottom: .75rem; padding: .875rem 1rem;
-  position: relative;
-}
-.review-header { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; flex-wrap: wrap; }
-.review-author {
   font-family: 'Roboto', sans-serif;
-  font-weight: 800; font-size: .9rem; color: var(--gray-900);
+  font-size: .82rem;
+  color: var(--blue-accent);
+  cursor: pointer;
+  text-decoration: underline;
 }
-.review-author.is-admin { color: var(--admin); }
-.review-author.is-admin::after { content: ' 👑'; font-size: .7rem; }
-.review-date {
-  font-family: 'Roboto', sans-serif;
-  font-size: .7rem; color: var(--gray-500);
-}
-.review-platform {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .55rem; padding: .12rem .35rem;
-  background: var(--gray-50); border: 1px solid var(--border);
-  color: var(--gray-500); border-radius: 2px; text-transform: uppercase;
-}
-.review-score-badge {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 800; font-size: .85rem;
-  padding: .15rem .5rem; border-radius: 2px;
-}
-.review-score-badge.green { background: var(--green); color: var(--gray-900); }
-.review-score-badge.yellow { background: var(--yellow); color: var(--gray-900); }
-.review-score-badge.red { background: var(--red); color: var(--white); }
-.review-title {
-  font-family: 'Roboto', sans-serif;
-  font-size: 1rem; font-weight: 800; color: var(--gray-900); margin-bottom: .25rem;
-}
-.review-text { font-size: .85rem; color: var(--gray-700); line-height: 1.55; }
-.review-actions { display: flex; gap: .4rem; margin-top: .65rem; flex-wrap: wrap; }
-.review-action-btn {
-  font-family: 'Roboto', sans-serif;
-  font-size: .72rem; font-weight: 700; letter-spacing: .3px;
-  padding: .25rem .6rem; border: 1px solid var(--border);
-  background: none; cursor: pointer; border-radius: 2px; transition: all .15s;
-  color: var(--gray-500);
-}
-.review-action-btn:hover { background: var(--gray-50); }
-.review-action-btn.delete { color: var(--red-dark); border-color: var(--red); }
-.review-action-btn.delete:hover { background: #fdf0f0; }
-.review-action-btn.edit { color: var(--blue-accent); border-color: var(--blue-accent); }
-.review-action-btn.edit:hover { background: #f0f4ff; }
-.edit-area { margin-top: .65rem; display: none; }
-.edit-area.open { display: block; }
-.edit-area textarea {
-  width: 100%; border: 1px solid var(--border);
-  padding: .55rem .7rem; font-family: 'Source Serif 4', serif;
-  font-size: .875rem; color: var(--gray-900);
-  outline: none; border-radius: 2px; resize: vertical;
-  background: var(--white); min-height: 70px;
-  margin-bottom: .4rem;
-}
-.edit-area textarea:focus { border-color: var(--gray-900); }
-.edit-save-btn {
-  background: var(--gray-900); color: var(--white);
-  border: none; padding: .4rem .875rem;
-  font-family: 'Roboto', sans-serif; font-size: .8rem;
-  font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
-  cursor: pointer; border-radius: 2px;
-}
-.edit-save-btn:hover { background: var(--green-dark); }
 
 /* ─── ADMIN PANEL ─── */
 .admin-panel { max-width: 900px; margin: 1.5rem auto; padding: 0 .875rem; }
 .admin-header {
-  background: var(--admin-dark); color: var(--white);
-  padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 3px;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: .5rem;
+  background: var(--admin-dark);
+  color: var(--white);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem;
 }
 .admin-header h1 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.5rem; font-weight: 800; letter-spacing: 1px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
-.admin-tabs { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 1.25rem; flex-wrap: wrap; }
+.admin-tabs {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  border-radius: 8px;
+  overflow: hidden;
+}
 .admin-tab {
-  padding: .6rem 1.1rem; background: var(--white); border: none;
-  font-family: 'Roboto', sans-serif; font-size: .85rem;
-  font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
-  cursor: pointer; color: var(--gray-500); transition: all .15s; flex-shrink: 0;
+  padding: .6rem 1.1rem;
+  background: var(--white);
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all .15s;
+  flex-shrink: 0;
 }
 .admin-tab.active { background: var(--admin-dark); color: var(--white); }
 .admin-tab:hover:not(.active) { background: var(--gray-50); }
 .admin-section { display: none; }
 .admin-section.active { display: block; }
 .admin-card {
-  background: var(--white); border: 1px solid var(--border);
-  padding: 1.25rem; margin-bottom: 1rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
 }
 .admin-card h3 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1rem; font-weight: 800; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--gray-900); margin-bottom: .875rem;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-900);
+  margin-bottom: .875rem;
 }
 .admin-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
 .admin-table th {
   font-family: 'Roboto', sans-serif;
-  font-size: .7rem; font-weight: 800; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--gray-500);
-  padding: .4rem .6rem; text-align: left;
-  border-bottom: 2px solid var(--border); white-space: nowrap;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  padding: .4rem .6rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
 }
 .admin-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
 .admin-table tr:last-child td { border-bottom: none; }
 .admin-table tr:hover td { background: var(--gray-50); }
 .admin-badge {
-  font-family: 'Roboto', sans-serif; font-size: .7rem; font-weight: 700;
-  padding: .15rem .45rem; border-radius: 2px; white-space: nowrap;
+  font-family: 'Roboto', sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .15rem .45rem;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 .admin-badge.banned { background: #fdf0f0; color: var(--red-dark); border: 1px solid var(--red); }
 .admin-badge.active { background: #f0faf0; color: var(--green-dark); border: 1px solid var(--green-dark); }
 .admin-badge.admin-b { background: #f5f0ff; color: var(--admin); border: 1px solid var(--admin); }
 .admin-action {
-  font-family: 'Roboto', sans-serif; font-size: .72rem; font-weight: 700;
-  padding: .2rem .55rem; border: 1px solid var(--border);
-  background: none; cursor: pointer; border-radius: 2px; transition: all .15s;
-  color: var(--gray-500); margin-right: .2rem; white-space: nowrap;
+  font-family: 'Roboto', sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .2rem .55rem;
+  border: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .15s;
+  color: var(--gray-500);
+  margin-right: .2rem;
+  white-space: nowrap;
 }
 .admin-action:hover { background: var(--gray-50); }
 .admin-action.danger { color: var(--red-dark); border-color: var(--red); }
@@ -906,61 +1205,102 @@ input[type=range]::-webkit-slider-thumb {
 .admin-action.success:hover { background: #f0faf0; }
 .banner-form { display: flex; gap: .5rem; flex-wrap: wrap; }
 .banner-form input {
-  flex: 1; min-width: 200px;
-  border: 1px solid var(--border); padding: .6rem .75rem;
-  font-family: 'Source Serif 4', serif; font-size: .875rem;
-  outline: none; border-radius: 2px;
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid var(--border);
+  padding: .6rem .75rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .875rem;
+  outline: none;
+  border-radius: 4px;
 }
 .banner-form input:focus { border-color: var(--gray-900); }
 .banner-form button {
-  background: var(--admin-dark); color: var(--white);
-  border: none; padding: .6rem 1.1rem;
-  font-family: 'Roboto', sans-serif; font-size: .85rem;
-  font-weight: 700; letter-spacing: .5px; cursor: pointer; border-radius: 2px;
+  background: var(--admin-dark);
+  color: var(--white);
+  border: none;
+  padding: .6rem 1.1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 .banner-form button:hover { opacity: .9; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: .75rem; }
 .stat-card {
-  background: var(--gray-50); border: 1px solid var(--border);
-  padding: .875rem; text-align: center; border-radius: 2px;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  padding: .875rem;
+  text-align: center;
+  border-radius: 8px;
 }
 .stat-num {
   font-family: 'Roboto', sans-serif;
-  font-size: 2rem; font-weight: 800; color: var(--gray-900); line-height: 1;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  line-height: 1;
 }
 .stat-label {
   font-family: 'Roboto', sans-serif;
-  font-size: .7rem; font-weight: 700; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--gray-500); margin-top: .3rem;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-top: .3rem;
 }
 .pw-form { display: flex; flex-direction: column; gap: .75rem; max-width: 340px; }
 .pw-form label {
   font-family: 'Roboto', sans-serif;
-  font-size: .75rem; font-weight: 700; letter-spacing: .5px;
-  color: var(--gray-500); margin-bottom: .25rem; display: block; text-transform: uppercase;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--gray-500);
+  margin-bottom: .25rem;
+  display: block;
+  text-transform: uppercase;
 }
 .pw-form input {
-  width: 100%; border: 1px solid var(--border);
-  padding: .6rem .75rem; font-family: 'Source Serif 4', serif;
-  font-size: .9rem; outline: none; border-radius: 2px;
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: .6rem .75rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem;
+  outline: none;
+  border-radius: 4px;
 }
 .pw-form input:focus { border-color: var(--gray-900); }
 .pw-form button {
-  background: var(--admin-dark); color: var(--white);
-  border: none; padding: .7rem; cursor: pointer;
-  font-family: 'Roboto', sans-serif; font-size: .9rem;
-  font-weight: 700; letter-spacing: .5px; border-radius: 2px;
+  background: var(--admin-dark);
+  color: var(--white);
+  border: none;
+  padding: .7rem;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  border-radius: 4px;
 }
 
 /* ─── TOAST ─── */
 .toast {
-  position: fixed; bottom: 1.25rem; left: 50%;
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
   transform: translateX(-50%);
-  background: var(--green-dark); color: #fff;
+  background: var(--green-dark);
+  color: #fff;
   padding: .65rem 1.6rem;
   font-family: 'Roboto', sans-serif;
-  font-weight: 800; font-size: .95rem; letter-spacing: 1px;
-  z-index: 9999; border-radius: 3px;
+  font-weight: 800;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  z-index: 9999;
+  border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0,0,0,.2);
   pointer-events: none;
   animation: toastIn .2s ease;
@@ -968,31 +1308,7 @@ input[type=range]::-webkit-slider-thumb {
 .toast.error { background: var(--red-dark); }
 @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(8px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
 
-/* ─── RESPONSIVE ─── */
-@media (max-width: 680px) {
-  .two-col { grid-template-columns: 1fr; }
-  .featured-grid { grid-template-columns: 1fr; }
-  .games-grid { grid-template-columns: repeat(2, 1fr); }
-  .featured-card-img, .featured-card-img-placeholder { width: 110px; }
-  .nav-links { display: none; }
-  .community-banner { flex-direction: column; align-items: flex-start; gap: .75rem; }
-  .community-banner-btn { margin-left: 0; }
-  .score-legend { font-size: .65rem; gap: .5rem; }
-  .admin-panel { padding: 0 .5rem; }
-  .admin-table { font-size: .75rem; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .modal { max-height: 95vh; }
-  .modal-body { padding: 1rem; }
-  .auth-body { padding: 1.25rem; }
-  nav { gap: .5rem; }
-  .nav-btn-login { padding: .3rem .6rem; font-size: .8rem; }
-  .reviews-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 400px) {
-  .games-grid { grid-template-columns: 1fr; }
-}
-
-/* Changelog styles */
+/* ─── CHANGELOG STYLES ─── */
 .changelog-entry {
   padding: 0.75rem;
   border-bottom: 1px solid var(--border);
@@ -1003,7 +1319,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 .changelog-badge {
   padding: 0.2rem 0.6rem;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1035,12 +1351,25 @@ input[type=range]::-webkit-slider-thumb {
   background: var(--red-dark);
   color: white;
   padding: 0.2rem 0.5rem;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 700;
   margin-left: 0.5rem;
 }
 
+/* Responsive extras */
+@media (max-width: 480px) {
+  .auth-modal { max-width: 95%; }
+  .auth-body { padding: 1rem; }
+  .admin-tab { font-size: 0.7rem; padding: 0.5rem 0.8rem; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .modal { max-height: 95vh; }
+  .games-grid { grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 1.2rem; }
+  .nav-logo { font-size: 1.1rem; }
+  .nav-search input { font-size: 0.8rem; }
+  .nav-search button { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
+}
 </style>
 </head>
 <body>
@@ -1055,7 +1384,7 @@ input[type=range]::-webkit-slider-thumb {
 <nav>
   <a class="nav-logo" href="#" onclick="showHome()"><span>Criti</span>Games</a>
   <div class="nav-search">
-    <input type="text" id="searchInput" placeholder="Buscar videojuego..." onkeydown="if(event.key==='Enter')doSearch()">
+    <input type="text" id="searchInput" placeholder="Buscar videojuego..." autocomplete="off" onkeydown="if(event.key==='Enter')doSearch()">
     <button onclick="doSearch()">BUSCAR</button>
   </div>
   <div class="nav-links">
@@ -1093,7 +1422,7 @@ input[type=range]::-webkit-slider-thumb {
   </div>
 
   <div class="score-legend">
-    <span style="font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray-500);letter-spacing:.5px">PUNTUACIÓN COMUNIDAD:</span>
+    <span style="font-family:'Roboto',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray-500);letter-spacing:.5px">PUNTUACIÓN COMUNIDAD:</span>
     <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Muy favorable (75–100)</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Mixto (50–74)</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Negativo (0–49)</div>
@@ -1112,9 +1441,6 @@ input[type=range]::-webkit-slider-thumb {
         <a onclick="showAllGames()">Ver más →</a>
       </div>
       <div id="gamesGrid" class="games-grid"></div>
-
-
-      <div id="reviewsList" class="reviews-section"></div>
     </div>
 
     <div>
@@ -1140,10 +1466,10 @@ input[type=range]::-webkit-slider-thumb {
         </div>
       </div>
       <div class="sidebar-card">
-        <div class="sidebar-card-header">¿Qué es CritiFlix?</div>
+        <div class="sidebar-card-header">¿Qué es CritiGames?</div>
         <div class="sidebar-card-body">
           <p style="font-size:.8rem;line-height:1.6;color:var(--gray-700)">
-            Las notas en CritiFlix se calculan <strong>exclusivamente</strong> a partir de opiniones de jugadores reales. Nada de medios especializados con acuerdos publicitarios.<br><br>
+            Las notas en CritiGames se calculan <strong>exclusivamente</strong> a partir de opiniones de jugadores reales. Nada de medios especializados con acuerdos publicitarios.<br><br>
             Cada valoración puntúa individualmente <strong>jugabilidad, gráficos, IA, historia, audio, rendimiento</strong> y más.
           </p>
         </div>
@@ -1153,14 +1479,14 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 </div>
 
+<!-- ADMIN PANEL VIEW -->
 <div id="adminView" style="display:none">
   <div class="admin-panel">
     <div class="admin-header">
       <h1>👑 PANEL DE ADMINISTRACIÓN</h1>
-      <button onclick="showHome()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.35rem .8rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;border-radius:2px;">← Volver</button>
+      <button onclick="showHome()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.35rem .8rem;font-family:'Roboto',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;border-radius:4px;">← Volver</button>
     </div>
     
-    <!-- Menú de pestañas -->
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
       <button class="admin-tab" onclick="switchAdminTab('users')">👥 Usuarios</button>
@@ -1170,7 +1496,6 @@ input[type=range]::-webkit-slider-thumb {
       <button class="admin-tab" onclick="switchAdminTab('settings')">⚙️ Ajustes</button>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="admin-dashboard" class="admin-section active">
       <div class="admin-card">
         <h3>📊 Estadísticas Generales</h3>
@@ -1189,31 +1514,27 @@ input[type=range]::-webkit-slider-thumb {
       </div>
     </div>
 
-    <!-- USUARIOS -->
     <div id="admin-users" class="admin-section">
       <div class="admin-card">
         <h3>👥 Gestión de Usuarios</h3>
         <div style="margin-bottom:1rem">
-          <input type="text" id="searchUser" placeholder="🔍 Buscar usuario..." style="padding:0.5rem;border:1px solid var(--border);border-radius:4px;width:200px" onkeyup="filterAdminUsers()">
+          <input type="text" id="searchUser" placeholder="🔍 Buscar usuario..." style="padding:0.5rem;border:1px solid var(--border);border-radius:4px;width:100%;max-width:250px" autocomplete="off">
         </div>
         <div style="overflow-x:auto">
           <table class="admin-table" id="adminUsersTable">
-            <thead>
-              <tr><th>Usuario</th><th>Puntos</th><th>Estado</th><th>Rol</th><th>Registro</th><th>Acciones</th</tr>
-            </thead>
+            <thead><tr><th>Usuario</th><th>Puntos</th><th>Estado</th><th>Rol</th><th>Registro</th><th>Acciones</th></tr></thead>
             <tbody id="adminUsersTbody"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- VALORACIONES -->
     <div id="admin-reviews" class="admin-section">
       <div class="admin-card">
         <h3>📝 Gestionar Valoraciones</h3>
-        <div style="margin-bottom:1rem">
-          <input type="text" id="searchReview" placeholder="🔍 Buscar por juego o usuario..." style="padding:0.5rem;border:1px solid var(--border);border-radius:4px;width:250px" onkeyup="filterAdminReviews()">
-          <select id="filterReviewStatus" onchange="filterAdminReviews()" style="padding:0.5rem;margin-left:0.5rem;border:1px solid var(--border);border-radius:4px">
+        <div style="margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:0.5rem">
+          <input type="text" id="searchReview" placeholder="🔍 Buscar por juego o usuario..." style="padding:0.5rem;border:1px solid var(--border);border-radius:4px;flex:1;min-width:200px" autocomplete="off">
+          <select id="filterReviewStatus" onchange="filterAdminReviews()" style="padding:0.5rem;border:1px solid var(--border);border-radius:4px">
             <option value="all">Todas</option>
             <option value="active">Activas</option>
             <option value="deleted">Eliminadas por admin</option>
@@ -1223,7 +1544,6 @@ input[type=range]::-webkit-slider-thumb {
       </div>
     </div>
 
-    <!-- AVISO GLOBAL -->
     <div id="admin-banner" class="admin-section">
       <div class="admin-card">
         <h3>📢 Aviso Global (Banner Superior)</h3>
@@ -1234,7 +1554,7 @@ input[type=range]::-webkit-slider-thumb {
             <option value="warning">🔍 Investigando</option>
             <option value="error">❌ No funciona</option>
           </select>
-          <input type="text" id="bannerInput" placeholder="Escribe el mensaje del aviso..." maxlength="200" style="flex:2">
+          <input type="text" id="bannerInput" placeholder="Escribe el mensaje del aviso..." maxlength="200" style="flex:2" autocomplete="off">
           <button onclick="saveBanner()" style="background:var(--admin-dark)">Publicar</button>
           <button onclick="clearBanner()" style="background:var(--red-dark)">Eliminar</button>
         </div>
@@ -1242,7 +1562,6 @@ input[type=range]::-webkit-slider-thumb {
       </div>
     </div>
 
-    <!-- REGISTRO DE CAMBIOS -->
     <div id="admin-changelog" class="admin-section">
       <div class="admin-card">
         <h3>📋 Registro de Cambios (visible para todos)</h3>
@@ -1253,38 +1572,33 @@ input[type=range]::-webkit-slider-thumb {
             <option value="error">❌ No funciona</option>
             <option value="info">🆕 Novedad</option>
           </select>
-          <input type="text" id="changelogText" placeholder="Describe el cambio, error o novedad..." style="flex:2;padding:0.5rem;border:1px solid var(--border);border-radius:4px">
+          <input type="text" id="changelogText" placeholder="Describe el cambio, error o novedad..." style="flex:2;padding:0.5rem;border:1px solid var(--border);border-radius:4px" autocomplete="off">
           <button onclick="addChangelog()" style="background:var(--admin-dark);color:white;border:none;padding:0.5rem 1rem;border-radius:4px;cursor:pointer">+ Añadir entrada</button>
         </div>
         <div id="changelogList" style="max-height:400px;overflow-y:auto"></div>
       </div>
     </div>
 
-    <!-- AJUSTES -->
     <div id="admin-settings" class="admin-section">
       <div class="admin-card">
         <h3>⚙️ Cambiar Contraseña de Administrador</h3>
         <div class="pw-form">
-          <div><label>Nueva contraseña</label><input type="password" id="adminNewPw" placeholder="Nueva contraseña"></div>
-          <div><label>Confirmar contraseña</label><input type="password" id="adminConfirmPw" placeholder="Repetir contraseña"></div>
+          <div><label>Nueva contraseña</label><input type="password" id="adminNewPw" placeholder="Nueva contraseña" autocomplete="off"></div>
+          <div><label>Confirmar contraseña</label><input type="password" id="adminConfirmPw" placeholder="Repetir contraseña" autocomplete="off"></div>
           <button onclick="changeAdminPw()">Actualizar contraseña</button>
         </div>
-        <div id="pwMsg" style="margin-top:.75rem;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;display:none"></div>
-      </div>
-      <div class="admin-card">
-        <h3>📊 Estadísticas de la comunidad</h3>
-        <div id="communityStats"></div>
+        <div id="pwMsg" style="margin-top:.75rem;font-family:'Roboto',sans-serif;font-size:.82rem;display:none"></div>
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  <strong>CritiFlix</strong> — La nota la pones tú.<br>
+  <strong>CritiGames</strong> — La nota la pones tú.<br>
   <span style="font-size:.7rem">Datos de juegos vía RAWG · Las puntuaciones son 100% comunitarias</span>
 </footer>
 
-<!-- ══ MODAL PARA VER/Escribir RESEÑAS (CON PESTAÑAS) ══ -->
+<!-- MODAL PARA VER/ESCRIBIR RESEÑAS -->
 <div class="modal-overlay" id="gameModal">
   <div class="modal">
     <div class="modal-top">
@@ -1296,17 +1610,15 @@ input[type=range]::-webkit-slider-thumb {
       <button class="game-tab" onclick="switchGameTab('write')">✍️ ESCRIBIR RESEÑA</button>
     </div>
     <div id="gameModalInfo" class="modal-game-info">
-      <div style="font-family:'Barlow Condensed',sans-serif;color:var(--gray-500)">Cargando...</div>
+      <div style="font-family:'Roboto',sans-serif;color:var(--gray-500)">Cargando...</div>
     </div>
     
-    <!-- Pestaña: VER RESEÑAS -->
     <div id="gameReviewsTab" class="modal-body" style="display: block;">
       <div id="gameReviewsGrid" class="reviews-grid">
         <div class="review-hint">Cargando reseñas...</div>
       </div>
     </div>
     
-    <!-- Pestaña: ESCRIBIR RESEÑA (INTACTO) -->
     <div id="gameWriteTab" class="modal-body" style="display: none;">
       <div class="overall-box">
         <div class="overall-number" id="modalOverallNum" style="color:var(--green)">78</div>
@@ -1322,7 +1634,7 @@ input[type=range]::-webkit-slider-thumb {
         <div class="form-block-title">Datos básicos</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem">
           <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray-500);margin-bottom:.35rem;letter-spacing:.5px">PLATAFORMA</div>
+            <div style="font-family:'Roboto',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray-500);margin-bottom:.35rem;letter-spacing:.5px">PLATAFORMA</div>
             <div class="chips-row">
               <input type="radio" name="plat" id="plt-pc" class="chip-radio" checked><label for="plt-pc" class="chip-label">PC</label>
               <input type="radio" name="plat" id="plt-ps5" class="chip-radio"><label for="plt-ps5" class="chip-label">PS5</label>
@@ -1331,7 +1643,7 @@ input[type=range]::-webkit-slider-thumb {
             </div>
           </div>
           <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray-500);margin-bottom:.35rem;letter-spacing:.5px">HORAS JUGADAS</div>
+            <div style="font-family:'Roboto',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray-500);margin-bottom:.35rem;letter-spacing:.5px">HORAS JUGADAS</div>
             <div class="chips-row">
               <input type="radio" name="hrs" id="h1" class="chip-radio"><label for="h1" class="chip-label">&lt;10h</label>
               <input type="radio" name="hrs" id="h2" class="chip-radio" checked><label for="h2" class="chip-label">10-50h</label>
@@ -1342,30 +1654,15 @@ input[type=range]::-webkit-slider-thumb {
         </div>
       </div>
 
-      <div class="form-block">
-        <div class="form-block-title">Jugabilidad y controles</div>
-        <div id="sliders-gameplay"></div>
-      </div>
-      <div class="form-block">
-        <div class="form-block-title">IA, diseño y dificultad</div>
-        <div id="sliders-design"></div>
-      </div>
-      <div class="form-block">
-        <div class="form-block-title">Apartado técnico y gráficos</div>
-        <div id="sliders-tech"></div>
-      </div>
-      <div class="form-block">
-        <div class="form-block-title">Audio y narrativa</div>
-        <div id="sliders-audio"></div>
-      </div>
-      <div class="form-block">
-        <div class="form-block-title">Valor y contenido</div>
-        <div id="sliders-value"></div>
-      </div>
+      <div class="form-block"><div class="form-block-title">Jugabilidad y controles</div><div id="sliders-gameplay"></div></div>
+      <div class="form-block"><div class="form-block-title">IA, diseño y dificultad</div><div id="sliders-design"></div></div>
+      <div class="form-block"><div class="form-block-title">Apartado técnico y gráficos</div><div id="sliders-tech"></div></div>
+      <div class="form-block"><div class="form-block-title">Audio y narrativa</div><div id="sliders-audio"></div></div>
+      <div class="form-block"><div class="form-block-title">Valor y contenido</div><div id="sliders-value"></div></div>
 
       <div class="form-block">
         <div class="form-block-title">Tu reseña escrita</div>
-        <input type="text" class="form-input" id="reviewTitle" placeholder="Título de tu reseña" style="margin-bottom:.5rem">
+        <input type="text" class="form-input" id="reviewTitle" placeholder="Título de tu reseña" style="margin-bottom:.5rem" autocomplete="off">
         <textarea class="form-textarea" id="reviewPros" placeholder="Lo mejor del juego..."></textarea>
         <textarea class="form-textarea" id="reviewCons" placeholder="Lo peor o lo que mejorarías..." style="margin-top:.5rem"></textarea>
       </div>
@@ -1373,10 +1670,8 @@ input[type=range]::-webkit-slider-thumb {
       <div class="form-block">
         <div class="form-block-title">¿Lo recomiendas?</div>
         <div class="recommend-row">
-          <input type="radio" name="rec" id="rec-yes" class="rec-radio yes" checked>
-          <label for="rec-yes" class="rec-btn">✓ Sí lo recomiendo</label>
-          <input type="radio" name="rec" id="rec-no" class="rec-radio no">
-          <label for="rec-no" class="rec-btn">✕ No lo recomiendo</label>
+          <input type="radio" name="rec" id="rec-yes" class="rec-radio yes" checked><label for="rec-yes" class="rec-btn">✓ Sí lo recomiendo</label>
+          <input type="radio" name="rec" id="rec-no" class="rec-radio no"><label for="rec-no" class="rec-btn">✕ No lo recomiendo</label>
         </div>
       </div>
 
@@ -1385,7 +1680,7 @@ input[type=range]::-webkit-slider-thumb {
   </div>
 </div>
 
-<!-- ══ AUTH MODAL ══ -->
+<!-- AUTH MODAL -->
 <div class="modal-overlay" id="authModal">
   <div class="modal auth-modal">
     <div class="modal-top">
@@ -1397,63 +1692,66 @@ input[type=range]::-webkit-slider-thumb {
       <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Crear cuenta</button>
       <button class="auth-tab" id="tabRecover" onclick="switchAuthTab('recover')" style="font-size:.78rem">Recuperar</button>
     </div>
-    <div class="auth-body">
+    <div class="auth-body" autocomplete="off">
       <div id="authError" class="auth-error"></div>
       <div id="authSuccess" class="auth-success"></div>
+      
       <div id="formLogin">
         <div class="auth-field">
           <label class="auth-label">Nombre de usuario</label>
-          <input class="auth-input" type="text" id="loginUser" placeholder="tu_usuario">
+          <input class="auth-input" type="text" id="loginUser" placeholder="tu_usuario" autocomplete="off">
         </div>
         <div class="auth-field">
           <label class="auth-label">Código único</label>
-          <input class="auth-input" type="password" id="loginCode" placeholder="••••••••">
+          <input class="auth-input" type="password" id="loginCode" placeholder="••••••••" autocomplete="off">
           <div class="auth-hint">Tu código personal de acceso</div>
         </div>
         <button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
         <div style="margin-top:.875rem;text-align:center">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;color:var(--gray-500)">¿Olvidaste tu código? <span class="auth-link" onclick="switchAuthTab('recover')">Recuperar acceso</span></span>
+          <span style="font-family:'Roboto',sans-serif;font-size:.8rem;color:var(--gray-500)">¿Olvidaste tu código? <span class="auth-link" onclick="switchAuthTab('recover')">Recuperar acceso</span></span>
         </div>
       </div>
+      
       <div id="formRegister" style="display:none">
         <div class="auth-field">
           <label class="auth-label">Nombre de usuario</label>
-          <input class="auth-input" type="text" id="regUser" placeholder="tu_usuario">
+          <input class="auth-input" type="text" id="regUser" placeholder="tu_usuario" autocomplete="off">
           <div class="auth-hint">Solo letras, números y guiones bajos. Mín. 3 caracteres.</div>
         </div>
         <div class="auth-field">
           <label class="auth-label">Código único de acceso</label>
-          <input class="auth-input" type="password" id="regCode" placeholder="Crea tu código">
+          <input class="auth-input" type="password" id="regCode" placeholder="Crea tu código" autocomplete="off">
           <div class="auth-hint">Mínimo 6 caracteres.</div>
         </div>
         <div class="auth-field">
           <label class="auth-label">Confirmar código</label>
-          <input class="auth-input" type="password" id="regCodeConfirm" placeholder="Repite tu código">
+          <input class="auth-input" type="password" id="regCodeConfirm" placeholder="Repite tu código" autocomplete="off">
         </div>
         <div class="auth-field">
           <label class="auth-label">Frase de recuperación</label>
-          <input class="auth-input" type="text" id="regPhrase" placeholder="p.ej: Mi primer juego fue Zelda">
+          <input class="auth-input" type="text" id="regPhrase" placeholder="p.ej: Mi primer juego fue Zelda" autocomplete="off">
           <div class="auth-hint">Si olvidas tu código, usa esta frase para recuperarlo.</div>
         </div>
         <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR CUENTA</button>
       </div>
+      
       <div id="formRecover" style="display:none">
         <div class="auth-field">
           <label class="auth-label">Nombre de usuario</label>
-          <input class="auth-input" type="text" id="recoverUser" placeholder="tu_usuario">
+          <input class="auth-input" type="text" id="recoverUser" placeholder="tu_usuario" autocomplete="off">
         </div>
         <div class="auth-field">
           <label class="auth-label">Frase de recuperación</label>
-          <input class="auth-input" type="text" id="recoverPhrase" placeholder="Tu frase de recuperación">
+          <input class="auth-input" type="text" id="recoverPhrase" placeholder="Tu frase de recuperación" autocomplete="off">
         </div>
         <div id="recoverNewPw" style="display:none">
           <div class="auth-field">
             <label class="auth-label">Nuevo código</label>
-            <input class="auth-input" type="password" id="recoverNewCode" placeholder="Nuevo código de acceso">
+            <input class="auth-input" type="password" id="recoverNewCode" placeholder="Nuevo código de acceso" autocomplete="off">
           </div>
           <div class="auth-field">
             <label class="auth-label">Confirmar nuevo código</label>
-            <input class="auth-input" type="password" id="recoverConfirmCode" placeholder="Repite el nuevo código">
+            <input class="auth-input" type="password" id="recoverConfirmCode" placeholder="Repite el nuevo código" autocomplete="off">
           </div>
         </div>
         <button class="auth-btn" id="recoverBtn" onclick="doRecover()">VERIFICAR Y RECUPERAR</button>
@@ -1463,9 +1761,9 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 
 <script>
-// ══════════════════════════════════════════════════
+// ==============================================
 // SUPABASE CONFIG
-// ══════════════════════════════════════════════════
+// ==============================================
 const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZmdkc2tqemFvbmVsbWltc2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODA5MjYsImV4cCI6MjA5NDk1NjkyNn0.w6O1pf99kYws15ay7C8ck6GR8dkstCIl4BGSNfvwEbc';
 
@@ -1490,9 +1788,9 @@ async function hashCode(code) {
   return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-// ══════════════════════════════════════════════════
+// ==============================================
 // AUTH
-// ══════════════════════════════════════════════════
+// ==============================================
 function openAuthModal() { document.getElementById('authModal').classList.add('open'); switchAuthTab('login'); clearAuthMessages(); }
 function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
 
@@ -1638,9 +1936,9 @@ document.addEventListener('click', e => { if(!e.target.closest('.nav-user-menu')
 function showAdminPanel() { if(!currentUser?.is_admin) return; document.getElementById('homeView').style.display = 'none'; document.getElementById('adminView').style.display = 'block'; closeDropdown(); }
 function showHome() { document.getElementById('homeView').style.display = 'block'; document.getElementById('adminView').style.display = 'none'; }
 
-// ══════════════════════════════════════════════════
-// GAME MODAL CON PESTAÑAS (CORREGIDO)
-// ══════════════════════════════════════════════════
+// ==============================================
+// GAME MODAL
+// ==============================================
 let activeGameTab = 'reviews';
 
 function closeGameModal() {
@@ -1686,7 +1984,6 @@ async function openGameModal(game) {
   switchGameTab('reviews');
 }
 
-// FUNCIÓN CORREGIDA - Aquí estaba el problema
 async function loadGameReviewsIntoModal(gameId) {
   const container = document.getElementById('gameReviewsGrid');
   if (!container) return;
@@ -1701,6 +1998,7 @@ async function loadGameReviewsIntoModal(gameId) {
       .from('reviews')
       .select('*')
       .eq('game_id', String(gameId))
+      .eq('deleted_by_admin', false)
       .order('created_at', { ascending: false });
     
     if (error) {
@@ -1709,7 +2007,6 @@ async function loadGameReviewsIntoModal(gameId) {
       return;
     }
     reviews = data || [];
-    console.log(`🔍 Cargadas ${reviews.length} reseñas para game_id ${gameId}`);
   }
   
   if (reviews.length === 0) {
@@ -1718,10 +2015,8 @@ async function loadGameReviewsIntoModal(gameId) {
   }
   
   container.innerHTML = reviews.map(r => buildReviewCardHTML(r)).join('');
-  console.log('✅ Reseñas renderizadas correctamente');
 }
 
-// Función de renderizado de tarjeta de reseña
 function buildReviewCardHTML(r) {
   const scoreClass = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
   const date = new Date(r.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -1745,20 +2040,6 @@ function buildReviewCardHTML(r) {
   `;
 }
 
-async function deleteReviewFromModal(reviewId, authorUsername) {
-  if (!confirm('¿Borrar esta valoración?')) return;
-  const sb = getSupabase();
-  if (!sb) {
-    showToast('Valoración eliminada (demo)');
-    if (currentGame) loadGameReviewsIntoModal(currentGame.id);
-    return;
-  }
-  const { error } = await sb.from('reviews').delete().eq('id', reviewId);
-  if (error) showToast('Error al borrar', true);
-  else showToast('Valoración eliminada');
-  if (currentGame) loadGameReviewsIntoModal(currentGame.id);
-}
-
 function resetWriteForm() {
   Object.keys(sliderVals).forEach(key => {
     sliderVals[key] = 7;
@@ -1776,15 +2057,16 @@ function resetWriteForm() {
 
 function requireLoginOrOpenModal() {
   if (!currentUser) { openAuthModal(); return; }
+  if (currentUser.is_banned) { showToast('Tu cuenta está suspendida.', true); return; }
   if (currentGame) {
     switchGameTab('write');
     openGameModal(currentGame);
   }
 }
 
-// ══════════════════════════════════════════════════
+// ==============================================
 // SUBMIT REVIEW
-// ══════════════════════════════════════════════════
+// ==============================================
 async function submitReview() {
   if (!currentUser) { openAuthModal(); return; }
   if (currentUser.is_banned) { showToast('Cuenta suspendida.', true); return; }
@@ -1818,8 +2100,6 @@ async function submitReview() {
     created_at: new Date().toISOString()
   };
   
-  console.log('📝 Publicando reseña:', review);
-  
   const sb = getSupabase();
   if (!sb) {
     showToast('✓ Valoración publicada (demo)');
@@ -1832,7 +2112,6 @@ async function submitReview() {
   const { error } = await sb.from('reviews').insert(review);
   if (error) { 
     showToast('Error: ' + error.message, true);
-    console.error('Error al insertar:', error);
   } else {
     showToast('✓ Valoración publicada');
     if (currentGame) loadGameReviewsIntoModal(currentGame.id);
@@ -1841,22 +2120,28 @@ async function submitReview() {
   btn.disabled = false; btn.textContent = 'PUBLICAR VALORACIÓN';
 }
 
-// ══════════════════════════════════════════════════
-// LOAD REVIEWS (global)
-// ══════════════════════════════════════════════════
+// ==============================================
+// LOAD REVIEWS
+// ==============================================
 async function loadReviews() {
   const sb = getSupabase();
   if (!sb) {
-    allReviews = [];
     renderReviewsList([]);
     return;
   }
-  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(30);
+  const { data } = await sb.from('reviews').select('*').eq('deleted_by_admin', false).order('created_at', { ascending: false }).limit(30);
   allReviews = data || [];
   renderReviewsList(allReviews);
 }
 
-
+function renderReviewsList(reviews) {
+  const list = document.getElementById('reviewsList');
+  if (!reviews || reviews.length === 0) {
+    list.innerHTML = '<div style="font-family:\'Roboto\',sans-serif;color:var(--gray-500);padding:1rem">Sé el primero en valorar un juego.</div>';
+    return;
+  }
+  list.innerHTML = reviews.slice(0,10).map(r => buildHomeReviewHTML(r)).join('');
+}
 
 function buildHomeReviewHTML(r) {
   const cls = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
@@ -1868,17 +2153,17 @@ function buildHomeReviewHTML(r) {
       <span class="review-date">${date}</span>
       ${r.platform ? `<span class="review-platform">${escapeHTML(r.platform)}</span>` : ''}
       <span class="review-score-badge ${cls}">${r.score}</span>
-      ${r.recommend ? '<span style="font-size:.7rem;color:var(--green-dark);font-family:\'Barlow Condensed\',sans-serif;font-weight:700">✓ Recomienda</span>' : '<span style="font-size:.7rem;color:var(--red-dark)">✕ No recomienda</span>'}
+      ${r.recommend ? '<span style="font-size:.7rem;color:var(--green-dark);font-family:\'Roboto\',sans-serif;font-weight:700">✓ Recomienda</span>' : '<span style="font-size:.7rem;color:var(--red-dark)">✕ No recomienda</span>'}
     </div>
-    <div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.72rem;color:var(--gray-500);margin-bottom:.35rem">${escapeHTML(r.game_name)}</div>
+    <div style="font-family:\'Roboto\',sans-serif;font-size:.72rem;color:var(--gray-500);margin-bottom:.35rem">${escapeHTML(r.game_name)}</div>
     ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
     ${r.pros ? `<div class="review-text"><strong style="color:var(--green-dark)">+</strong> ${escapeHTML(r.pros).substring(0,150)}${r.pros.length > 150 ? '...' : ''}</div>` : ''}
   </div>`;
 }
 
-// ══════════════════════════════════════════════════
+// ==============================================
 // RAWG / GAMES
-// ══════════════════════════════════════════════════
+// ==============================================
 const RAWG_KEY = '0f28a5bfdda4462489f37fbb908f5246';
 const RAWG_BASE = 'https://api.rawg.io/api';
 
@@ -1919,7 +2204,6 @@ async function renderFeatured(games) {
   const grid = document.getElementById('featuredGrid');
   if (!grid) return;
   
-  // Obtener puntuaciones de Supabase
   const sb = getSupabase();
   let gameScores = {};
   if (sb) {
@@ -1963,7 +2247,6 @@ async function renderFeatured(games) {
 async function renderGrid(games) {
   const grid = document.getElementById('gamesGrid');
   
-  // Obtener puntuaciones de Supabase
   const sb = getSupabase();
   let gameScores = {};
   if (sb) {
@@ -1993,7 +2276,7 @@ async function renderGrid(games) {
         </div>
         <div class="game-card-footer">
           <div>
-            <div class="game-card-footer-label">PlayerCore</div>
+            <div class="game-card-footer-label">CritiGames</div>
             <div class="game-card-footer-sub">${countText}</div>
           </div>
           <div class="score small ${cls}">${avgScore || 'N/A'}</div>
@@ -2035,7 +2318,6 @@ async function doSearch() {
 }
 function showAllGames() { loadGames(); }
 
-// SUB-NAV filters
 document.querySelectorAll('.sub-nav a').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -2046,40 +2328,15 @@ document.querySelectorAll('.sub-nav a').forEach(link => {
   });
 });
 
-// ══════════════════════════════════════════════════
+// ==============================================
 // SLIDERS
-// ══════════════════════════════════════════════════
+// ==============================================
 const SLIDER_DEFS = {
-  gameplay: [
-    { key:'combate', label:'Mecánicas de combate', val:8 },
-    { key:'controles', label:'Controles / Responsividad', val:7 },
-    { key:'curva', label:'Curva de dificultad', val:7 },
-    { key:'variedad', label:'Variedad de mecánicas', val:8 },
-  ],
-  design: [
-    { key:'ia', label:'IA de enemigos', val:7 },
-    { key:'jefes', label:'Diseño de jefes', val:8 },
-    { key:'niveles', label:'Diseño de niveles/mundo', val:8 },
-    { key:'dificultad', label:'Equilibrio de dificultad', val:7 },
-  ],
-  tech: [
-    { key:'graficos', label:'Calidad gráfica', val:8 },
-    { key:'arte', label:'Dirección artística', val:8 },
-    { key:'rendimiento', label:'Rendimiento / FPS', val:7 },
-    { key:'bugs', label:'Estabilidad / Bugs', val:7 },
-  ],
-  audio: [
-    { key:'musica', label:'Banda sonora', val:8 },
-    { key:'sfx', label:'Efectos de sonido', val:7 },
-    { key:'historia', label:'Historia / Guión', val:7 },
-    { key:'lore', label:'Construcción del mundo', val:7 },
-  ],
-  value: [
-    { key:'duracion', label:'Duración / Contenido', val:8 },
-    { key:'precio', label:'Relación calidad/precio', val:7 },
-    { key:'replay', label:'Rejugabilidad', val:7 },
-    { key:'multi', label:'Multijugador (si aplica)', val:7 },
-  ],
+  gameplay: [{ key:'combate', label:'Mecánicas de combate', val:8 }, { key:'controles', label:'Controles / Responsividad', val:7 }, { key:'curva', label:'Curva de dificultad', val:7 }, { key:'variedad', label:'Variedad de mecánicas', val:8 }],
+  design: [{ key:'ia', label:'IA de enemigos', val:7 }, { key:'jefes', label:'Diseño de jefes', val:8 }, { key:'niveles', label:'Diseño de niveles/mundo', val:8 }, { key:'dificultad', label:'Equilibrio de dificultad', val:7 }],
+  tech: [{ key:'graficos', label:'Calidad gráfica', val:8 }, { key:'arte', label:'Dirección artística', val:8 }, { key:'rendimiento', label:'Rendimiento / FPS', val:7 }, { key:'bugs', label:'Estabilidad / Bugs', val:7 }],
+  audio: [{ key:'musica', label:'Banda sonora', val:8 }, { key:'sfx', label:'Efectos de sonido', val:7 }, { key:'historia', label:'Historia / Guión', val:7 }, { key:'lore', label:'Construcción del mundo', val:7 }],
+  value: [{ key:'duracion', label:'Duración / Contenido', val:8 }, { key:'precio', label:'Relación calidad/precio', val:7 }, { key:'replay', label:'Rejugabilidad', val:7 }, { key:'multi', label:'Multijugador (si aplica)', val:7 }],
 };
 const sliderVals = {};
 
@@ -2092,13 +2349,7 @@ function buildSlider(def, containerId) {
   const cls = scoreClass(def.val * 10);
   const row = document.createElement('div');
   row.className = 'slider-row';
-  row.innerHTML = `
-    <div class="slider-row-top">
-      <span class="slider-row-label">${def.label}</span>
-      <span class="slider-row-val ${cls}" id="sv-${def.key}">${def.val}/10</span>
-    </div>
-    <input type="range" min="1" max="10" value="${def.val}" oninput="onSlider(this,'${def.key}')">
-  `;
+  row.innerHTML = `<div class="slider-row-top"><span class="slider-row-label">${def.label}</span><span class="slider-row-val ${cls}" id="sv-${def.key}">${def.val}/10</span></div><input type="range" min="1" max="10" value="${def.val}" oninput="onSlider(this,'${def.key}')">`;
   wrap.appendChild(row);
 }
 
@@ -2131,9 +2382,9 @@ function initSliders() {
   updateOverall();
 }
 
-// ══════════════════════════════════════════════════
+// ==============================================
 // UTILS
-// ══════════════════════════════════════════════════
+// ==============================================
 function showToast(msg, isError = false) {
   const t = document.createElement('div');
   t.className = 'toast' + (isError ? ' error' : '');
@@ -2143,467 +2394,41 @@ function showToast(msg, isError = false) {
 }
 function escapeHTML(str) { if (!str) return ''; return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ══════════════════════════════════════════════════
+// ==============================================
 // BANNER
-// ══════════════════════════════════════════════════
+// ==============================================
 async function loadBanner() {
   const sb = getSupabase();
   if (!sb) return;
   const { data } = await sb.from('app_config').select('value').eq('key','global_banner').single();
-  if (data?.value) document.getElementById('globalBanner').classList.add('active');
-  document.getElementById('bannerText').textContent = data?.value || '';
+  if (data?.value) {
+    try {
+      const bannerData = JSON.parse(data.value);
+      showBanner(bannerData.text, bannerData.type);
+    } catch(e) {
+      showBanner(data.value, 'info');
+    }
+  }
 }
 function dismissBanner() { document.getElementById('globalBanner').classList.remove('active'); }
-
-// Admin panel simplificado
-function switchAdminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach((t,i) => {
-    const tabs = ['dashboard','reviews','users','banner','settings'];
-    t.classList.toggle('active', tabs[i] === tab);
-  });
-  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('admin-' + tab).classList.add('active');
-}
-
-// ══════════════════════════════════════════════════
-// ADMIN PANEL COMPLETO
-// ══════════════════════════════════════════════════
-
-let allUsers = [];
-let allReviewsAdmin = [];
-let changelogs = [];
-
-// Cargar datos del admin
-async function loadAdminData() {
-  const sb = getSupabase();
-  if (!sb) {
-    document.getElementById('statUsers').textContent = '0';
-    document.getElementById('statReviews').textContent = '0';
-    document.getElementById('statBanned').textContent = '0';
-    document.getElementById('statAdmins').textContent = '1';
-    document.getElementById('statToday').textContent = '0';
-    document.getElementById('statAvgScore').textContent = '0';
-    return;
-  }
-  
-  const [{ count: uCount }, { count: rCount }, { count: bCount }, { data: users }, { data: reviews }] = await Promise.all([
-    sb.from('players').select('id', { count: 'exact', head: true }),
-    sb.from('reviews').select('id', { count: 'exact', head: true }),
-    sb.from('players').select('id', { count: 'exact', head: true }).eq('is_banned', true),
-    sb.from('players').select('*'),
-    sb.from('reviews').select('*')
-  ]);
-  
-  allUsers = users || [];
-  allReviewsAdmin = reviews || [];
-  
-  const adminCount = allUsers.filter(u => u.is_admin).length;
-  const today = new Date().toISOString().split('T')[0];
-  const todayCount = allReviewsAdmin.filter(r => r.created_at?.startsWith(today)).length;
-  const avgScore = allReviewsAdmin.length > 0 
-    ? Math.round(allReviewsAdmin.reduce((a,b) => a + b.score, 0) / allReviewsAdmin.length)
-    : 0;
-  
-  document.getElementById('statUsers').textContent = uCount ?? 0;
-  document.getElementById('statReviews').textContent = rCount ?? 0;
-  document.getElementById('statBanned').textContent = bCount ?? 0;
-  document.getElementById('statAdmins').textContent = adminCount;
-  document.getElementById('statToday').textContent = todayCount;
-  document.getElementById('statAvgScore').textContent = avgScore;
-  
-  // Cargar changelogs
-  await loadChangelogs();
-}
-
-// Cargar usuarios
-async function loadAdminUsers() {
-  const sb = getSupabase();
-  const tbody = document.getElementById('adminUsersTbody');
-  if (!sb) {
-    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--gray-500)">Conecta Supabase</td></tr>';
-    return;
-  }
-  
-  const { data: users } = await sb.from('players').select('*').order('created_at', { ascending: false });
-  allUsers = users || [];
-  
-  // Calcular puntos (número de reseñas)
-  const { data: reviews } = await sb.from('reviews').select('player_id, score');
-  const pointsMap = {};
-  reviews?.forEach(r => {
-    pointsMap[r.player_id] = (pointsMap[r.player_id] || 0) + Math.floor(r.score / 10);
-  });
-  
-  tbody.innerHTML = allUsers.map(u => `
-    <tr id="user-row-${u.id}">
-      <td><strong>${escapeHTML(u.username)}</strong>${u.is_admin ? ' 👑' : ''}</td>
-      <td>${pointsMap[u.id] || 0}</td>
-      <td><span class="admin-badge ${u.is_banned ? 'banned' : 'active'}">${u.is_banned ? 'Baneado' : 'Activo'}</span></td>
-      <td>${u.is_admin ? 'Admin' : 'Usuario'}</td>
-      <td style="white-space:nowrap">${new Date(u.created_at).toLocaleDateString()}</td>
-      <td>
-        ${!u.is_admin ? `
-          <button class="admin-action" onclick="makeAdmin('${u.id}', '${u.username}')">👑 Hacer Admin</button>
-          ${u.is_banned 
-            ? `<button class="admin-action success" onclick="toggleBanUser('${u.id}', false)">🔓 Desbanear</button>`
-            : `<button class="admin-action danger" onclick="toggleBanUser('${u.id}', true)">🔒 Banear</button>`}
-          <button class="admin-action" onclick="resetUserCode('${u.id}', '${u.username}')">🔄 Reset código</button>
-        ` : '<span style="color:var(--admin)">— eres tú —</span>'}
-      </td>
-    </tr>
-  `).join('');
-}
-
-function filterAdminUsers() {
-  const search = document.getElementById('searchUser')?.value.toLowerCase() || '';
-  const rows = document.querySelectorAll('#adminUsersTbody tr');
-  rows.forEach(row => {
-    const text = row.innerText.toLowerCase();
-    row.style.display = text.includes(search) ? '' : 'none';
-  });
-}
-
-// Funciones de administración de usuarios
-async function makeAdmin(userId, username) {
-  if (!confirm(`¿Dar permisos de administrador a ${username}?`)) return;
-  const sb = getSupabase();
-  if (!sb) { showToast('Demo: no se puede cambiar rol'); return; }
-  await sb.from('players').update({ is_admin: true }).eq('id', userId);
-  showToast(`${username} ahora es administrador`);
-  loadAdminUsers();
-  loadAdminData();
-}
-
-async function toggleBanUser(userId, ban) {
-  const action = ban ? 'banear' : 'desbanear';
-  if (!confirm(`¿${action} a este usuario?`)) return;
-  const sb = getSupabase();
-  if (!sb) { showToast(`Demo: usuario ${action}do`); return; }
-  await sb.from('players').update({ is_banned: ban }).eq('id', userId);
-  showToast(`Usuario ${ban ? 'baneado' : 'desbaneado'}`);
-  loadAdminUsers();
-  loadAdminData();
-}
-
-async function resetUserCode(userId, username) {
-  const newCode = prompt(`Nuevo código para ${username} (mínimo 6 caracteres):`);
-  if (!newCode || newCode.length < 6) { showToast('Código debe tener mínimo 6 caracteres', true); return; }
-  const sb = getSupabase();
-  if (!sb) { showToast('Demo: código reset'); return; }
-  const hash = await hashCode(newCode);
-  await sb.from('players').update({ code_hash: hash }).eq('id', userId);
-  showToast(`Código de ${username} actualizado`);
-}
-
-// Cargar reseñas para admin
-async function loadAdminReviews() {
-  const sb = getSupabase();
-  const container = document.getElementById('adminAllReviews');
-  if (!sb) {
-    container.innerHTML = '<div style="color:var(--gray-500)">Conecta Supabase</div>';
-    return;
-  }
-  
-  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false });
-  allReviewsAdmin = data || [];
-  renderAdminReviews();
-}
-
-function renderAdminReviews() {
-  const container = document.getElementById('adminAllReviews');
-  const search = document.getElementById('searchReview')?.value.toLowerCase() || '';
-  const status = document.getElementById('filterReviewStatus')?.value || 'all';
-  
-  let filtered = allReviewsAdmin;
-  if (search) {
-    filtered = filtered.filter(r => 
-      r.game_name?.toLowerCase().includes(search) || 
-      r.username?.toLowerCase().includes(search)
-    );
-  }
-  if (status === 'deleted') {
-    filtered = filtered.filter(r => r.deleted_by_admin === true);
-  } else if (status === 'active') {
-    filtered = filtered.filter(r => !r.deleted_by_admin);
-  }
-  
-  if (filtered.length === 0) {
-    container.innerHTML = '<div style="padding:1rem;color:var(--gray-500);text-align:center">No hay valoraciones</div>';
-    return;
-  }
-  
-  container.innerHTML = filtered.map(r => `
-    <div class="review-item ${r.deleted_by_admin ? 'deleted-review' : ''}" id="admin-review-${r.id}">
-      <div class="review-header">
-        <span class="review-author">${escapeHTML(r.username)}</span>
-        <span class="review-date">${new Date(r.created_at).toLocaleDateString()}</span>
-        ${r.platform ? `<span class="review-platform">${r.platform}</span>` : ''}
-        <span class="review-score-badge ${r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red'}">${r.score}</span>
-        ${r.deleted_by_admin ? '<span class="deleted-badge">🗑 Eliminado por admin</span>' : ''}
-      </div>
-      <div style="font-size:0.8rem;color:var(--gray-500)">${escapeHTML(r.game_name)}</div>
-      ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
-      ${r.pros && !r.deleted_by_admin ? `<div class="review-text"><strong style="color:green">+</strong> ${escapeHTML(r.pros)}</div>` : ''}
-      ${r.cons && !r.deleted_by_admin ? `<div class="review-text" style="margin-top:0.25rem"><strong style="color:red">–</strong> ${escapeHTML(r.cons)}</div>` : ''}
-      ${r.deleted_by_admin ? '<div class="review-text" style="color:var(--gray-500);font-style:italic">Esta valoración fue eliminada por un administrador.</div>' : ''}
-      <div class="review-actions">
-        ${!r.deleted_by_admin ? `
-          <button class="review-action-btn delete" onclick="softDeleteReview('${r.id}')">🗑 Eliminar (marcar)</button>
-        ` : `
-          <button class="review-action-btn" onclick="restoreReview('${r.id}')">↩️ Restaurar</button>
-        `}
-        <button class="review-action-btn" onclick="permanentDeleteReview('${r.id}')">⚠️ Borrar permanentemente</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function filterAdminReviews() {
-  renderAdminReviews();
-}
-
-// Soft delete (marcar como eliminado por admin)
-async function softDeleteReview(reviewId) {
-  if (!confirm('¿Marcar esta reseña como eliminada por el administrador? El usuario no la verá.')) return;
-  const sb = getSupabase();
-  if (!sb) { showToast('Demo: reseña marcada como eliminada'); return; }
-  await sb.from('reviews').update({ deleted_by_admin: true, deleted_at: new Date().toISOString() }).eq('id', reviewId);
-  showToast('Reseña marcada como eliminada');
-  loadAdminReviews();
-  loadReviews(); // Recargar reseñas públicas
-}
-
-// Restaurar reseña
-async function restoreReview(reviewId) {
-  if (!confirm('¿Restaurar esta reseña? Volverá a ser visible.')) return;
-  const sb = getSupabase();
-  if (!sb) { showToast('Demo: reseña restaurada'); return;
-  }
-  await sb.from('reviews').update({ deleted_by_admin: false, deleted_at: null }).eq('id', reviewId);
-  showToast('Reseña restaurada');
-  loadAdminReviews();
-  loadReviews();
-}
-
-// Borrado permanente
-async function permanentDeleteReview(reviewId) {
-  if (!confirm('⚠️ ¿Borrar PERMANENTEMENTE esta reseña? Esta acción no se puede deshacer.')) return;
-  const sb = getSupabase();
-  if (!sb) { showToast('Demo: reseña borrada permanentemente'); return; }
-  await sb.from('reviews').delete().eq('id', reviewId);
-  showToast('Reseña borrada permanentemente');
-  loadAdminReviews();
-  loadReviews();
-}
-
-// CHANGELOG (Registro de cambios)
-async function loadChangelogs() {
-  const sb = getSupabase();
-  if (!sb) {
-    // Demo data
-    changelogs = [
-      { id: '1', type: 'success', text: 'Corregido error al mostrar reseñas', date: new Date().toISOString() },
-      { id: '2', type: 'warning', text: 'Investigando problema con los filtros', date: new Date().toISOString() }
-    ];
-    renderChangelogs();
-    return;
-  }
-  
-  const { data } = await sb.from('changelog').select('*').order('created_at', { ascending: false });
-  changelogs = data || [];
-  renderChangelogs();
-}
-
-function renderChangelogs() {
-  const container = document.getElementById('changelogList');
-  if (!container) return;
-  
-  if (changelogs.length === 0) {
-    container.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--gray-500)">📝 Sin actualizaciones todavía.</div>';
-    return;
-  }
-  
-  container.innerHTML = changelogs.map(log => `
-    <div class="changelog-entry">
-      <span class="changelog-badge ${log.type}">${log.type === 'success' ? '✅ Solucionado' : log.type === 'warning' ? '🔍 Investigando' : log.type === 'error' ? '❌ No funciona' : '🆕 Novedad'}</span>
-      <span class="changelog-text">${escapeHTML(log.text)}</span>
-      <span class="changelog-date">${new Date(log.created_at).toLocaleDateString()}</span>
-      ${currentUser?.is_admin ? `<button class="changelog-delete" onclick="deleteChangelog('${log.id}')">✕</button>` : ''}
-    </div>
-  `).join('');
-}
-
-async function addChangelog() {
-  const type = document.getElementById('changelogType')?.value || 'info';
-  const text = document.getElementById('changelogText')?.value.trim();
-  if (!text) { showToast('Escribe un mensaje', true); return; }
-  
-  const sb = getSupabase();
-  if (!sb) {
-    changelogs.unshift({ id: Date.now(), type, text, created_at: new Date().toISOString() });
-    renderChangelogs();
-    document.getElementById('changelogText').value = '';
-    showToast('Entrada añadida (demo)');
-    return;
-  }
-  
-  const { error } = await sb.from('changelog').insert({ type, text, created_by: currentUser?.username });
-  if (error) { showToast('Error: ' + error.message, true); }
-  else {
-    showToast('Entrada añadida');
-    document.getElementById('changelogText').value = '';
-    loadChangelogs();
-  }
-}
-
-async function deleteChangelog(id) {
-  if (!confirm('¿Eliminar esta entrada?')) return;
-  const sb = getSupabase();
-  if (!sb) {
-    changelogs = changelogs.filter(l => l.id != id);
-    renderChangelogs();
-    showToast('Entrada eliminada');
-    return;
-  }
-  await sb.from('changelog').delete().eq('id', id);
-  loadChangelogs();
-  showToast('Entrada eliminada');
-}
-
-// Mostrar changelog público debajo del banner
-function showPublicChangelog() {
-  const changelogHtml = `
-    <div id="publicChangelog" style="background:var(--gray-50);border-bottom:1px solid var(--border);padding:0.5rem 1rem;font-size:0.75rem;overflow-x:auto;white-space:nowrap">
-      <span style="font-weight:bold;margin-right:0.5rem">📋 Últimas actualizaciones:</span>
-      <div id="publicChangelogItems" style="display:inline-flex;gap:1rem"></div>
-    </div>
-  `;
-  const banner = document.getElementById('globalBanner');
-  banner.insertAdjacentHTML('afterend', changelogHtml);
-  loadPublicChangelog();
-}
-
-async function loadPublicChangelog() {
-  const sb = getSupabase();
-  let logs = [];
-  if (sb) {
-    const { data } = await sb.from('changelog').select('*').order('created_at', { ascending: false }).limit(5);
-    logs = data || [];
-  } else {
-    logs = changelogs.slice(0,5);
-  }
-  
-  const container = document.getElementById('publicChangelogItems');
-  if (container) {
-    container.innerHTML = logs.map(log => `
-      <span class="changelog-badge ${log.type}" style="display:inline-block;margin-right:0.5rem">${log.type === 'success' ? '✅' : log.type === 'warning' ? '🔍' : log.type === 'error' ? '❌' : '🆕'}</span>
-      <span>${escapeHTML(log.text)}</span>
-    `).join('');
-  }
-}
-
-// Banner con tipos de colores
-async function saveBanner() {
-  const msg = document.getElementById('bannerInput').value.trim();
-  const type = document.getElementById('bannerType').value;
-  const bannerData = { text: msg, type: type, date: new Date().toISOString() };
-  
-  const sb = getSupabase();
-  if (!sb) {
-    showBanner(msg, type);
-    showToast('Banner actualizado (demo)');
-    document.getElementById('currentBannerPreview').innerHTML = `<div class="changelog-badge ${type}" style="display:inline-block">${type === 'success' ? '✅ Solucionado' : type === 'warning' ? '🔍 Investigando' : type === 'error' ? '❌ No funciona' : '📘 Normal'}</div> ${escapeHTML(msg)}`;
-    return;
-  }
-  await sb.from('app_config').update({ value: JSON.stringify(bannerData) }).eq('key', 'global_banner');
-  showBanner(msg, type);
-  showToast('Banner publicado');
-  loadBannerAdmin();
-}
-
 function showBanner(msg, type = 'info') {
   if (!msg) return;
   const banner = document.getElementById('globalBanner');
   const bannerText = document.getElementById('bannerText');
-  
-  const typeColors = {
-    success: '#6ac46a',
-    warning: '#ffbe00',
-    error: '#e84040',
-    info: '#1a6ef5'
-  };
-  
+  const typeColors = { success: '#6ac46a', warning: '#ffbe00', error: '#e84040', info: '#1a6ef5' };
   banner.style.background = typeColors[type] || '#ffbe00';
   bannerText.textContent = msg;
   banner.classList.add('active');
 }
 
-async function loadBannerAdmin() {
-  const sb = getSupabase();
-  const preview = document.getElementById('currentBannerPreview');
-  if (!sb) {
-    preview.innerHTML = 'Modo demo: configura Supabase';
-    return;
-  }
-  const { data } = await sb.from('app_config').select('value').eq('key', 'global_banner').single();
-  if (data?.value) {
-    let bannerData;
-    try { bannerData = JSON.parse(data.value); } catch(e) { bannerData = { text: data.value, type: 'info' }; }
-    document.getElementById('bannerInput').value = bannerData.text || '';
-    document.getElementById('bannerType').value = bannerData.type || 'info';
-    preview.innerHTML = `<div class="changelog-badge ${bannerData.type || 'info'}" style="display:inline-block">${bannerData.type === 'success' ? '✅ Solucionado' : bannerData.type === 'warning' ? '🔍 Investigando' : bannerData.type === 'error' ? '❌ No funciona' : '📘 Normal'}</div> ${escapeHTML(bannerData.text || '')}`;
-  } else {
-    preview.innerHTML = 'Sin banner activo.';
-  }
-}
-
-async function clearBanner() {
-  const sb = getSupabase();
-  if (!sb) {
-    dismissBanner();
-    document.getElementById('bannerInput').value = '';
-    document.getElementById('currentBannerPreview').innerHTML = 'Sin banner activo.';
-    showToast('Banner eliminado (demo)');
-    return;
-  }
-  await sb.from('app_config').update({ value: '' }).eq('key', 'global_banner');
-  dismissBanner();
-  document.getElementById('bannerInput').value = '';
-  showToast('Banner eliminado');
-  loadBannerAdmin();
-}
-
-// Cambiar contraseña admin
-async function changeAdminPw() {
-  const newPw = document.getElementById('adminNewPw').value;
-  const confirmPw = document.getElementById('adminConfirmPw').value;
-  const msg = document.getElementById('pwMsg');
-  if (newPw.length < 6) { msg.textContent = 'Mínimo 6 caracteres.'; msg.style.color = 'var(--red-dark)'; msg.style.display = 'block'; return; }
-  if (newPw !== confirmPw) { msg.textContent = 'No coinciden.'; msg.style.color = 'var(--red-dark)'; msg.style.display = 'block'; return; }
-  
-  const sb = getSupabase();
-  if (!sb) {
-    msg.textContent = '✓ Contraseña actualizada (demo).';
-    msg.style.color = 'var(--green-dark)'; msg.style.display = 'block';
-    return;
-  }
-  const hash = await hashCode(newPw);
-  await sb.from('players').update({ code_hash: hash }).eq('username', 'dastan');
-  msg.textContent = '✓ Contraseña actualizada correctamente.';
-  msg.style.color = 'var(--green-dark)'; msg.style.display = 'block';
-  document.getElementById('adminNewPw').value = '';
-  document.getElementById('adminConfirmPw').value = '';
-}
-
-// Inicializar admin
+// ==============================================
+// ADMIN PANEL (resumido pero funcional)
+// ==============================================
 function switchAdminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach((t, i) => {
-    const tabs = ['dashboard', 'users', 'reviews', 'banner', 'changelog', 'settings'];
-    t.classList.toggle('active', tabs[i] === tab);
-  });
+  const tabs = ['dashboard', 'users', 'reviews', 'banner', 'changelog', 'settings'];
+  document.querySelectorAll('.admin-tab').forEach((t, i) => t.classList.toggle('active', tabs[i] === tab));
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.getElementById('admin-' + tab).classList.add('active');
-  
   if (tab === 'users') loadAdminUsers();
   if (tab === 'reviews') loadAdminReviews();
   if (tab === 'banner') loadBannerAdmin();
@@ -2611,21 +2436,162 @@ function switchAdminTab(tab) {
   if (tab === 'changelog') loadChangelogs();
 }
 
-// Modificar loadReviews para filtrar reseñas eliminadas
-async function loadReviews() {
+async function loadAdminData() {
   const sb = getSupabase();
-  if (!sb) {
-    renderReviewsList([]);
-    return;
-  }
-  const { data } = await sb.from('reviews').select('*').eq('deleted_by_admin', false).order('created_at', { ascending: false }).limit(30);
-  allReviews = data || [];
-  renderReviewsList(allReviews);
+  if (!sb) return;
+  const [{ count: uCount }, { count: rCount }, { count: bCount }, { data: users }, { data: reviews }] = await Promise.all([
+    sb.from('players').select('id', { count: 'exact', head: true }),
+    sb.from('reviews').select('id', { count: 'exact', head: true }),
+    sb.from('players').select('id', { count: 'exact', head: true }).eq('is_banned', true),
+    sb.from('players').select('*'),
+    sb.from('reviews').select('*')
+  ]);
+  document.getElementById('statUsers').textContent = uCount ?? 0;
+  document.getElementById('statReviews').textContent = rCount ?? 0;
+  document.getElementById('statBanned').textContent = bCount ?? 0;
+  document.getElementById('statAdmins').textContent = (users || []).filter(u => u.is_admin).length;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('statToday').textContent = (reviews || []).filter(r => r.created_at?.startsWith(today)).length;
+  const avgScore = (reviews || []).length > 0 ? Math.round((reviews || []).reduce((a,b) => a + b.score, 0) / (reviews || []).length) : 0;
+  document.getElementById('statAvgScore').textContent = avgScore;
 }
 
-// ══════════════════════════════════════════════════
+async function loadAdminUsers() {
+  const sb = getSupabase();
+  if (!sb) return;
+  const { data: users } = await sb.from('players').select('*').order('created_at', { ascending: false });
+  const { data: reviews } = await sb.from('reviews').select('player_id, score');
+  const pointsMap = {};
+  reviews?.forEach(r => { pointsMap[r.player_id] = (pointsMap[r.player_id] || 0) + Math.floor(r.score / 10); });
+  const tbody = document.getElementById('adminUsersTbody');
+  tbody.innerHTML = (users || []).map(u => `
+    <tr>
+      <td><strong>${escapeHTML(u.username)}</strong>${u.is_admin ? ' 👑' : ''}</td>
+      <td>${pointsMap[u.id] || 0}</td>
+      <td><span class="admin-badge ${u.is_banned ? 'banned' : 'active'}">${u.is_banned ? 'Baneado' : 'Activo'}</span></td>
+      <td>${u.is_admin ? 'Admin' : 'Usuario'}</td>
+      <td>${new Date(u.created_at).toLocaleDateString()}</td>
+      <td>${!u.is_admin ? (u.is_banned ? `<button class="admin-action success" onclick="toggleBanUser('${u.id}', false)">Desbanear</button>` : `<button class="admin-action danger" onclick="toggleBanUser('${u.id}', true)">Banear</button>`) : '<span style="color:var(--admin)">—</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+async function toggleBanUser(userId, ban) {
+  if (!confirm(`¿${ban ? 'banear' : 'desbanear'} a este usuario?`)) return;
+  const sb = getSupabase();
+  if (sb) await sb.from('players').update({ is_banned: ban }).eq('id', userId);
+  showToast(`Usuario ${ban ? 'baneado' : 'desbaneado'}`);
+  loadAdminUsers();
+}
+
+async function loadAdminReviews() {
+  const sb = getSupabase();
+  if (!sb) return;
+  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false });
+  const container = document.getElementById('adminAllReviews');
+  if (!data || data.length === 0) { container.innerHTML = '<div>No hay valoraciones</div>'; return; }
+  container.innerHTML = data.map(r => `
+    <div class="review-item">
+      <div class="review-header"><span class="review-author">${escapeHTML(r.username)}</span><span class="review-date">${new Date(r.created_at).toLocaleDateString()}</span>${r.platform ? `<span class="review-platform">${r.platform}</span>` : ''}<span class="review-score-badge ${r.score>=75?'green':r.score>=50?'yellow':'red'}">${r.score}</span></div>
+      <div style="font-size:0.8rem">${escapeHTML(r.game_name)}</div>
+      ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
+      <div class="review-actions"><button class="review-action-btn delete" onclick="permanentDeleteReview('${r.id}')">Borrar</button></div>
+    </div>
+  `).join('');
+}
+
+async function permanentDeleteReview(reviewId) {
+  if (!confirm('¿Borrar permanentemente?')) return;
+  const sb = getSupabase();
+  if (sb) await sb.from('reviews').delete().eq('id', reviewId);
+  showToast('Reseña borrada');
+  loadAdminReviews();
+  loadReviews();
+}
+
+async function loadBannerAdmin() {
+  const sb = getSupabase();
+  const preview = document.getElementById('currentBannerPreview');
+  if (!sb) { preview.innerHTML = 'Modo demo'; return; }
+  const { data } = await sb.from('app_config').select('value').eq('key','global_banner').single();
+  if (data?.value) {
+    try { const bannerData = JSON.parse(data.value); document.getElementById('bannerInput').value = bannerData.text || ''; document.getElementById('bannerType').value = bannerData.type || 'info'; preview.innerHTML = `<span class="changelog-badge ${bannerData.type || 'info'}">${bannerData.type === 'success' ? '✅' : bannerData.type === 'warning' ? '🔍' : bannerData.type === 'error' ? '❌' : '📘'}</span> ${escapeHTML(bannerData.text || '')}`; }
+    catch(e) { document.getElementById('bannerInput').value = data.value; preview.innerHTML = data.value; }
+  } else { preview.innerHTML = 'Sin banner'; }
+}
+
+async function saveBanner() {
+  const msg = document.getElementById('bannerInput').value.trim();
+  const type = document.getElementById('bannerType').value;
+  if (!msg) { showToast('Escribe un mensaje', true); return; }
+  const sb = getSupabase();
+  if (sb) await sb.from('app_config').update({ value: JSON.stringify({ text: msg, type }) }).eq('key', 'global_banner');
+  showBanner(msg, type);
+  showToast('Banner actualizado');
+  loadBannerAdmin();
+}
+
+async function clearBanner() {
+  const sb = getSupabase();
+  if (sb) await sb.from('app_config').update({ value: '' }).eq('key', 'global_banner');
+  dismissBanner();
+  document.getElementById('bannerInput').value = '';
+  showToast('Banner eliminado');
+  loadBannerAdmin();
+}
+
+// Changelog
+let changelogs = [];
+async function loadChangelogs() {
+  const sb = getSupabase();
+  if (sb) {
+    const { data } = await sb.from('changelog').select('*').order('created_at', { ascending: false });
+    changelogs = data || [];
+  } else { changelogs = []; }
+  renderChangelogs();
+}
+function renderChangelogs() {
+  const container = document.getElementById('changelogList');
+  if (!container) return;
+  if (changelogs.length === 0) { container.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--gray-500)">Sin actualizaciones</div>'; return; }
+  container.innerHTML = changelogs.map(log => `<div class="changelog-entry"><span class="changelog-badge ${log.type}">${log.type === 'success' ? '✅' : log.type === 'warning' ? '🔍' : log.type === 'error' ? '❌' : '🆕'}</span><span class="changelog-text">${escapeHTML(log.text)}</span><span class="changelog-date">${new Date(log.created_at).toLocaleDateString()}</span>${currentUser?.is_admin ? `<button class="changelog-delete" onclick="deleteChangelog('${log.id}')">✕</button>` : ''}</div>`).join('');
+}
+async function addChangelog() {
+  const type = document.getElementById('changelogType')?.value || 'info';
+  const text = document.getElementById('changelogText')?.value.trim();
+  if (!text) { showToast('Escribe un mensaje', true); return; }
+  const sb = getSupabase();
+  if (sb) await sb.from('changelog').insert({ type, text, created_by: currentUser?.username });
+  document.getElementById('changelogText').value = '';
+  loadChangelogs();
+  showToast('Entrada añadida');
+}
+async function deleteChangelog(id) {
+  if (!confirm('¿Eliminar?')) return;
+  const sb = getSupabase();
+  if (sb) await sb.from('changelog').delete().eq('id', id);
+  loadChangelogs();
+  showToast('Entrada eliminada');
+}
+
+async function changeAdminPw() {
+  const newPw = document.getElementById('adminNewPw').value;
+  const confirmPw = document.getElementById('adminConfirmPw').value;
+  const msg = document.getElementById('pwMsg');
+  if (newPw.length < 6) { msg.textContent = 'Mínimo 6 caracteres'; msg.style.display = 'block'; return; }
+  if (newPw !== confirmPw) { msg.textContent = 'No coinciden'; msg.style.display = 'block'; return; }
+  const sb = getSupabase();
+  if (sb) {
+    const hash = await hashCode(newPw);
+    await sb.from('players').update({ code_hash: hash }).eq('username', 'dastan');
+  }
+  msg.textContent = '✓ Contraseña actualizada'; msg.style.color = 'var(--green-dark)'; msg.style.display = 'block';
+  document.getElementById('adminNewPw').value = ''; document.getElementById('adminConfirmPw').value = '';
+}
+
+// ==============================================
 // INIT
-// ══════════════════════════════════════════════════
+// ==============================================
 loadSession();
 updateNavAuth();
 initSliders();
@@ -2633,13 +2599,8 @@ loadGames();
 loadReviews();
 loadBanner();
 
-// Cerrar modales al hacer clic fuera
-document.getElementById('gameModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('gameModal')) closeGameModal();
-});
-document.getElementById('authModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('authModal')) closeAuthModal();
-});
+document.getElementById('gameModal').addEventListener('click', e => { if (e.target === document.getElementById('gameModal')) closeGameModal(); });
+document.getElementById('authModal').addEventListener('click', e => { if (e.target === document.getElementById('authModal')) closeAuthModal(); });
 </script>
 </body>
 </html>
