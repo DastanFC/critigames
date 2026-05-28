@@ -1004,15 +1004,6 @@ input[type=range]::-webkit-slider-thumb {
 
 <div id="homeView">
 <div class="page-wrap">
-  <div class="community-banner">
-    <div class="community-banner-icon">🎮</div>
-    <div class="community-banner-text">
-      <h3>OPINIONES 100% DE JUGADORES REALES</h3>
-      <p>Sin notas infladas. Solo la voz honesta de la comunidad.</p>
-    </div>
-    <button class="community-banner-btn" onclick="requireLoginOrOpenModal()">+ VALORAR</button>
-  </div>
-
   <div class="score-legend">
     <span style="font-size:0.65rem;font-weight:700">PUNTUACIÓN:</span>
     <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Muy favorable (75-100)</div>
@@ -1037,7 +1028,127 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 </div>
 
-<div id="adminView" style="display:none"><div class="admin-panel"><div class="admin-header"><h1>👑 Panel Admin</h1><button onclick="showHome()">← Volver</button></div><div class="admin-tabs"><button class="admin-tab active" onclick="switchAdminTab('dashboard')">Dashboard</button><button class="admin-tab" onclick="switchAdminTab('users')">Usuarios</button><button class="admin-tab" onclick="switchAdminTab('reviews')">Reseñas</button><button class="admin-tab" onclick="switchAdminTab('banner')">Aviso</button><button class="admin-tab" onclick="switchAdminTab('changelog')">Cambios</button></div><div id="admin-dashboard" class="admin-section active"><div class="admin-card"><h3>Estadísticas</h3><div class="stats-grid"><div class="stat-card"><div class="stat-num" id="statUsers">—</div><div class="stat-label">Usuarios</div></div><div class="stat-card"><div class="stat-num" id="statReviews">—</div><div class="stat-label">Reseñas</div></div><div class="stat-card"><div class="stat-num" id="statBanned">—</div><div class="stat-label">Baneados</div></div></div></div></div><div id="admin-users" class="admin-section"><div class="admin-card"><h3>Usuarios</h3><table class="admin-table"><thead><tr><th>Usuario</th><th>Estado</th><th>Rol</th><th>Acciones</th></tr></thead><tbody id="adminUsersTbody"></tbody></table></div></div><div id="admin-reviews" class="admin-section"><div class="admin-card"><h3>Reseñas</h3><div id="adminAllReviews"></div></div></div><div id="admin-banner" class="admin-section"><div class="admin-card"><h3>Aviso Global</h3><div class="banner-form"><select id="bannerType"><option value="info">Info</option><option value="success">Éxito</option><option value="warning">Advertencia</option><option value="error">Error</option></select><input type="text" id="bannerInput" placeholder="Mensaje"><button onclick="saveBanner()">Publicar</button><button onclick="clearBanner()">Eliminar</button></div></div></div><div id="admin-changelog" class="admin-section"><div class="admin-card"><h3>Registro de Cambios</h3><div><select id="changelogType"><option value="info">🆕 Novedad</option><option value="success">✅ Solucionado</option><option value="warning">🔍 Investigando</option><option value="error">❌ Error</option></select><input type="text" id="changelogText" placeholder="Descripción"><button onclick="addChangelog()">+ Añadir</button></div><div id="changelogList"></div></div></div></div></div>
+<div id="adminView" style="display:none">
+<div class="admin-panel">
+  <div class="admin-header">
+    <h1>👑 Panel Admin</h1>
+    <button onclick="showHome()">← Volver</button>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
+    <button class="admin-tab" onclick="switchAdminTab('users')">👥 Usuarios</button>
+    <button class="admin-tab" onclick="switchAdminTab('reviews')">📝 Reseñas</button>
+    <button class="admin-tab" onclick="switchAdminTab('moderation')">🛡️ Moderación</button>
+    <button class="admin-tab" onclick="switchAdminTab('banner')">📢 Aviso</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard" class="admin-section active">
+    <div class="admin-card">
+      <h3>Estadísticas generales</h3>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="statUsers">—</div><div class="stat-label">Usuarios</div></div>
+        <div class="stat-card"><div class="stat-num" id="statReviews">—</div><div class="stat-label">Reseñas</div></div>
+        <div class="stat-card"><div class="stat-num" id="statBanned">—</div><div class="stat-label">Baneados</div></div>
+        <div class="stat-card"><div class="stat-num" id="statReviewsToday">—</div><div class="stat-label">Hoy</div></div>
+        <div class="stat-card"><div class="stat-num" id="statAvgScore">—</div><div class="stat-label">Nota media</div></div>
+        <div class="stat-card"><div class="stat-num" id="statTopGame">—</div><div class="stat-label">Juego + reseñado</div></div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3>Últimas reseñas publicadas</h3>
+      <div id="dashRecentReviews"></div>
+    </div>
+    <div class="admin-card">
+      <h3>Usuarios registrados recientemente</h3>
+      <div id="dashRecentUsers"></div>
+    </div>
+  </div>
+
+  <!-- USUARIOS -->
+  <div id="admin-users" class="admin-section">
+    <div class="admin-card">
+      <h3>Gestión de usuarios</h3>
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;flex-wrap:wrap">
+        <input type="text" id="userSearchInput" class="form-input" placeholder="Buscar por nombre..." style="flex:1;min-width:150px" oninput="filterAdminUsers()">
+        <select id="userFilterStatus" class="form-input" style="width:auto" onchange="filterAdminUsers()">
+          <option value="all">Todos</option>
+          <option value="active">Activos</option>
+          <option value="banned">Baneados</option>
+          <option value="admin">Admins</option>
+        </select>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>Usuario</th><th>Estado</th><th>Rol</th><th>Reseñas</th><th>Registro</th><th>Acciones</th></tr></thead>
+        <tbody id="adminUsersTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RESEÑAS -->
+  <div id="admin-reviews" class="admin-section">
+    <div class="admin-card">
+      <h3>Todas las reseñas</h3>
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;flex-wrap:wrap">
+        <input type="text" id="reviewSearchInput" class="form-input" placeholder="Buscar por juego o usuario..." style="flex:1;min-width:150px" oninput="filterAdminReviews()">
+        <select id="reviewFilterScore" class="form-input" style="width:auto" onchange="filterAdminReviews()">
+          <option value="all">Todas las notas</option>
+          <option value="green">Positivas (75+)</option>
+          <option value="yellow">Mixtas (50-74)</option>
+          <option value="red">Negativas (&lt;50)</option>
+        </select>
+      </div>
+      <div id="adminAllReviews"></div>
+    </div>
+  </div>
+
+  <!-- MODERACIÓN -->
+  <div id="admin-moderation" class="admin-section">
+    <div class="admin-card">
+      <h3>🔍 Reseñas recientes — Revisión rápida</h3>
+      <p style="font-size:0.75rem;color:var(--gray-500);margin-bottom:0.8rem">Las últimas reseñas publicadas. Aprueba o elimina con un clic.</p>
+      <div id="modReviewsList"></div>
+    </div>
+    <div class="admin-card">
+      <h3>⚠️ Usuarios con alta actividad</h3>
+      <p style="font-size:0.75rem;color:var(--gray-500);margin-bottom:0.8rem">Usuarios con más de 5 reseñas. Útil para detectar spam.</p>
+      <div id="modHighActivity"></div>
+    </div>
+    <div class="admin-card">
+      <h3>🗑️ Borrado masivo</h3>
+      <p style="font-size:0.75rem;color:var(--gray-500);margin-bottom:0.5rem">Elimina todas las reseñas de un usuario por nombre.</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <input type="text" id="bulkDeleteUser" class="form-input" placeholder="Nombre de usuario" style="flex:1">
+        <button onclick="bulkDeleteByUser()" style="background:var(--red-dark);color:white;border:none;padding:0.5rem 1rem;font-weight:700;border-radius:4px;cursor:pointer">Borrar todo</button>
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3>🚫 Gestión rápida de bans</h3>
+      <p style="font-size:0.75rem;color:var(--gray-500);margin-bottom:0.5rem">Banea o desbanea un usuario directamente por nombre.</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <input type="text" id="quickBanUser" class="form-input" placeholder="Nombre de usuario" style="flex:1">
+        <button onclick="quickBan(true)" style="background:var(--red-dark);color:white;border:none;padding:0.5rem 1rem;font-weight:700;border-radius:4px;cursor:pointer">Banear</button>
+        <button onclick="quickBan(false)" style="background:var(--green-dark);color:white;border:none;padding:0.5rem 1rem;font-weight:700;border-radius:4px;cursor:pointer">Desbanear</button>
+      </div>
+      <div id="quickBanResult" style="margin-top:0.5rem;font-size:0.75rem"></div>
+    </div>
+  </div>
+
+  <!-- BANNER -->
+  <div id="admin-banner" class="admin-section">
+    <div class="admin-card">
+      <h3>Aviso Global</h3>
+      <div class="banner-form">
+        <select id="bannerType"><option value="info">Info</option><option value="success">Éxito</option><option value="warning">Advertencia</option><option value="error">Error</option></select>
+        <input type="text" id="bannerInput" placeholder="Mensaje del aviso">
+        <button onclick="saveBanner()">Publicar</button>
+        <button onclick="clearBanner()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
 
 <footer><strong>CritiGames</strong> — La nota la pones tú.<br>Datos vía RAWG</footer>
 
@@ -1628,100 +1739,248 @@ async function clearBanner(){
 }
 
 // ========== ADMIN ==========
+let _allAdminUsers = [];
+let _allAdminReviews = [];
+
 async function switchAdminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>{t.classList.toggle('active',['dashboard','users','reviews','banner','changelog'][i]===tab);});
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['dashboard','users','reviews','moderation','banner'][i]===tab);
+  });
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('admin-'+tab).classList.add('active');
+  if(tab==='dashboard') loadAdminData();
   if(tab==='users') loadAdminUsers();
   if(tab==='reviews') loadAdminReviews();
+  if(tab==='moderation') loadModeration();
   if(tab==='banner') loadBannerAdmin();
-  if(tab==='dashboard') loadAdminData();
-  if(tab==='changelog') loadChangelogs();
 }
+
 async function loadAdminData(){
   const sb=getSupabase();
   if(!sb) return;
-  const {count:uCount}=await sb.from('players').select('id',{count:'exact',head:true});
-  const {count:rCount}=await sb.from('reviews').select('id',{count:'exact',head:true});
-  const {count:bCount}=await sb.from('players').select('id',{count:'exact',head:true}).eq('is_banned',true);
+  const [{count:uCount},{count:rCount},{count:bCount},{data:reviews},{data:users}] = await Promise.all([
+    sb.from('players').select('id',{count:'exact',head:true}),
+    sb.from('reviews').select('id',{count:'exact',head:true}),
+    sb.from('players').select('id',{count:'exact',head:true}).eq('is_banned',true),
+    sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(5),
+    sb.from('players').select('*').order('created_at',{ascending:false}).limit(5)
+  ]);
   document.getElementById('statUsers').textContent=uCount||0;
   document.getElementById('statReviews').textContent=rCount||0;
   document.getElementById('statBanned').textContent=bCount||0;
+
+  // Reseñas de hoy
+  const today=new Date().toISOString().slice(0,10);
+  const {count:todayCount}=await sb.from('reviews').select('id',{count:'exact',head:true}).gte('created_at',today);
+  document.getElementById('statReviewsToday').textContent=todayCount||0;
+
+  // Nota media
+  const {data:allScores}=await sb.from('reviews').select('score');
+  if(allScores&&allScores.length){
+    const avg=Math.round(allScores.reduce((a,r)=>a+r.score,0)/allScores.length);
+    document.getElementById('statAvgScore').textContent=avg;
+  }
+
+  // Juego más reseñado
+  const {data:gameReviews}=await sb.from('reviews').select('game_name');
+  if(gameReviews&&gameReviews.length){
+    const freq={};
+    gameReviews.forEach(r=>{freq[r.game_name]=(freq[r.game_name]||0)+1;});
+    const top=Object.entries(freq).sort((a,b)=>b[1]-a[1])[0];
+    document.getElementById('statTopGame').textContent=top?top[0].slice(0,12)+'…':'—';
+  }
+
+  // Últimas reseñas
+  const rr=document.getElementById('dashRecentReviews');
+  rr.innerHTML=(reviews||[]).map(r=>`<div style="padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.75rem;display:flex;justify-content:space-between;gap:0.5rem"><span><strong>${escapeHTML(r.username)}</strong> — ${escapeHTML(r.game_name)}</span><span class="score small ${r.score>=75?'green':r.score>=50?'yellow':'red'}" style="min-width:32px;height:24px;font-size:0.7rem">${r.score}</span></div>`).join('');
+
+  // Últimos usuarios
+  const ur=document.getElementById('dashRecentUsers');
+  ur.innerHTML=(users||[]).map(u=>`<div style="padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.75rem;display:flex;justify-content:space-between"><span>${escapeHTML(u.username)}${u.is_admin?' 👑':''}</span><span style="color:var(--gray-500)">${new Date(u.created_at).toLocaleDateString()}</span></div>`).join('');
 }
+
 async function loadAdminUsers(){
   const sb=getSupabase();
   if(!sb) return;
   const {data:users}=await sb.from('players').select('*').order('created_at',{ascending:false});
-  const tbody=document.getElementById('adminUsersTbody');
-  tbody.innerHTML=(users||[]).map(u=>`<tr><td>${escapeHTML(u.username)}${u.is_admin?' 👑':''}</td><td><span class="admin-badge ${u.is_banned?'banned':'active'}">${u.is_banned?'Baneado':'Activo'}</span></td><td>${u.is_admin?'Admin':'Usuario'}</td><td>${!u.is_admin?(u.is_banned?`<button class="admin-action success" onclick="toggleBanUser('${u.id}',false)">Desbanear</button>`:`<button class="admin-action danger" onclick="toggleBanUser('${u.id}',true)">Banear</button>`):'—'}</td></tr>`).join('');
+  // Contar reseñas por usuario
+  const {data:reviews}=await sb.from('reviews').select('player_id');
+  const reviewCount={};
+  (reviews||[]).forEach(r=>{reviewCount[r.player_id]=(reviewCount[r.player_id]||0)+1;});
+  _allAdminUsers=(users||[]).map(u=>({...u,reviewCount:reviewCount[u.id]||0}));
+  renderAdminUsers(_allAdminUsers);
 }
+
+function renderAdminUsers(users){
+  const tbody=document.getElementById('adminUsersTbody');
+  tbody.innerHTML=users.map(u=>`<tr>
+    <td><strong>${escapeHTML(u.username)}</strong>${u.is_admin?' 👑':''}</td>
+    <td><span class="admin-badge ${u.is_banned?'banned':'active'}">${u.is_banned?'Baneado':'Activo'}</span></td>
+    <td>${u.is_admin?'Admin':'Usuario'}</td>
+    <td style="text-align:center">${u.reviewCount}</td>
+    <td>${new Date(u.created_at).toLocaleDateString()}</td>
+    <td>${!u.is_admin?`
+      ${u.is_banned
+        ?`<button class="admin-action success" onclick="toggleBanUser('${u.id}',false)">Desbanear</button>`
+        :`<button class="admin-action danger" onclick="toggleBanUser('${u.id}',true)">Banear</button>`}
+      <button class="admin-action danger" onclick="deleteUserReviews('${u.id}','${escapeHTML(u.username)}')" style="margin-left:0.3rem">Borrar reseñas</button>
+    `:'—'}</td>
+  </tr>`).join('');
+}
+
+function filterAdminUsers(){
+  const q=document.getElementById('userSearchInput').value.toLowerCase();
+  const f=document.getElementById('userFilterStatus').value;
+  let list=_allAdminUsers;
+  if(q) list=list.filter(u=>u.username.toLowerCase().includes(q));
+  if(f==='active') list=list.filter(u=>!u.is_banned&&!u.is_admin);
+  if(f==='banned') list=list.filter(u=>u.is_banned);
+  if(f==='admin') list=list.filter(u=>u.is_admin);
+  renderAdminUsers(list);
+}
+
 async function toggleBanUser(userId,ban){
-  if(!confirm(`¿${ban?'banear':'desbanear'}?`)) return;
+  if(!confirm(`¿${ban?'Banear':'Desbanear'} este usuario?`)) return;
   const sb=getSupabase();
   if(sb) await sb.from('players').update({is_banned:ban}).eq('id',userId);
   showToast(`Usuario ${ban?'baneado':'desbaneado'}`);
   loadAdminUsers();
 }
+
+async function deleteUserReviews(userId, username){
+  if(!confirm(`¿Borrar TODAS las reseñas de "${username}"?`)) return;
+  const sb=getSupabase();
+  if(sb) await sb.from('reviews').delete().eq('player_id',userId);
+  showToast(`Reseñas de ${username} eliminadas`);
+  loadAdminUsers();
+}
+
 async function loadAdminReviews(){
   const sb=getSupabase();
   if(!sb) return;
   const {data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
-  const container=document.getElementById('adminAllReviews');
-  if(!data||data.length===0){container.innerHTML='<div>No hay reseñas</div>'; return;}
-  container.innerHTML=data.map(r=>`<div style="border-bottom:1px solid #ddd;padding:0.5rem"><strong>${escapeHTML(r.username)}</strong> - ${escapeHTML(r.game_name)} - Puntuación: ${r.score}<br><button onclick="permanentDeleteReview('${r.id}')" style="margin-top:0.3rem;padding:0.2rem 0.5rem;background:#e84040;color:white;border:none;border-radius:4px">Borrar</button></div>`).join('');
+  _allAdminReviews=data||[];
+  renderAdminReviews(_allAdminReviews);
 }
+
+function renderAdminReviews(reviews){
+  const container=document.getElementById('adminAllReviews');
+  if(!reviews||reviews.length===0){container.innerHTML='<div style="padding:1rem;color:var(--gray-500)">No hay reseñas</div>'; return;}
+  container.innerHTML=reviews.map(r=>`
+    <div style="border-bottom:1px solid var(--border);padding:0.6rem 0;display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap">
+      <div class="score small ${r.score>=75?'green':r.score>=50?'yellow':'red'}">${r.score}</div>
+      <div style="flex:1;min-width:120px">
+        <div style="font-size:0.8rem;font-weight:700">${escapeHTML(r.game_name)}</div>
+        <div style="font-size:0.65rem;color:var(--gray-500)">${escapeHTML(r.username)} · ${new Date(r.created_at).toLocaleDateString()}</div>
+        ${r.title?`<div style="font-size:0.7rem;margin-top:0.15rem">${escapeHTML(r.title)}</div>`:''}
+      </div>
+      <button onclick="permanentDeleteReview('${r.id}')" style="padding:0.2rem 0.6rem;background:var(--red-dark);color:white;border:none;border-radius:4px;font-size:0.65rem;font-weight:700;cursor:pointer">Borrar</button>
+    </div>`).join('');
+}
+
+function filterAdminReviews(){
+  const q=document.getElementById('reviewSearchInput').value.toLowerCase();
+  const f=document.getElementById('reviewFilterScore').value;
+  let list=_allAdminReviews;
+  if(q) list=list.filter(r=>r.game_name?.toLowerCase().includes(q)||r.username?.toLowerCase().includes(q));
+  if(f==='green') list=list.filter(r=>r.score>=75);
+  if(f==='yellow') list=list.filter(r=>r.score>=50&&r.score<75);
+  if(f==='red') list=list.filter(r=>r.score<50);
+  renderAdminReviews(list);
+}
+
 async function permanentDeleteReview(reviewId){
-  if(!confirm('¿Borrar permanentemente?')) return;
+  if(!confirm('¿Borrar permanentemente esta reseña?')) return;
   const sb=getSupabase();
   if(sb) await sb.from('reviews').delete().eq('id',reviewId);
   showToast('Reseña borrada');
   loadAdminReviews();
   loadReviews();
 }
-async function loadBannerAdmin(){
+
+async function loadModeration(){
   const sb=getSupabase();
   if(!sb) return;
-  const {data}=await sb.from('app_config').select('value').eq('key','global_banner').single();
-  if(data?.value){
-    try{const b=JSON.parse(data.value); document.getElementById('bannerInput').value=b.text||''; document.getElementById('bannerType').value=b.type||'info';}
-    catch(e){document.getElementById('bannerInput').value=data.value;}
-  }
+
+  // Reseñas recientes para revisión
+  const {data:recent}=await sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(20);
+  const modList=document.getElementById('modReviewsList');
+  modList.innerHTML=(recent||[]).map(r=>`
+    <div style="border:1px solid var(--border);border-radius:4px;padding:0.6rem;margin-bottom:0.5rem;display:flex;gap:0.6rem;align-items:flex-start;flex-wrap:wrap">
+      <div class="score small ${r.score>=75?'green':r.score>=50?'yellow':'red'}">${r.score}</div>
+      <div style="flex:1;min-width:120px">
+        <div style="font-size:0.8rem;font-weight:700">${escapeHTML(r.game_name)}</div>
+        <div style="font-size:0.65rem;color:var(--gray-500)">${escapeHTML(r.username)} · ${new Date(r.created_at).toLocaleString()}</div>
+        ${r.title?`<div style="font-size:0.72rem;margin-top:0.2rem;font-style:italic">"${escapeHTML(r.title)}"</div>`:''}
+        ${r.pros?`<div style="font-size:0.68rem;color:var(--green-dark);margin-top:0.1rem">➕ ${escapeHTML(r.pros.slice(0,80))}${r.pros.length>80?'…':''}</div>`:''}
+        ${r.cons?`<div style="font-size:0.68rem;color:var(--red-dark);margin-top:0.1rem">➖ ${escapeHTML(r.cons.slice(0,80))}${r.cons.length>80?'…':''}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.3rem">
+        <button onclick="permanentDeleteReviewMod('${r.id}',this)" style="padding:0.2rem 0.6rem;background:var(--red-dark);color:white;border:none;border-radius:4px;font-size:0.65rem;font-weight:700;cursor:pointer">🗑️ Borrar</button>
+        <button onclick="banUserFromReview('${r.player_id}','${escapeHTML(r.username)}',this)" style="padding:0.2rem 0.6rem;background:var(--gray-700);color:white;border:none;border-radius:4px;font-size:0.65rem;font-weight:700;cursor:pointer">🚫 Banear</button>
+      </div>
+    </div>`).join('');
+
+  // Alta actividad (>3 reseñas)
+  const {data:allR}=await sb.from('reviews').select('player_id,username');
+  const freq={};
+  (allR||[]).forEach(r=>{
+    if(!freq[r.player_id]) freq[r.player_id]={username:r.username,count:0};
+    freq[r.player_id].count++;
+  });
+  const heavy=Object.entries(freq).filter(([,v])=>v.count>3).sort((a,b)=>b[1].count-a[1].count);
+  const haDiv=document.getElementById('modHighActivity');
+  if(!heavy.length){haDiv.innerHTML='<div style="font-size:0.75rem;color:var(--gray-500)">Ningún usuario supera 3 reseñas.</div>'; return;}
+  haDiv.innerHTML=heavy.map(([id,v])=>`
+    <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid var(--border)">
+      <strong style="font-size:0.8rem;flex:1">${escapeHTML(v.username)}</strong>
+      <span style="font-size:0.7rem;color:var(--gray-500)">${v.count} reseñas</span>
+      <button onclick="deleteUserReviews('${id}','${escapeHTML(v.username)}')" style="padding:0.15rem 0.5rem;background:var(--red-dark);color:white;border:none;border-radius:4px;font-size:0.6rem;cursor:pointer">Borrar todas</button>
+      <button onclick="toggleBanUser('${id}',true)" style="padding:0.15rem 0.5rem;background:var(--gray-700);color:white;border:none;border-radius:4px;font-size:0.6rem;cursor:pointer">Banear</button>
+    </div>`).join('');
 }
-let changelogs=[];
-async function loadChangelogs(){
+
+async function permanentDeleteReviewMod(reviewId, btn){
+  if(!confirm('¿Borrar esta reseña?')) return;
+  const sb=getSupabase();
+  if(sb) await sb.from('reviews').delete().eq('id',reviewId);
+  btn.closest('div[style]').remove();
+  showToast('Reseña borrada');
+}
+
+async function banUserFromReview(playerId, username, btn){
+  if(!confirm(`¿Banear a "${username}"?`)) return;
+  const sb=getSupabase();
+  if(sb) await sb.from('players').update({is_banned:true}).eq('id',playerId);
+  btn.textContent='✓ Baneado';
+  btn.disabled=true;
+  showToast(`${username} baneado`);
+}
+
+async function bulkDeleteByUser(){
+  const username=document.getElementById('bulkDeleteUser').value.trim();
+  if(!username){showToast('Escribe un nombre de usuario',true);return;}
+  if(!confirm(`¿Borrar TODAS las reseñas de "${username}"?`)) return;
   const sb=getSupabase();
   if(sb){
-    const {data}=await sb.from('changelog').select('*').order('created_at',{ascending:false});
-    changelogs=data||[];
+    const {error}=await sb.from('reviews').delete().eq('username',username);
+    if(error){showToast('Error: '+error.message,true);}
+    else{showToast(`Reseñas de "${username}" eliminadas`); document.getElementById('bulkDeleteUser').value='';}
   }
-  renderChangelogs();
 }
-function renderChangelogs(){
-  const container=document.getElementById('changelogList');
-  if(!container) return;
-  if(changelogs.length===0){container.innerHTML='<div>Sin cambios</div>';return;}
-  container.innerHTML=changelogs.map(log=>`<div class="changelog-entry"><span class="changelog-badge ${log.type}">${log.type==='success'?'✅':log.type==='warning'?'🔍':log.type==='error'?'❌':'🆕'}</span><span class="changelog-text">${escapeHTML(log.text)}</span><span class="changelog-date">${new Date(log.created_at).toLocaleDateString()}</span>${currentUser?.is_admin?`<button class="changelog-delete" onclick="deleteChangelog('${log.id}')">✕</button>`:''}</div>`).join('');
-}
-async function addChangelog() {
-  const type = document.getElementById('changelogType')?.value || 'info';
-  const text = document.getElementById('changelogText')?.value.trim();
-  if (!text) {
-    showToast('Escribe un mensaje', true);
-    return;
-  }
-  if (!currentUser?.is_admin) {
-    showToast('Solo administradores', true);
-    return;
-  }
-  const sb = getSupabase();
-  if (sb) {
-    await sb.from('changelog').insert({ type, text, created_by: currentUser?.username });
-    document.getElementById('changelogText').value = '';
-    loadChangelogs();
-    showToast('Entrada añadida al registro');
-  } else {
-    showToast('Demo: entrada guardada localmente', false);
-  }
+
+async function quickBan(ban){
+  const username=document.getElementById('quickBanUser').value.trim();
+  const result=document.getElementById('quickBanResult');
+  if(!username){showToast('Escribe un nombre de usuario',true);return;}
+  const sb=getSupabase();
+  if(!sb) return;
+  const {data:users}=await sb.from('players').select('id,username,is_banned').eq('username',username);
+  if(!users||users.length===0){result.innerHTML=`<span style="color:var(--red-dark)">Usuario "${escapeHTML(username)}" no encontrado.</span>`; return;}
+  const u=users[0];
+  await sb.from('players').update({is_banned:ban}).eq('id',u.id);
+  result.innerHTML=`<span style="color:${ban?'var(--red-dark)':'var(--green-dark)'}">✓ ${escapeHTML(u.username)} ${ban?'baneado':'desbaneado'} correctamente.</span>`;
+  showToast(`${u.username} ${ban?'baneado':'desbaneado'}`);
 }
 
 // ========== SUB-NAV ==========
