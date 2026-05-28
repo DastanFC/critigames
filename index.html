@@ -992,6 +992,56 @@ input[type=range]::-webkit-slider-thumb {
 @media (max-width: 400px) {
   .games-grid { grid-template-columns: 1fr; }
 }
+
+/* Changelog styles */
+.changelog-entry {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.changelog-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.changelog-badge.success { background: #6ac46a; color: #1a1a18; }
+.changelog-badge.warning { background: #ffbe00; color: #1a1a18; }
+.changelog-badge.error { background: #e84040; color: white; }
+.changelog-badge.info { background: #1a6ef5; color: white; }
+.changelog-text { flex: 1; font-size: 0.85rem; }
+.changelog-date { font-size: 0.7rem; color: var(--gray-500); }
+.changelog-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--red-dark);
+  font-size: 1rem;
+  padding: 0 0.25rem;
+}
+.deleted-review {
+  background: #fdf0f0;
+  color: var(--gray-500);
+  font-style: italic;
+}
+.deleted-review .review-text {
+  text-decoration: line-through;
+}
+.deleted-badge {
+  background: var(--red-dark);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+}
+
 </style>
 </head>
 <body>
@@ -1106,25 +1156,129 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 </div>
 
-<!-- ADMIN PANEL VIEW -->
 <div id="adminView" style="display:none">
   <div class="admin-panel">
     <div class="admin-header">
-      <h1>👑 PANEL ADMIN — dastan</h1>
+      <h1>👑 PANEL DE ADMINISTRACIÓN</h1>
       <button onclick="showHome()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.35rem .8rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;border-radius:2px;">← Volver</button>
     </div>
+    
+    <!-- Menú de pestañas -->
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('dashboard')">Dashboard</button>
-      <button class="admin-tab" onclick="switchAdminTab('reviews')">Valoraciones</button>
-      <button class="admin-tab" onclick="switchAdminTab('users')">Usuarios</button>
-      <button class="admin-tab" onclick="switchAdminTab('banner')">Banner</button>
-      <button class="admin-tab" onclick="switchAdminTab('settings')">Ajustes</button>
+      <button class="admin-tab active" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
+      <button class="admin-tab" onclick="switchAdminTab('users')">👥 Usuarios</button>
+      <button class="admin-tab" onclick="switchAdminTab('reviews')">📝 Valoraciones</button>
+      <button class="admin-tab" onclick="switchAdminTab('banner')">📢 Aviso Global</button>
+      <button class="admin-tab" onclick="switchAdminTab('changelog')">📋 Registro Cambios</button>
+      <button class="admin-tab" onclick="switchAdminTab('settings')">⚙️ Ajustes</button>
     </div>
-    <div id="admin-dashboard" class="admin-section active">...</div>
-    <div id="admin-reviews" class="admin-section">...</div>
-    <div id="admin-users" class="admin-section">...</div>
-    <div id="admin-banner" class="admin-section">...</div>
-    <div id="admin-settings" class="admin-section">...</div>
+
+    <!-- DASHBOARD -->
+    <div id="admin-dashboard" class="admin-section active">
+      <div class="admin-card">
+        <h3>📊 Estadísticas Generales</h3>
+        <div class="stats-grid" id="adminStats">
+          <div class="stat-card"><div class="stat-num" id="statUsers">—</div><div class="stat-label">Usuarios</div></div>
+          <div class="stat-card"><div class="stat-num" id="statReviews">—</div><div class="stat-label">Valoraciones</div></div>
+          <div class="stat-card"><div class="stat-num" id="statBanned">—</div><div class="stat-label">Usuarios Baneados</div></div>
+          <div class="stat-card"><div class="stat-num" id="statAdmins">—</div><div class="stat-label">Administradores</div></div>
+          <div class="stat-card"><div class="stat-num" id="statToday">—</div><div class="stat-label">Valoraciones hoy</div></div>
+          <div class="stat-card"><div class="stat-num" id="statAvgScore">—</div><div class="stat-label">Nota media global</div></div>
+        </div>
+      </div>
+      <div class="admin-card">
+        <h3>🕐 Últimas Actividad</h3>
+        <div id="adminRecentActivity"></div>
+      </div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div id="admin-users" class="admin-section">
+      <div class="admin-card">
+        <h3>👥 Gestión de Usuarios</h3>
+        <div style="margin-bottom:1rem">
+          <input type="text" id="searchUser" placeholder="🔍 Buscar usuario..." style="padding:0.5rem;border:1px solid var(--border);border-radius:4px;width:200px" onkeyup="filterAdminUsers()">
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table" id="adminUsersTable">
+            <thead>
+              <tr><th>Usuario</th><th>Puntos</th><th>Estado</th><th>Rol</th><th>Registro</th><th>Acciones</th</tr>
+            </thead>
+            <tbody id="adminUsersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VALORACIONES -->
+    <div id="admin-reviews" class="admin-section">
+      <div class="admin-card">
+        <h3>📝 Gestionar Valoraciones</h3>
+        <div style="margin-bottom:1rem">
+          <input type="text" id="searchReview" placeholder="🔍 Buscar por juego o usuario..." style="padding:0.5rem;border:1px solid var(--border);border-radius:4px;width:250px" onkeyup="filterAdminReviews()">
+          <select id="filterReviewStatus" onchange="filterAdminReviews()" style="padding:0.5rem;margin-left:0.5rem;border:1px solid var(--border);border-radius:4px">
+            <option value="all">Todas</option>
+            <option value="active">Activas</option>
+            <option value="deleted">Eliminadas por admin</option>
+          </select>
+        </div>
+        <div id="adminAllReviews"></div>
+      </div>
+    </div>
+
+    <!-- AVISO GLOBAL -->
+    <div id="admin-banner" class="admin-section">
+      <div class="admin-card">
+        <h3>📢 Aviso Global (Banner Superior)</h3>
+        <div class="banner-form">
+          <select id="bannerType" style="padding:0.6rem;border:1px solid var(--border);border-radius:4px">
+            <option value="info">📘 Normal</option>
+            <option value="success">✅ Solucionado</option>
+            <option value="warning">🔍 Investigando</option>
+            <option value="error">❌ No funciona</option>
+          </select>
+          <input type="text" id="bannerInput" placeholder="Escribe el mensaje del aviso..." maxlength="200" style="flex:2">
+          <button onclick="saveBanner()" style="background:var(--admin-dark)">Publicar</button>
+          <button onclick="clearBanner()" style="background:var(--red-dark)">Eliminar</button>
+        </div>
+        <div id="currentBannerPreview" style="margin-top:1rem;padding:0.75rem;background:var(--gray-50);border-radius:4px"></div>
+      </div>
+    </div>
+
+    <!-- REGISTRO DE CAMBIOS -->
+    <div id="admin-changelog" class="admin-section">
+      <div class="admin-card">
+        <h3>📋 Registro de Cambios (visible para todos)</h3>
+        <div style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <select id="changelogType" style="padding:0.5rem;border:1px solid var(--border);border-radius:4px">
+            <option value="success">✅ Solucionado</option>
+            <option value="warning">🔍 Investigando</option>
+            <option value="error">❌ No funciona</option>
+            <option value="info">🆕 Novedad</option>
+          </select>
+          <input type="text" id="changelogText" placeholder="Describe el cambio, error o novedad..." style="flex:2;padding:0.5rem;border:1px solid var(--border);border-radius:4px">
+          <button onclick="addChangelog()" style="background:var(--admin-dark);color:white;border:none;padding:0.5rem 1rem;border-radius:4px;cursor:pointer">+ Añadir entrada</button>
+        </div>
+        <div id="changelogList" style="max-height:400px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- AJUSTES -->
+    <div id="admin-settings" class="admin-section">
+      <div class="admin-card">
+        <h3>⚙️ Cambiar Contraseña de Administrador</h3>
+        <div class="pw-form">
+          <div><label>Nueva contraseña</label><input type="password" id="adminNewPw" placeholder="Nueva contraseña"></div>
+          <div><label>Confirmar contraseña</label><input type="password" id="adminConfirmPw" placeholder="Repetir contraseña"></div>
+          <button onclick="changeAdminPw()">Actualizar contraseña</button>
+        </div>
+        <div id="pwMsg" style="margin-top:.75rem;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;display:none"></div>
+      </div>
+      <div class="admin-card">
+        <h3>📊 Estadísticas de la comunidad</h3>
+        <div id="communityStats"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2019,6 +2173,464 @@ function switchAdminTab(tab) {
   });
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.getElementById('admin-' + tab).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════
+// ADMIN PANEL COMPLETO
+// ══════════════════════════════════════════════════
+
+let allUsers = [];
+let allReviewsAdmin = [];
+let changelogs = [];
+
+// Cargar datos del admin
+async function loadAdminData() {
+  const sb = getSupabase();
+  if (!sb) {
+    document.getElementById('statUsers').textContent = '0';
+    document.getElementById('statReviews').textContent = '0';
+    document.getElementById('statBanned').textContent = '0';
+    document.getElementById('statAdmins').textContent = '1';
+    document.getElementById('statToday').textContent = '0';
+    document.getElementById('statAvgScore').textContent = '0';
+    return;
+  }
+  
+  const [{ count: uCount }, { count: rCount }, { count: bCount }, { data: users }, { data: reviews }] = await Promise.all([
+    sb.from('players').select('id', { count: 'exact', head: true }),
+    sb.from('reviews').select('id', { count: 'exact', head: true }),
+    sb.from('players').select('id', { count: 'exact', head: true }).eq('is_banned', true),
+    sb.from('players').select('*'),
+    sb.from('reviews').select('*')
+  ]);
+  
+  allUsers = users || [];
+  allReviewsAdmin = reviews || [];
+  
+  const adminCount = allUsers.filter(u => u.is_admin).length;
+  const today = new Date().toISOString().split('T')[0];
+  const todayCount = allReviewsAdmin.filter(r => r.created_at?.startsWith(today)).length;
+  const avgScore = allReviewsAdmin.length > 0 
+    ? Math.round(allReviewsAdmin.reduce((a,b) => a + b.score, 0) / allReviewsAdmin.length)
+    : 0;
+  
+  document.getElementById('statUsers').textContent = uCount ?? 0;
+  document.getElementById('statReviews').textContent = rCount ?? 0;
+  document.getElementById('statBanned').textContent = bCount ?? 0;
+  document.getElementById('statAdmins').textContent = adminCount;
+  document.getElementById('statToday').textContent = todayCount;
+  document.getElementById('statAvgScore').textContent = avgScore;
+  
+  // Cargar changelogs
+  await loadChangelogs();
+}
+
+// Cargar usuarios
+async function loadAdminUsers() {
+  const sb = getSupabase();
+  const tbody = document.getElementById('adminUsersTbody');
+  if (!sb) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--gray-500)">Conecta Supabase</td></tr>';
+    return;
+  }
+  
+  const { data: users } = await sb.from('players').select('*').order('created_at', { ascending: false });
+  allUsers = users || [];
+  
+  // Calcular puntos (número de reseñas)
+  const { data: reviews } = await sb.from('reviews').select('player_id, score');
+  const pointsMap = {};
+  reviews?.forEach(r => {
+    pointsMap[r.player_id] = (pointsMap[r.player_id] || 0) + Math.floor(r.score / 10);
+  });
+  
+  tbody.innerHTML = allUsers.map(u => `
+    <tr id="user-row-${u.id}">
+      <td><strong>${escapeHTML(u.username)}</strong>${u.is_admin ? ' 👑' : ''}</td>
+      <td>${pointsMap[u.id] || 0}</td>
+      <td><span class="admin-badge ${u.is_banned ? 'banned' : 'active'}">${u.is_banned ? 'Baneado' : 'Activo'}</span></td>
+      <td>${u.is_admin ? 'Admin' : 'Usuario'}</td>
+      <td style="white-space:nowrap">${new Date(u.created_at).toLocaleDateString()}</td>
+      <td>
+        ${!u.is_admin ? `
+          <button class="admin-action" onclick="makeAdmin('${u.id}', '${u.username}')">👑 Hacer Admin</button>
+          ${u.is_banned 
+            ? `<button class="admin-action success" onclick="toggleBanUser('${u.id}', false)">🔓 Desbanear</button>`
+            : `<button class="admin-action danger" onclick="toggleBanUser('${u.id}', true)">🔒 Banear</button>`}
+          <button class="admin-action" onclick="resetUserCode('${u.id}', '${u.username}')">🔄 Reset código</button>
+        ` : '<span style="color:var(--admin)">— eres tú —</span>'}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterAdminUsers() {
+  const search = document.getElementById('searchUser')?.value.toLowerCase() || '';
+  const rows = document.querySelectorAll('#adminUsersTbody tr');
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(search) ? '' : 'none';
+  });
+}
+
+// Funciones de administración de usuarios
+async function makeAdmin(userId, username) {
+  if (!confirm(`¿Dar permisos de administrador a ${username}?`)) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: no se puede cambiar rol'); return; }
+  await sb.from('players').update({ is_admin: true }).eq('id', userId);
+  showToast(`${username} ahora es administrador`);
+  loadAdminUsers();
+  loadAdminData();
+}
+
+async function toggleBanUser(userId, ban) {
+  const action = ban ? 'banear' : 'desbanear';
+  if (!confirm(`¿${action} a este usuario?`)) return;
+  const sb = getSupabase();
+  if (!sb) { showToast(`Demo: usuario ${action}do`); return; }
+  await sb.from('players').update({ is_banned: ban }).eq('id', userId);
+  showToast(`Usuario ${ban ? 'baneado' : 'desbaneado'}`);
+  loadAdminUsers();
+  loadAdminData();
+}
+
+async function resetUserCode(userId, username) {
+  const newCode = prompt(`Nuevo código para ${username} (mínimo 6 caracteres):`);
+  if (!newCode || newCode.length < 6) { showToast('Código debe tener mínimo 6 caracteres', true); return; }
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: código reset'); return; }
+  const hash = await hashCode(newCode);
+  await sb.from('players').update({ code_hash: hash }).eq('id', userId);
+  showToast(`Código de ${username} actualizado`);
+}
+
+// Cargar reseñas para admin
+async function loadAdminReviews() {
+  const sb = getSupabase();
+  const container = document.getElementById('adminAllReviews');
+  if (!sb) {
+    container.innerHTML = '<div style="color:var(--gray-500)">Conecta Supabase</div>';
+    return;
+  }
+  
+  const { data } = await sb.from('reviews').select('*').order('created_at', { ascending: false });
+  allReviewsAdmin = data || [];
+  renderAdminReviews();
+}
+
+function renderAdminReviews() {
+  const container = document.getElementById('adminAllReviews');
+  const search = document.getElementById('searchReview')?.value.toLowerCase() || '';
+  const status = document.getElementById('filterReviewStatus')?.value || 'all';
+  
+  let filtered = allReviewsAdmin;
+  if (search) {
+    filtered = filtered.filter(r => 
+      r.game_name?.toLowerCase().includes(search) || 
+      r.username?.toLowerCase().includes(search)
+    );
+  }
+  if (status === 'deleted') {
+    filtered = filtered.filter(r => r.deleted_by_admin === true);
+  } else if (status === 'active') {
+    filtered = filtered.filter(r => !r.deleted_by_admin);
+  }
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="padding:1rem;color:var(--gray-500);text-align:center">No hay valoraciones</div>';
+    return;
+  }
+  
+  container.innerHTML = filtered.map(r => `
+    <div class="review-item ${r.deleted_by_admin ? 'deleted-review' : ''}" id="admin-review-${r.id}">
+      <div class="review-header">
+        <span class="review-author">${escapeHTML(r.username)}</span>
+        <span class="review-date">${new Date(r.created_at).toLocaleDateString()}</span>
+        ${r.platform ? `<span class="review-platform">${r.platform}</span>` : ''}
+        <span class="review-score-badge ${r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red'}">${r.score}</span>
+        ${r.deleted_by_admin ? '<span class="deleted-badge">🗑 Eliminado por admin</span>' : ''}
+      </div>
+      <div style="font-size:0.8rem;color:var(--gray-500)">${escapeHTML(r.game_name)}</div>
+      ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
+      ${r.pros && !r.deleted_by_admin ? `<div class="review-text"><strong style="color:green">+</strong> ${escapeHTML(r.pros)}</div>` : ''}
+      ${r.cons && !r.deleted_by_admin ? `<div class="review-text" style="margin-top:0.25rem"><strong style="color:red">–</strong> ${escapeHTML(r.cons)}</div>` : ''}
+      ${r.deleted_by_admin ? '<div class="review-text" style="color:var(--gray-500);font-style:italic">Esta valoración fue eliminada por un administrador.</div>' : ''}
+      <div class="review-actions">
+        ${!r.deleted_by_admin ? `
+          <button class="review-action-btn delete" onclick="softDeleteReview('${r.id}')">🗑 Eliminar (marcar)</button>
+        ` : `
+          <button class="review-action-btn" onclick="restoreReview('${r.id}')">↩️ Restaurar</button>
+        `}
+        <button class="review-action-btn" onclick="permanentDeleteReview('${r.id}')">⚠️ Borrar permanentemente</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterAdminReviews() {
+  renderAdminReviews();
+}
+
+// Soft delete (marcar como eliminado por admin)
+async function softDeleteReview(reviewId) {
+  if (!confirm('¿Marcar esta reseña como eliminada por el administrador? El usuario no la verá.')) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: reseña marcada como eliminada'); return; }
+  await sb.from('reviews').update({ deleted_by_admin: true, deleted_at: new Date().toISOString() }).eq('id', reviewId);
+  showToast('Reseña marcada como eliminada');
+  loadAdminReviews();
+  loadReviews(); // Recargar reseñas públicas
+}
+
+// Restaurar reseña
+async function restoreReview(reviewId) {
+  if (!confirm('¿Restaurar esta reseña? Volverá a ser visible.')) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: reseña restaurada'); return;
+  }
+  await sb.from('reviews').update({ deleted_by_admin: false, deleted_at: null }).eq('id', reviewId);
+  showToast('Reseña restaurada');
+  loadAdminReviews();
+  loadReviews();
+}
+
+// Borrado permanente
+async function permanentDeleteReview(reviewId) {
+  if (!confirm('⚠️ ¿Borrar PERMANENTEMENTE esta reseña? Esta acción no se puede deshacer.')) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: reseña borrada permanentemente'); return; }
+  await sb.from('reviews').delete().eq('id', reviewId);
+  showToast('Reseña borrada permanentemente');
+  loadAdminReviews();
+  loadReviews();
+}
+
+// CHANGELOG (Registro de cambios)
+async function loadChangelogs() {
+  const sb = getSupabase();
+  if (!sb) {
+    // Demo data
+    changelogs = [
+      { id: '1', type: 'success', text: 'Corregido error al mostrar reseñas', date: new Date().toISOString() },
+      { id: '2', type: 'warning', text: 'Investigando problema con los filtros', date: new Date().toISOString() }
+    ];
+    renderChangelogs();
+    return;
+  }
+  
+  const { data } = await sb.from('changelog').select('*').order('created_at', { ascending: false });
+  changelogs = data || [];
+  renderChangelogs();
+}
+
+function renderChangelogs() {
+  const container = document.getElementById('changelogList');
+  if (!container) return;
+  
+  if (changelogs.length === 0) {
+    container.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--gray-500)">📝 Sin actualizaciones todavía.</div>';
+    return;
+  }
+  
+  container.innerHTML = changelogs.map(log => `
+    <div class="changelog-entry">
+      <span class="changelog-badge ${log.type}">${log.type === 'success' ? '✅ Solucionado' : log.type === 'warning' ? '🔍 Investigando' : log.type === 'error' ? '❌ No funciona' : '🆕 Novedad'}</span>
+      <span class="changelog-text">${escapeHTML(log.text)}</span>
+      <span class="changelog-date">${new Date(log.created_at).toLocaleDateString()}</span>
+      ${currentUser?.is_admin ? `<button class="changelog-delete" onclick="deleteChangelog('${log.id}')">✕</button>` : ''}
+    </div>
+  `).join('');
+}
+
+async function addChangelog() {
+  const type = document.getElementById('changelogType')?.value || 'info';
+  const text = document.getElementById('changelogText')?.value.trim();
+  if (!text) { showToast('Escribe un mensaje', true); return; }
+  
+  const sb = getSupabase();
+  if (!sb) {
+    changelogs.unshift({ id: Date.now(), type, text, created_at: new Date().toISOString() });
+    renderChangelogs();
+    document.getElementById('changelogText').value = '';
+    showToast('Entrada añadida (demo)');
+    return;
+  }
+  
+  const { error } = await sb.from('changelog').insert({ type, text, created_by: currentUser?.username });
+  if (error) { showToast('Error: ' + error.message, true); }
+  else {
+    showToast('Entrada añadida');
+    document.getElementById('changelogText').value = '';
+    loadChangelogs();
+  }
+}
+
+async function deleteChangelog(id) {
+  if (!confirm('¿Eliminar esta entrada?')) return;
+  const sb = getSupabase();
+  if (!sb) {
+    changelogs = changelogs.filter(l => l.id != id);
+    renderChangelogs();
+    showToast('Entrada eliminada');
+    return;
+  }
+  await sb.from('changelog').delete().eq('id', id);
+  loadChangelogs();
+  showToast('Entrada eliminada');
+}
+
+// Mostrar changelog público debajo del banner
+function showPublicChangelog() {
+  const changelogHtml = `
+    <div id="publicChangelog" style="background:var(--gray-50);border-bottom:1px solid var(--border);padding:0.5rem 1rem;font-size:0.75rem;overflow-x:auto;white-space:nowrap">
+      <span style="font-weight:bold;margin-right:0.5rem">📋 Últimas actualizaciones:</span>
+      <div id="publicChangelogItems" style="display:inline-flex;gap:1rem"></div>
+    </div>
+  `;
+  const banner = document.getElementById('globalBanner');
+  banner.insertAdjacentHTML('afterend', changelogHtml);
+  loadPublicChangelog();
+}
+
+async function loadPublicChangelog() {
+  const sb = getSupabase();
+  let logs = [];
+  if (sb) {
+    const { data } = await sb.from('changelog').select('*').order('created_at', { ascending: false }).limit(5);
+    logs = data || [];
+  } else {
+    logs = changelogs.slice(0,5);
+  }
+  
+  const container = document.getElementById('publicChangelogItems');
+  if (container) {
+    container.innerHTML = logs.map(log => `
+      <span class="changelog-badge ${log.type}" style="display:inline-block;margin-right:0.5rem">${log.type === 'success' ? '✅' : log.type === 'warning' ? '🔍' : log.type === 'error' ? '❌' : '🆕'}</span>
+      <span>${escapeHTML(log.text)}</span>
+    `).join('');
+  }
+}
+
+// Banner con tipos de colores
+async function saveBanner() {
+  const msg = document.getElementById('bannerInput').value.trim();
+  const type = document.getElementById('bannerType').value;
+  const bannerData = { text: msg, type: type, date: new Date().toISOString() };
+  
+  const sb = getSupabase();
+  if (!sb) {
+    showBanner(msg, type);
+    showToast('Banner actualizado (demo)');
+    document.getElementById('currentBannerPreview').innerHTML = `<div class="changelog-badge ${type}" style="display:inline-block">${type === 'success' ? '✅ Solucionado' : type === 'warning' ? '🔍 Investigando' : type === 'error' ? '❌ No funciona' : '📘 Normal'}</div> ${escapeHTML(msg)}`;
+    return;
+  }
+  await sb.from('app_config').update({ value: JSON.stringify(bannerData) }).eq('key', 'global_banner');
+  showBanner(msg, type);
+  showToast('Banner publicado');
+  loadBannerAdmin();
+}
+
+function showBanner(msg, type = 'info') {
+  if (!msg) return;
+  const banner = document.getElementById('globalBanner');
+  const bannerText = document.getElementById('bannerText');
+  
+  const typeColors = {
+    success: '#6ac46a',
+    warning: '#ffbe00',
+    error: '#e84040',
+    info: '#1a6ef5'
+  };
+  
+  banner.style.background = typeColors[type] || '#ffbe00';
+  bannerText.textContent = msg;
+  banner.classList.add('active');
+}
+
+async function loadBannerAdmin() {
+  const sb = getSupabase();
+  const preview = document.getElementById('currentBannerPreview');
+  if (!sb) {
+    preview.innerHTML = 'Modo demo: configura Supabase';
+    return;
+  }
+  const { data } = await sb.from('app_config').select('value').eq('key', 'global_banner').single();
+  if (data?.value) {
+    let bannerData;
+    try { bannerData = JSON.parse(data.value); } catch(e) { bannerData = { text: data.value, type: 'info' }; }
+    document.getElementById('bannerInput').value = bannerData.text || '';
+    document.getElementById('bannerType').value = bannerData.type || 'info';
+    preview.innerHTML = `<div class="changelog-badge ${bannerData.type || 'info'}" style="display:inline-block">${bannerData.type === 'success' ? '✅ Solucionado' : bannerData.type === 'warning' ? '🔍 Investigando' : bannerData.type === 'error' ? '❌ No funciona' : '📘 Normal'}</div> ${escapeHTML(bannerData.text || '')}`;
+  } else {
+    preview.innerHTML = 'Sin banner activo.';
+  }
+}
+
+async function clearBanner() {
+  const sb = getSupabase();
+  if (!sb) {
+    dismissBanner();
+    document.getElementById('bannerInput').value = '';
+    document.getElementById('currentBannerPreview').innerHTML = 'Sin banner activo.';
+    showToast('Banner eliminado (demo)');
+    return;
+  }
+  await sb.from('app_config').update({ value: '' }).eq('key', 'global_banner');
+  dismissBanner();
+  document.getElementById('bannerInput').value = '';
+  showToast('Banner eliminado');
+  loadBannerAdmin();
+}
+
+// Cambiar contraseña admin
+async function changeAdminPw() {
+  const newPw = document.getElementById('adminNewPw').value;
+  const confirmPw = document.getElementById('adminConfirmPw').value;
+  const msg = document.getElementById('pwMsg');
+  if (newPw.length < 6) { msg.textContent = 'Mínimo 6 caracteres.'; msg.style.color = 'var(--red-dark)'; msg.style.display = 'block'; return; }
+  if (newPw !== confirmPw) { msg.textContent = 'No coinciden.'; msg.style.color = 'var(--red-dark)'; msg.style.display = 'block'; return; }
+  
+  const sb = getSupabase();
+  if (!sb) {
+    msg.textContent = '✓ Contraseña actualizada (demo).';
+    msg.style.color = 'var(--green-dark)'; msg.style.display = 'block';
+    return;
+  }
+  const hash = await hashCode(newPw);
+  await sb.from('players').update({ code_hash: hash }).eq('username', 'dastan');
+  msg.textContent = '✓ Contraseña actualizada correctamente.';
+  msg.style.color = 'var(--green-dark)'; msg.style.display = 'block';
+  document.getElementById('adminNewPw').value = '';
+  document.getElementById('adminConfirmPw').value = '';
+}
+
+// Inicializar admin
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach((t, i) => {
+    const tabs = ['dashboard', 'users', 'reviews', 'banner', 'changelog', 'settings'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('admin-' + tab).classList.add('active');
+  
+  if (tab === 'users') loadAdminUsers();
+  if (tab === 'reviews') loadAdminReviews();
+  if (tab === 'banner') loadBannerAdmin();
+  if (tab === 'dashboard') loadAdminData();
+  if (tab === 'changelog') loadChangelogs();
+}
+
+// Modificar loadReviews para filtrar reseñas eliminadas
+async function loadReviews() {
+  const sb = getSupabase();
+  if (!sb) {
+    renderReviewsList([]);
+    return;
+  }
+  const { data } = await sb.from('reviews').select('*').eq('deleted_by_admin', false).order('created_at', { ascending: false }).limit(30);
+  allReviews = data || [];
+  renderReviewsList(allReviews);
 }
 
 // ══════════════════════════════════════════════════
