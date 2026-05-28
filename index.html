@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>PlayerCore — Reviews reales de jugadores</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --white: #ffffff;
@@ -33,7 +32,7 @@
 body {
   background: var(--off-white);
   color: var(--gray-900);
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 15px;
   line-height: 1.5;
 }
@@ -45,7 +44,7 @@ body {
   color: var(--gray-900);
   text-align: center;
   padding: .4rem 1rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
   font-size: .85rem;
   letter-spacing: .5px;
@@ -68,7 +67,7 @@ nav {
   position: sticky; top: 0; z-index: 100;
 }
 .nav-logo {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.4rem; font-weight: 800;
   letter-spacing: 1px; color: var(--white);
   text-decoration: none; white-space: nowrap; flex-shrink: 0;
@@ -85,19 +84,19 @@ nav {
 .nav-search input {
   flex: 1; min-width: 0;
   background: none; border: none; outline: none;
-  color: var(--white); font-family: 'Source Serif 4', serif;
-  font-size: .85rem; padding: .4rem .7rem;
+  color: var(--white); font-family: 'Roboto', sans-serif;
+  font-size: .95rem; padding: .4rem .7rem;
 }
 .nav-search input::placeholder { color: rgba(255,255,255,.4); }
 .nav-search button {
   background: var(--green); border: none; padding: .4rem .75rem;
   color: var(--gray-900); font-weight: 700; cursor: pointer;
-  font-size: .8rem; font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; font-family: 'Roboto', sans-serif;
   letter-spacing: 1px; white-space: nowrap; flex-shrink: 0;
 }
 .nav-links { display: flex; gap: 1rem; margin-left: auto; flex-shrink: 0; }
 .nav-links a {
-  color: rgba(255,255,255,.65); font-family: 'Barlow Condensed', sans-serif;
+  color: rgba(255,255,255,.65); font-family: 'Roboto', sans-serif;
   font-size: .9rem; font-weight: 600; text-decoration: none;
   letter-spacing: .5px; white-space: nowrap;
   transition: color .15s;
@@ -106,7 +105,7 @@ nav {
 .nav-btn-login {
   background: none; border: 1px solid rgba(255,255,255,.3);
   color: var(--white); padding: .3rem .8rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 600; font-size: .85rem; letter-spacing: .5px;
   cursor: pointer; white-space: nowrap; border-radius: 2px;
   transition: all .15s; flex-shrink: 0;
@@ -116,7 +115,7 @@ nav {
 .nav-user-btn {
   background: var(--green-dark); border: none;
   color: var(--white); padding: .3rem .8rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700; font-size: .85rem; letter-spacing: .5px;
   cursor: pointer; border-radius: 2px; display: flex;
   align-items: center; gap: .4rem; white-space: nowrap;
@@ -133,7 +132,7 @@ nav {
 .nav-dropdown a, .nav-dropdown button {
   display: block; width: 100%; text-align: left;
   padding: .6rem 1rem; border: none; background: none;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .85rem; font-weight: 600; color: var(--gray-700);
   cursor: pointer; text-decoration: none;
   transition: background .1s;
@@ -154,7 +153,7 @@ nav {
 }
 .sub-nav::-webkit-scrollbar { display: none; }
 .sub-nav a {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .85rem; font-weight: 700;
   letter-spacing: .5px; text-transform: uppercase;
   color: var(--gray-500); text-decoration: none;
@@ -177,13 +176,13 @@ nav {
   display: flex; align-items: baseline; justify-content: space-between;
 }
 .section-header h2 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.5rem; font-weight: 800;
   letter-spacing: 1px; text-transform: uppercase;
   color: var(--gray-900);
 }
 .section-header a {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .8rem; font-weight: 700;
   color: var(--blue-accent); text-decoration: none;
   letter-spacing: .5px; text-transform: uppercase;
@@ -194,7 +193,7 @@ nav {
 .score {
   width: 54px; height: 54px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.6rem; font-weight: 800; border-radius: 4px;
 }
 .score.green  { background: var(--green);  color: var(--gray-900); }
@@ -240,12 +239,12 @@ nav {
 }
 .game-card-platforms { display: flex; gap: .25rem; flex-wrap: wrap; }
 .game-card-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .95rem; font-weight: 700; line-height: 1.2;
   color: var(--gray-900);
 }
 .game-card-meta {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .72rem; color: var(--gray-500); margin-top: auto;
 }
 .game-card-footer {
@@ -254,12 +253,12 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
 }
 .game-card-footer-label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem; font-weight: 700; letter-spacing: .5px;
   text-transform: uppercase; color: var(--gray-500);
 }
 .game-card-footer-sub {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .62rem; color: var(--gray-500); margin-top: .1rem;
 }
 
@@ -288,22 +287,22 @@ nav {
 }
 .featured-card-body { padding: .875rem; flex: 1; display: flex; flex-direction: column; gap: .35rem; }
 .featured-card-label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .62rem; font-weight: 800; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--green-dark);
 }
 .featured-card-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.1rem; font-weight: 800; line-height: 1.1; color: var(--gray-900);
 }
 .featured-card-genre {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .72rem; color: var(--gray-500);
 }
 .featured-card-score-row { display: flex; align-items: center; gap: .5rem; margin-top: auto; padding-top: .4rem; }
 .featured-card-score-info { display: flex; flex-direction: column; }
-.featured-card-score-verdict { font-family: 'Barlow Condensed', sans-serif; font-size: .82rem; font-weight: 700; color: var(--gray-700); }
-.featured-card-score-count { font-family: 'Barlow Condensed', sans-serif; font-size: .68rem; color: var(--gray-500); }
+.featured-card-score-verdict { font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 700; color: var(--gray-700); }
+.featured-card-score-count { font-family: 'Roboto', sans-serif; font-size: .68rem; color: var(--gray-500); }
 
 /* ─── SKELETONS ─── */
 .skeleton { background: var(--white); animation: shimmer 1.4s ease-in-out infinite; }
@@ -327,7 +326,7 @@ nav {
 .list-item:last-child { border-bottom: none; }
 .list-item:hover { background: var(--gray-50); }
 .list-rank {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800; font-size: 1rem;
   color: var(--gray-200); width: 20px; text-align: center; flex-shrink: 0;
 }
@@ -339,25 +338,25 @@ nav {
 }
 .list-info { flex: 1; min-width: 0; }
 .list-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700; font-size: .9rem; line-height: 1.1;
   color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.list-meta { font-family: 'Barlow Condensed', sans-serif; font-size: .68rem; color: var(--gray-500); }
+.list-meta { font-family: 'Roboto', sans-serif; font-size: .68rem; color: var(--gray-500); }
 
 /* ─── SIDEBAR CARD ─── */
 .sidebar-card { background: var(--white); border: 1px solid var(--border); margin-bottom: 1rem; }
 .sidebar-card-header {
   padding: .65rem .875rem;
   border-bottom: 1px solid var(--border);
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .88rem; font-weight: 800;
   letter-spacing: .5px; text-transform: uppercase; color: var(--gray-900);
 }
 .sidebar-card-body { padding: .65rem .875rem; }
 .genre-list { display: flex; flex-wrap: wrap; gap: .35rem; }
 .genre-chip {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .72rem; font-weight: 700; letter-spacing: .5px;
   padding: .25rem .55rem;
   background: var(--gray-50); border: 1px solid var(--border);
@@ -375,18 +374,18 @@ nav {
 }
 .community-banner-icon { font-size: 1.75rem; flex-shrink: 0; }
 .community-banner-text h3 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.05rem; font-weight: 800; letter-spacing: .5px; margin-bottom: .2rem;
 }
 .community-banner-text p {
   font-size: .78rem; color: rgba(255,255,255,.65);
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 .community-banner-btn {
   margin-left: auto; flex-shrink: 0;
   background: var(--green); color: var(--gray-900);
   border: none; padding: .5rem 1.1rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800; font-size: .88rem; letter-spacing: 1px;
   text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: opacity .15s;
 }
@@ -399,7 +398,7 @@ nav {
 }
 .legend-item {
   display: flex; align-items: center; gap: .35rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem; font-weight: 600; letter-spacing: .3px;
 }
 .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
@@ -409,7 +408,7 @@ footer {
   background: var(--gray-900); color: rgba(255,255,255,.5);
   text-align: center; padding: 2rem 1.5rem;
   margin-top: 3rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .8rem; letter-spacing: .5px;
 }
 footer strong { color: var(--green); }
@@ -438,7 +437,7 @@ footer strong { color: var(--green); }
   position: sticky; top: 0; z-index: 1;
 }
 .modal-top h2 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; color: var(--white);
 }
 .modal-close {
@@ -459,7 +458,7 @@ footer strong { color: var(--green); }
   padding: .75rem 1rem;
   background: none;
   border: none;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .9rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -483,8 +482,8 @@ footer strong { color: var(--green); }
   align-items: center;
 }
 .modal-game-img { width: 72px; height: 45px; object-fit: cover; flex-shrink: 0; background: var(--gray-100); border-radius: 2px; }
-.modal-game-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 800; }
-.modal-game-meta { font-family: 'Barlow Condensed', sans-serif; font-size: .72rem; color: var(--gray-500); }
+.modal-game-title { font-family: 'Roboto', sans-serif; font-size: 1.05rem; font-weight: 800; }
+.modal-game-meta { font-family: 'Roboto', sans-serif; font-size: .72rem; color: var(--gray-500); }
 .modal-body { padding: 1.25rem; }
 
 /* ─── REVIEWS GRID (para ver reseñas) ─── */
@@ -516,7 +515,7 @@ footer strong { color: var(--green); }
   flex-wrap: wrap;
 }
 .review-author-name {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800;
   font-size: .9rem;
   color: var(--gray-900);
@@ -524,7 +523,7 @@ footer strong { color: var(--green); }
 .review-author-name.is-admin { color: var(--admin); }
 .review-author-name.is-admin::after { content: ' 👑'; font-size: .7rem; }
 .review-date {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .68rem;
   color: var(--gray-500);
 }
@@ -539,7 +538,7 @@ footer strong { color: var(--green); }
   text-transform: uppercase;
 }
 .review-score-large {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800;
   font-size: 1.8rem;
   line-height: 1;
@@ -551,7 +550,7 @@ footer strong { color: var(--green); }
 .review-score-large.yellow { background: var(--yellow); color: var(--gray-900); }
 .review-score-large.red { background: var(--red); color: var(--white); }
 .review-recommend {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem;
   font-weight: 700;
   margin-left: .5rem;
@@ -559,14 +558,14 @@ footer strong { color: var(--green); }
 .review-recommend.yes { color: var(--green-dark); }
 .review-recommend.no { color: var(--red-dark); }
 .review-game-name {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .85rem;
   font-weight: 700;
   color: var(--gray-700);
   margin-bottom: .5rem;
 }
 .review-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .95rem;
   font-weight: 800;
   color: var(--gray-900);
@@ -600,7 +599,7 @@ footer strong { color: var(--green); }
   justify-content: flex-end;
 }
 .review-card-action {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem;
   font-weight: 700;
   padding: .2rem .6rem;
@@ -618,7 +617,7 @@ footer strong { color: var(--green); }
 .review-hint {
   text-align: center;
   padding: 2rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .85rem;
   color: var(--gray-500);
   grid-column: 1/-1;
@@ -626,7 +625,7 @@ footer strong { color: var(--green); }
 .no-reviews {
   text-align: center;
   padding: 2rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .9rem;
   color: var(--gray-500);
   background: var(--gray-50);
@@ -639,7 +638,7 @@ footer strong { color: var(--green); }
 /* ─── REVIEW MODAL (ESCRIBIR - INTACTO) ─── */
 .form-block { margin-bottom: 1.2rem; }
 .form-block-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .78rem; font-weight: 800;
   letter-spacing: 1px; text-transform: uppercase;
   color: var(--gray-500);
@@ -649,8 +648,8 @@ footer strong { color: var(--green); }
 }
 .slider-row { margin-bottom: .65rem; }
 .slider-row-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .2rem; }
-.slider-row-label { font-family: 'Barlow Condensed', sans-serif; font-size: .82rem; font-weight: 600; color: var(--gray-700); }
-.slider-row-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: .95rem; }
+.slider-row-label { font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 600; color: var(--gray-700); }
+.slider-row-val { font-family: 'Roboto', sans-serif; font-weight: 800; font-size: .95rem; }
 .slider-row-val.green { color: var(--green-dark); }
 .slider-row-val.yellow { color: var(--yellow-dark); }
 .slider-row-val.red { color: var(--red-dark); }
@@ -666,7 +665,7 @@ input[type=range]::-webkit-slider-thumb {
 .chips-row { display: flex; gap: .35rem; flex-wrap: wrap; }
 .chip-radio { display: none; }
 .chip-label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .78rem; font-weight: 700;
   padding: .3rem .7rem; border: 1px solid var(--border);
   cursor: pointer; border-radius: 2px;
@@ -688,9 +687,9 @@ input[type=range]::-webkit-slider-thumb {
   display: flex; align-items: center; gap: .875rem;
   margin-bottom: 1.1rem; border-radius: 2px;
 }
-.overall-number { font-family: 'Barlow Condensed', sans-serif; font-size: 2.75rem; font-weight: 800; line-height: 1; min-width: 64px; text-align: center; }
+.overall-number { font-family: 'Roboto', sans-serif; font-size: 2.75rem; font-weight: 800; line-height: 1; min-width: 64px; text-align: center; }
 .overall-bar-wrap { flex: 1; }
-.overall-bar-wrap p { font-family: 'Barlow Condensed', sans-serif; font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: .35rem; }
+.overall-bar-wrap p { font-family: 'Roboto', sans-serif; font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: .35rem; }
 .overall-bar { height: 5px; background: rgba(255,255,255,.15); border-radius: 3px; overflow: hidden; }
 .overall-bar-fill { height: 100%; border-radius: 3px; transition: width .3s, background .3s; }
 .recommend-row { display: flex; gap: .5rem; }
@@ -698,7 +697,7 @@ input[type=range]::-webkit-slider-thumb {
 .rec-btn {
   flex: 1; padding: .55rem;
   border: 2px solid var(--border);
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .82rem; font-weight: 800; letter-spacing: .5px;
   text-transform: uppercase; text-align: center;
   cursor: pointer; border-radius: 2px; transition: all .15s; color: var(--gray-500);
@@ -708,7 +707,7 @@ input[type=range]::-webkit-slider-thumb {
 .submit-btn {
   width: 100%; background: var(--gray-900); color: var(--white);
   border: none; padding: .8rem; cursor: pointer;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .95rem; font-weight: 800; letter-spacing: 1.5px;
   text-transform: uppercase; border-radius: 2px;
   transition: background .15s; margin-top: .4rem;
@@ -721,7 +720,7 @@ input[type=range]::-webkit-slider-thumb {
 .auth-tabs { display: flex; border-bottom: 1px solid var(--border); }
 .auth-tab {
   flex: 1; padding: .75rem; background: none; border: none; cursor: pointer;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .9rem; font-weight: 700;
+  font-family: 'Roboto', sans-serif; font-size: .9rem; font-weight: 700;
   letter-spacing: .5px; text-transform: uppercase;
   color: var(--gray-500); transition: all .15s;
   border-bottom: 2px solid transparent; margin-bottom: -1px;
@@ -730,7 +729,7 @@ input[type=range]::-webkit-slider-thumb {
 .auth-body { padding: 1.5rem; }
 .auth-field { margin-bottom: 1rem; }
 .auth-label {
-  display: block; font-family: 'Barlow Condensed', sans-serif;
+  display: block; font-family: 'Roboto', sans-serif;
   font-size: .75rem; font-weight: 700; letter-spacing: .5px;
   color: var(--gray-500); margin-bottom: .3rem; text-transform: uppercase;
 }
@@ -745,7 +744,7 @@ input[type=range]::-webkit-slider-thumb {
 .auth-btn {
   width: 100%; background: var(--gray-900); color: var(--white);
   border: none; padding: .8rem; cursor: pointer;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .95rem; font-weight: 800; letter-spacing: 1.5px;
   text-transform: uppercase; border-radius: 2px; transition: background .15s; margin-top: .5rem;
 }
@@ -754,23 +753,23 @@ input[type=range]::-webkit-slider-thumb {
 .auth-error {
   background: #fdf0f0; border: 1px solid var(--red);
   color: var(--red-dark); padding: .6rem .75rem;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .82rem; font-weight: 600;
+  font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 600;
   border-radius: 2px; margin-bottom: .875rem; display: none;
 }
 .auth-error.show { display: block; }
 .auth-success {
   background: #f0faf0; border: 1px solid var(--green-dark);
   color: var(--green-dark); padding: .6rem .75rem;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .82rem; font-weight: 600;
+  font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 600;
   border-radius: 2px; margin-bottom: .875rem; display: none;
 }
 .auth-success.show { display: block; }
 .auth-hint {
-  font-family: 'Barlow Condensed', sans-serif; font-size: .75rem;
+  font-family: 'Roboto', sans-serif; font-size: .75rem;
   color: var(--gray-500); margin-top: .3rem;
 }
 .auth-link {
-  font-family: 'Barlow Condensed', sans-serif; font-size: .82rem;
+  font-family: 'Roboto', sans-serif; font-size: .82rem;
   color: var(--blue-accent); cursor: pointer; text-decoration: underline;
 }
 
@@ -783,13 +782,13 @@ input[type=range]::-webkit-slider-thumb {
 }
 .review-header { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; flex-wrap: wrap; }
 .review-author {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800; font-size: .9rem; color: var(--gray-900);
 }
 .review-author.is-admin { color: var(--admin); }
 .review-author.is-admin::after { content: ' 👑'; font-size: .7rem; }
 .review-date {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem; color: var(--gray-500);
 }
 .review-platform {
@@ -799,7 +798,7 @@ input[type=range]::-webkit-slider-thumb {
   color: var(--gray-500); border-radius: 2px; text-transform: uppercase;
 }
 .review-score-badge {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800; font-size: .85rem;
   padding: .15rem .5rem; border-radius: 2px;
 }
@@ -807,13 +806,13 @@ input[type=range]::-webkit-slider-thumb {
 .review-score-badge.yellow { background: var(--yellow); color: var(--gray-900); }
 .review-score-badge.red { background: var(--red); color: var(--white); }
 .review-title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1rem; font-weight: 800; color: var(--gray-900); margin-bottom: .25rem;
 }
 .review-text { font-size: .85rem; color: var(--gray-700); line-height: 1.55; }
 .review-actions { display: flex; gap: .4rem; margin-top: .65rem; flex-wrap: wrap; }
 .review-action-btn {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .72rem; font-weight: 700; letter-spacing: .3px;
   padding: .25rem .6rem; border: 1px solid var(--border);
   background: none; cursor: pointer; border-radius: 2px; transition: all .15s;
@@ -838,7 +837,7 @@ input[type=range]::-webkit-slider-thumb {
 .edit-save-btn {
   background: var(--gray-900); color: var(--white);
   border: none; padding: .4rem .875rem;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .8rem;
+  font-family: 'Roboto', sans-serif; font-size: .8rem;
   font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
   cursor: pointer; border-radius: 2px;
 }
@@ -853,13 +852,13 @@ input[type=range]::-webkit-slider-thumb {
   flex-wrap: wrap; gap: .5rem;
 }
 .admin-header h1 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.5rem; font-weight: 800; letter-spacing: 1px;
 }
 .admin-tabs { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 1.25rem; flex-wrap: wrap; }
 .admin-tab {
   padding: .6rem 1.1rem; background: var(--white); border: none;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .85rem;
+  font-family: 'Roboto', sans-serif; font-size: .85rem;
   font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
   cursor: pointer; color: var(--gray-500); transition: all .15s; flex-shrink: 0;
 }
@@ -872,13 +871,13 @@ input[type=range]::-webkit-slider-thumb {
   padding: 1.25rem; margin-bottom: 1rem;
 }
 .admin-card h3 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1rem; font-weight: 800; letter-spacing: .5px;
   text-transform: uppercase; color: var(--gray-900); margin-bottom: .875rem;
 }
 .admin-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
 .admin-table th {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem; font-weight: 800; letter-spacing: .5px;
   text-transform: uppercase; color: var(--gray-500);
   padding: .4rem .6rem; text-align: left;
@@ -888,14 +887,14 @@ input[type=range]::-webkit-slider-thumb {
 .admin-table tr:last-child td { border-bottom: none; }
 .admin-table tr:hover td { background: var(--gray-50); }
 .admin-badge {
-  font-family: 'Barlow Condensed', sans-serif; font-size: .7rem; font-weight: 700;
+  font-family: 'Roboto', sans-serif; font-size: .7rem; font-weight: 700;
   padding: .15rem .45rem; border-radius: 2px; white-space: nowrap;
 }
 .admin-badge.banned { background: #fdf0f0; color: var(--red-dark); border: 1px solid var(--red); }
 .admin-badge.active { background: #f0faf0; color: var(--green-dark); border: 1px solid var(--green-dark); }
 .admin-badge.admin-b { background: #f5f0ff; color: var(--admin); border: 1px solid var(--admin); }
 .admin-action {
-  font-family: 'Barlow Condensed', sans-serif; font-size: .72rem; font-weight: 700;
+  font-family: 'Roboto', sans-serif; font-size: .72rem; font-weight: 700;
   padding: .2rem .55rem; border: 1px solid var(--border);
   background: none; cursor: pointer; border-radius: 2px; transition: all .15s;
   color: var(--gray-500); margin-right: .2rem; white-space: nowrap;
@@ -916,7 +915,7 @@ input[type=range]::-webkit-slider-thumb {
 .banner-form button {
   background: var(--admin-dark); color: var(--white);
   border: none; padding: .6rem 1.1rem;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .85rem;
+  font-family: 'Roboto', sans-serif; font-size: .85rem;
   font-weight: 700; letter-spacing: .5px; cursor: pointer; border-radius: 2px;
 }
 .banner-form button:hover { opacity: .9; }
@@ -926,17 +925,17 @@ input[type=range]::-webkit-slider-thumb {
   padding: .875rem; text-align: center; border-radius: 2px;
 }
 .stat-num {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 2rem; font-weight: 800; color: var(--gray-900); line-height: 1;
 }
 .stat-label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .7rem; font-weight: 700; letter-spacing: .5px;
   text-transform: uppercase; color: var(--gray-500); margin-top: .3rem;
 }
 .pw-form { display: flex; flex-direction: column; gap: .75rem; max-width: 340px; }
 .pw-form label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: .75rem; font-weight: 700; letter-spacing: .5px;
   color: var(--gray-500); margin-bottom: .25rem; display: block; text-transform: uppercase;
 }
@@ -949,7 +948,7 @@ input[type=range]::-webkit-slider-thumb {
 .pw-form button {
   background: var(--admin-dark); color: var(--white);
   border: none; padding: .7rem; cursor: pointer;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .9rem;
+  font-family: 'Roboto', sans-serif; font-size: .9rem;
   font-weight: 700; letter-spacing: .5px; border-radius: 2px;
 }
 
@@ -959,7 +958,7 @@ input[type=range]::-webkit-slider-thumb {
   transform: translateX(-50%);
   background: var(--green-dark); color: #fff;
   padding: .65rem 1.6rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 800; font-size: .95rem; letter-spacing: 1px;
   z-index: 9999; border-radius: 3px;
   box-shadow: 0 4px 16px rgba(0,0,0,.2);
@@ -1000,7 +999,7 @@ input[type=range]::-webkit-slider-thumb {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 .changelog-badge {
   padding: 0.2rem 0.6rem;
@@ -1054,7 +1053,7 @@ input[type=range]::-webkit-slider-thumb {
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#" onclick="showHome()"><span>Player</span>Core</a>
+  <a class="nav-logo" href="#" onclick="showHome()"><span>Criti</span>Games</a>
   <div class="nav-search">
     <input type="text" id="searchInput" placeholder="Buscar videojuego..." onkeydown="if(event.key==='Enter')doSearch()">
     <button onclick="doSearch()">BUSCAR</button>
@@ -1114,9 +1113,7 @@ input[type=range]::-webkit-slider-thumb {
       </div>
       <div id="gamesGrid" class="games-grid"></div>
 
-      <div class="section-header" style="margin-top:1.5rem">
-        <h2>Últimas valoraciones</h2>
-      </div>
+
       <div id="reviewsList" class="reviews-section"></div>
     </div>
 
@@ -1143,10 +1140,10 @@ input[type=range]::-webkit-slider-thumb {
         </div>
       </div>
       <div class="sidebar-card">
-        <div class="sidebar-card-header">¿Qué es PlayerCore?</div>
+        <div class="sidebar-card-header">¿Qué es CritiFlix?</div>
         <div class="sidebar-card-body">
           <p style="font-size:.8rem;line-height:1.6;color:var(--gray-700)">
-            Las notas en PlayerCore se calculan <strong>exclusivamente</strong> a partir de opiniones de jugadores reales. Nada de medios especializados con acuerdos publicitarios.<br><br>
+            Las notas en CritiFlix se calculan <strong>exclusivamente</strong> a partir de opiniones de jugadores reales. Nada de medios especializados con acuerdos publicitarios.<br><br>
             Cada valoración puntúa individualmente <strong>jugabilidad, gráficos, IA, historia, audio, rendimiento</strong> y más.
           </p>
         </div>
@@ -1283,7 +1280,7 @@ input[type=range]::-webkit-slider-thumb {
 </div>
 
 <footer>
-  <strong>PlayerCore</strong> — La nota la pones tú.<br>
+  <strong>CritiFlix</strong> — La nota la pones tú.<br>
   <span style="font-size:.7rem">Datos de juegos vía RAWG · Las puntuaciones son 100% comunitarias</span>
 </footer>
 
@@ -1859,14 +1856,7 @@ async function loadReviews() {
   renderReviewsList(allReviews);
 }
 
-function renderReviewsList(reviews) {
-  const list = document.getElementById('reviewsList');
-  if (!reviews || reviews.length === 0) {
-    list.innerHTML = '<div style="font-family:\'Barlow Condensed\',sans-serif;color:var(--gray-500);padding:1rem">Sé el primero en valorar un juego.</div>';
-    return;
-  }
-  list.innerHTML = reviews.slice(0,10).map(r => buildHomeReviewHTML(r)).join('');
-}
+
 
 function buildHomeReviewHTML(r) {
   const cls = r.score >= 75 ? 'green' : r.score >= 50 ? 'yellow' : 'red';
