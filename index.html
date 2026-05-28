@@ -1568,10 +1568,69 @@ async function loadGameReviewsIntoModal(gameId){
 }
 
 function buildReviewCardHTML(r){
-  const scoreClass=r.score>=75?'green':r.score>=50?'yellow':'red';
-  const date=new Date(r.created_at).toLocaleDateString();
-  const canEdit = currentUser && (currentUser.id===r.player_id || currentUser.is_admin);
-  return `<div class="review-card" id="review-${r.id}"><div class="review-card-header"><div class="review-author-info"><span class="review-author-name ${r.username==='dastan'?'is-admin':''}">${escapeHTML(r.username)}</span><span class="review-date">${date}</span>${r.platform?`<span class="review-platform-badge">${escapeHTML(r.platform)}</span>`:''}${r.recommend?'<span class="review-recommend yes">✓ Recomienda</span>':'<span class="review-recommend no">✕ No recomienda</span>'}</div><div class="review-score-large ${scoreClass}">${r.score}</div></div><div class="review-game-name">${escapeHTML(r.game_name)}</div>${r.title?`<div class="review-title">${escapeHTML(r.title)}</div>`:''}${r.pros?`<div class="review-pros">➕ ${escapeHTML(r.pros)}</div>`:''}${r.cons?`<div class="review-cons">➖ ${escapeHTML(r.cons)}</div>`:''}${canEdit?`<div class="review-card-actions"><button class="review-card-action edit" onclick="editReview('${r.id}')">Editar</button><button class="review-card-action delete" onclick="deleteReview('${r.id}')">Borrar</button></div>`:''}</div>`;
+  // Si la reseña está oculta por admin/moderador
+  if(r.is_hidden === true){
+    const hiddenBy = r.hidden_by || 'un administrador';
+    const hiddenRole = r.hidden_role === 'moderator' ? 'moderador' : 'administrador';
+    const date = r.hidden_at ? new Date(r.hidden_at).toLocaleDateString() : 'fecha desconocida';
+    
+    return `<div class="review-card" style="background: var(--gray-50); opacity: 0.8; border-left: 4px solid var(--red);" id="review-${r.id}">
+      <div class="review-card-header">
+        <div class="review-author-info">
+          <span class="review-author-name">⚠️ Reseña oculta</span>
+          <span class="review-date">${date}</span>
+        </div>
+      </div>
+      <div style="padding: 0.5rem; background: #fff0f0; border-radius: 4px; margin-top: 0.3rem;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--red-dark);">🚫 Contenido retirado por incumplimiento de normas</div>
+        <div style="font-size: 0.7rem; color: var(--gray-700); margin-top: 0.3rem;">
+          Este comentario ha sido eliminado por ${hiddenRole === 'moderador' ? 'un moderador' : 'un administrador'} porque infringía las normas. 
+          Esto es solo un aviso. Si sigues incumpliendo las normas podrías ser expulsado.
+        </div>
+        ${r.hidden_by ? `<div style="font-size: 0.6rem; color: var(--gray-500); margin-top: 0.3rem;">🔒 Ocultado por: ${escapeHTML(r.hidden_by)}</div>` : ''}
+      </div>
+    </div>`;
+  }
+  
+  // Reseña normal (visible)
+  const scoreClass = r.score >= 75 ? 'green' : (r.score >= 50 ? 'yellow' : 'red');
+  const date = new Date(r.created_at).toLocaleDateString();
+  
+  // Permisos: el autor puede editar/borrar, el admin puede ocultar/editar, el moderador solo editar
+  const isAuthor = currentUser && currentUser.id === r.player_id;
+  const isAdmin = currentUser && currentUser.is_admin === true;
+  const isModerator = currentUser && currentUser.role === 'moderator'; // Asumiendo que tienes campo role, si no usa is_moderator
+  
+  // Ajusta según cómo manejes los roles de moderador en tu sistema
+  // Por ahora usaremos is_admin para admin, y asumimos que si no es admin pero tiene permiso especial es moderador
+  const canEdit = currentUser && (isAuthor || isAdmin || isModerator);
+  const canDelete = isAuthor; // Solo el autor puede borrar REALMENTE
+  const canHide = isAdmin; // Solo admin puede ocultar (no borrar)
+  
+  // Indicador de edición si la reseña fue editada
+  const editedInfo = (r.edited_by && r.edited_at) ? `<div style="font-size: 0.55rem; color: var(--gray-500); margin-top: 0.2rem;">✏️ Editado por ${escapeHTML(r.edited_by)} el ${new Date(r.edited_at).toLocaleDateString()}</div>` : '';
+  
+  return `<div class="review-card" id="review-${r.id}">
+    <div class="review-card-header">
+      <div class="review-author-info">
+        <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
+        <span class="review-date">${date}</span>
+        ${r.platform ? `<span class="review-platform-badge">${escapeHTML(r.platform)}</span>` : ''}
+        ${r.recommend ? '<span class="review-recommend yes" style="background: #e8f5e8; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.6rem;">✓ Recomienda</span>' : '<span class="review-recommend no" style="background: #ffe8e8; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.6rem;">✕ No recomienda</span>'}
+      </div>
+      <div class="review-score-large ${scoreClass}">${r.score}</div>
+    </div>
+    <div class="review-game-name">${escapeHTML(r.game_name)}</div>
+    ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
+    ${r.pros ? `<div class="review-pros">➕ ${escapeHTML(r.pros)}</div>` : ''}
+    ${r.cons ? `<div class="review-cons">➖ ${escapeHTML(r.cons)}</div>` : ''}
+    ${editedInfo}
+    ${(canEdit || canDelete || canHide) ? `<div class="review-card-actions">
+      ${canEdit ? `<button class="review-card-action edit" onclick='editReviewFn("${r.id}")'>✏️ Editar</button>` : ''}
+      ${canDelete ? `<button class="review-card-action delete" onclick='permanentDeleteReviewFn("${r.id}")'>🗑️ Borrar</button>` : ''}
+      ${canHide ? `<button class="review-card-action" style="color: var(--red-dark);" onclick='hideReviewByAdminFn("${r.id}", "${escapeHTML(r.username)}")'>🚫 Ocultar (aviso)</button>` : ''}
+    </div>` : ''}
+  </div>`;
 }
 
 async function deleteReview(reviewId){
