@@ -606,6 +606,32 @@ footer strong { color: var(--green); }
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
+.review-author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.review-author-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 4px;
+  padding: 0.1rem 0.3rem 0.1rem 0.1rem;
+  transition: background 0.15s;
+}
+.review-author-link:hover { background: var(--gray-50); }
+.review-author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--border);
+  background: var(--gray-100);
+  flex-shrink: 0;
+}
 .review-author-name {
   font-weight: 800;
   font-size: 0.8rem;
@@ -1935,10 +1961,14 @@ function buildReviewCardHTML(r){
   // Indicador de edición si la reseña fue editada
   const editedInfo = (r.edited_by && r.edited_at) ? `<div style="font-size: 0.55rem; color: var(--gray-500); margin-top: 0.2rem;">✏️ Editado por ${escapeHTML(r.edited_by)} el ${new Date(r.edited_at).toLocaleDateString()}</div>` : '';
   
+  const avatarUrl = r.player_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48`;
   return `<div class="review-card" id="review-${r.id}">
     <div class="review-card-header">
       <div class="review-author-info">
-        <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
+        <span class="review-author-link" onclick="showProfile('${r.player_id}')" title="Ver perfil de ${escapeHTML(r.username)}">
+          <img class="review-author-avatar" src="${avatarUrl}" alt="${escapeHTML(r.username)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48'">
+          <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
+        </span>
         <span class="review-date">${date}</span>
         ${r.platform ? `<span class="review-platform-badge">${escapeHTML(r.platform)}</span>` : ''}
         ${r.recommend ? '<span class="review-recommend yes" style="background: #e8f5e8; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.6rem;">✓ Recomienda</span>' : '<span class="review-recommend no" style="background: #ffe8e8; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.6rem;">✕ No recomienda</span>'}
@@ -1991,6 +2021,7 @@ async function submitReview(){
   const review={
     player_id:currentUser.id,
     username:currentUser.username,
+    player_avatar:currentUser.avatar_url||'',
     game_id:String(currentGame.id),
     game_name:currentGame.name,
     game_image:currentGame.background_image||'',
