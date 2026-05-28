@@ -1041,6 +1041,93 @@ input[type=range]::-webkit-slider-thumb {
 
 <footer><strong>CritiGames</strong> — La nota la pones tú.<br>Datos vía RAWG</footer>
 
+<!-- MODAL JUEGO -->
+<div class="modal-overlay" id="gameModal">
+  <div class="modal">
+    <div class="modal-top">
+      <h2 id="gameModalTitle">Juego</h2>
+      <button class="modal-close" onclick="closeGameModal()">✕</button>
+    </div>
+    <div class="modal-game-info" id="gameModalInfo"></div>
+    <div class="game-modal-tabs">
+      <button class="game-tab active" onclick="switchGameTab('reviews')">Reseñas</button>
+      <button class="game-tab" onclick="switchGameTab('write')">Escribir reseña</button>
+    </div>
+    <!-- TAB: Reseñas -->
+    <div id="gameReviewsTab" class="modal-body">
+      <div id="gameReviewsGrid" class="reviews-grid"></div>
+    </div>
+    <!-- TAB: Escribir -->
+    <div id="gameWriteTab" class="modal-body" style="display:none">
+      <div class="form-block">
+        <div class="form-block-title">Gameplay</div>
+        <div id="sliders-gameplay"></div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Diseño</div>
+        <div id="sliders-design"></div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Técnico</div>
+        <div id="sliders-tech"></div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Audio / Historia</div>
+        <div id="sliders-audio"></div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Valor</div>
+        <div id="sliders-value"></div>
+      </div>
+      <div class="overall-box">
+        <div class="overall-number" id="modalOverallNum">70</div>
+        <div class="overall-bar-wrap">
+          <div style="font-size:0.65rem;opacity:0.7;margin-bottom:0.3rem">PUNTUACIÓN GLOBAL</div>
+          <div class="overall-bar"><div class="overall-bar-fill" id="modalOverallFill" style="width:70%;background:var(--green)"></div></div>
+        </div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Plataforma</div>
+        <div class="chips-row">
+          <input class="chip-radio" type="radio" name="platform" id="plt-pc" checked><label class="chip-label" for="plt-pc">PC</label>
+          <input class="chip-radio" type="radio" name="platform" id="plt-ps5"><label class="chip-label" for="plt-ps5">PS5</label>
+          <input class="chip-radio" type="radio" name="platform" id="plt-xbs"><label class="chip-label" for="plt-xbs">Xbox</label>
+          <input class="chip-radio" type="radio" name="platform" id="plt-sw"><label class="chip-label" for="plt-sw">Switch</label>
+        </div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Horas jugadas</div>
+        <div class="chips-row">
+          <input class="chip-radio" type="radio" name="hours" id="h1"><label class="chip-label" for="h1">&lt;10h</label>
+          <input class="chip-radio" type="radio" name="hours" id="h2" checked><label class="chip-label" for="h2">10-50h</label>
+          <input class="chip-radio" type="radio" name="hours" id="h3"><label class="chip-label" for="h3">50-100h</label>
+          <input class="chip-radio" type="radio" name="hours" id="h4"><label class="chip-label" for="h4">+100h</label>
+        </div>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Título de tu reseña</div>
+        <input class="form-input" type="text" id="reviewTitle" placeholder="Resumen en una frase...">
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Lo mejor</div>
+        <textarea class="form-textarea" id="reviewPros" rows="3" placeholder="¿Qué te gustó?"></textarea>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">Lo peor</div>
+        <textarea class="form-textarea" id="reviewCons" rows="3" placeholder="¿Qué mejorarías?"></textarea>
+      </div>
+      <div class="form-block">
+        <div class="form-block-title">¿Lo recomiendas?</div>
+        <div class="recommend-row">
+          <input class="rec-radio yes" type="radio" name="recommend" id="rec-yes" checked><label class="rec-btn" for="rec-yes">👍 Sí</label>
+          <input class="rec-radio no" type="radio" name="recommend" id="rec-no"><label class="rec-btn" for="rec-no">👎 No</label>
+        </div>
+      </div>
+      <button class="submit-btn" id="submitReviewBtn" onclick="submitReview()">PUBLICAR RESEÑA</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL AUTH - VERSIÓN EXTREMA (sin type="password") -->
 <style>
 .password-mask {
@@ -1311,6 +1398,9 @@ async function openGameModal(game) {
   }
   
   currentGame = game;
+  const titleEl = document.getElementById('gameModalTitle');
+  if(titleEl) titleEl.textContent = game.name;
+  
   const infoDiv = document.getElementById('gameModalInfo');
   infoDiv.innerHTML = `
     <img class="modal-game-img" src="${game.background_image || ''}">
@@ -1329,7 +1419,7 @@ async function openGameModal(game) {
   await loadGameReviewsIntoModal(String(game.id));
   switchGameTab('reviews');
 }
-function closeGameModal(){document.getElementById('gameModal').classList.remove('open'); currentGame=null;}
+function closeGameModal(){document.getElementById('gameModal').classList.remove('open'); document.body.style.overflow=''; currentGame=null;}
 function switchGameTab(tab){
   const reviewsTab=document.getElementById('gameReviewsTab');
   const writeTab=document.getElementById('gameWriteTab');
