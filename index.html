@@ -1037,29 +1037,35 @@ input[type=range]::-webkit-slider-thumb {
 
 <footer><strong>CritiGames</strong> — La nota la pones tú.<br>Datos vía RAWG</footer>
 
-<!-- MODAL JUEGO -->
-<div class="modal-overlay" id="gameModal"><div class="modal"><div class="modal-top"><h2 id="gameModalTitle">Detalles</h2><button class="modal-close" onclick="closeGameModal()">✕</button></div><div class="game-modal-tabs"><button class="game-tab" onclick="switchGameTab('reviews')">📋 RESEÑAS</button><button class="game-tab" onclick="switchGameTab('write')">✍️ ESCRIBIR</button></div><div id="gameModalInfo" class="modal-game-info">Cargando...</div><div id="gameReviewsTab" class="modal-body"><div id="gameReviewsGrid" class="reviews-grid"><div class="review-hint">Cargando reseñas...</div></div></div><div id="gameWriteTab" class="modal-body" style="display:none"><div class="overall-box"><div class="overall-number" id="modalOverallNum">70</div><div class="overall-bar-wrap"><p>Nota media</p><div class="overall-bar"><div class="overall-bar-fill" id="modalOverallFill" style="width:70%"></div></div></div></div><div class="form-block"><div class="form-block-title">Datos</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem"><div><div class="chips-row"><input type="radio" name="plat" id="plt-pc" class="chip-radio" checked><label for="plt-pc" class="chip-label">PC</label><input type="radio" name="plat" id="plt-ps5" class="chip-radio"><label for="plt-ps5" class="chip-label">PS5</label><input type="radio" name="plat" id="plt-xbs" class="chip-radio"><label for="plt-xbs" class="chip-label">Xbox</label><input type="radio" name="plat" id="plt-sw" class="chip-radio"><label for="plt-sw" class="chip-label">Switch</label></div></div><div><div class="chips-row"><input type="radio" name="hrs" id="h1" class="chip-radio"><label for="h1" class="chip-label">&lt;10h</label><input type="radio" name="hrs" id="h2" class="chip-radio" checked><label for="h2" class="chip-label">10-50h</label><input type="radio" name="hrs" id="h3" class="chip-radio"><label for="h3" class="chip-label">50-100h</label><input type="radio" name="hrs" id="h4" class="chip-radio"><label for="h4" class="chip-label">+100h</label></div></div></div></div><div class="form-block"><div class="form-block-title">Jugabilidad</div><div id="sliders-gameplay"></div></div><div class="form-block"><div class="form-block-title">IA y Diseño</div><div id="sliders-design"></div></div><div class="form-block"><div class="form-block-title">Gráficos y Rendimiento</div><div id="sliders-tech"></div></div><div class="form-block"><div class="form-block-title">Audio e Historia</div><div id="sliders-audio"></div></div><div class="form-block"><div class="form-block-title">Valor y Contenido</div><div id="sliders-value"></div></div><div class="form-block"><div class="form-block-title">Tu reseña</div><input type="text" class="form-input" id="reviewTitle" placeholder="Título"><textarea class="form-textarea" id="reviewPros" placeholder="Lo mejor..."></textarea><textarea class="form-textarea" id="reviewCons" placeholder="Lo peor..."></textarea></div><div class="form-block"><div class="form-block-title">¿Lo recomiendas?</div><div class="recommend-row"><input type="radio" name="rec" id="rec-yes" class="rec-radio yes" checked><label for="rec-yes" class="rec-btn">✓ Sí</label><input type="radio" name="rec" id="rec-no" class="rec-radio no"><label for="rec-no" class="rec-btn">✕ No</label></div></div><button class="submit-btn" id="submitReviewBtn" onclick="submitReview()">PUBLICAR</button></div></div></div>
-
-<!-- MODAL AUTH - CON TRUCO PARA EVITAR GUARDAR CONTRASEÑA EN STARGON -->
+<!-- MODAL AUTH - VERSIÓN ANTI-GUARDAR CONTRASEÑA -->
 <div class="modal-overlay" id="authModal"><div class="modal auth-modal"><div class="modal-top"><h2>ENTRAR</h2><button class="modal-close" onclick="closeAuthModal()">✕</button></div><div class="auth-tabs"><button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</button><button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Registro</button><button class="auth-tab" id="tabRecover" onclick="switchAuthTab('recover')">Recuperar</button></div><div class="auth-body"><div id="authError" class="auth-error"></div><div id="authSuccess" class="auth-success"></div>
+
+<!-- TRUCO: Campo oculto para engañar al navegador -->
+<form style="display:none"><input type="text" name="fakeusername"><input type="password" name="fakepassword"></form>
+
 <div id="formLogin">
-  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="loginUser" autocomplete="off"></div>
-  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="text" id="loginCodeFake" placeholder="••••••••" style="display:none"><input class="auth-input" type="password" id="loginCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" placeholder="Código"></div>
-  <button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
+  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="loginUser" autocomplete="off" name="username"></div>
+  <div class="auth-field"><label class="auth-label">Código</label>
+    <input class="auth-input" type="password" id="loginCode" autocomplete="off" name="password" style="font-family:monospace">
+  </div>
+  <button class="auth-btn" id="loginBtn" onclick="doLogin()" type="button">ENTRAR</button>
 </div>
+
 <div id="formRegister" style="display:none">
   <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="regUser" autocomplete="off"></div>
-  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="password" id="regCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div>
-  <div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="regCodeConfirm" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div>
+  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="password" id="regCode" autocomplete="off"></div>
+  <div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="regCodeConfirm" autocomplete="off"></div>
   <div class="auth-field"><label class="auth-label">Frase recuperación</label><input class="auth-input" type="text" id="regPhrase" autocomplete="off"></div>
-  <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR</button>
+  <button class="auth-btn" id="registerBtn" onclick="doRegister()" type="button">CREAR</button>
 </div>
+
 <div id="formRecover" style="display:none">
   <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="recoverUser" autocomplete="off"></div>
   <div class="auth-field"><label class="auth-label">Frase</label><input class="auth-input" type="text" id="recoverPhrase" autocomplete="off"></div>
-  <div id="recoverNewPw" style="display:none"><div class="auth-field"><label class="auth-label">Nuevo código</label><input class="auth-input" type="password" id="recoverNewCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="recoverConfirmCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div></div>
-  <button class="auth-btn" id="recoverBtn" onclick="doRecover()">RECUPERAR</button>
+  <div id="recoverNewPw" style="display:none"><div class="auth-field"><label class="auth-label">Nuevo código</label><input class="auth-input" type="password" id="recoverNewCode" autocomplete="off"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="recoverConfirmCode" autocomplete="off"></div></div>
+  <button class="auth-btn" id="recoverBtn" onclick="doRecover()" type="button">RECUPERAR</button>
 </div>
+
 </div></div></div>
 
 <script>
