@@ -1037,37 +1037,39 @@ input[type=range]::-webkit-slider-thumb {
 
 <footer><strong>CritiGames</strong> — La nota la pones tú.<br>Datos vía RAWG</footer>
 
-<!-- MODAL AUTH - VERSIÓN ANTI-GUARDAR CONTRASEÑA -->
+<!-- MODAL AUTH - VERSIÓN EXTREMA (sin type="password") -->
+<style>
+.password-mask {
+  -webkit-text-security: disc;
+  font-family: monospace;
+}
+</style>
 <div class="modal-overlay" id="authModal"><div class="modal auth-modal"><div class="modal-top"><h2>ENTRAR</h2><button class="modal-close" onclick="closeAuthModal()">✕</button></div><div class="auth-tabs"><button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</button><button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Registro</button><button class="auth-tab" id="tabRecover" onclick="switchAuthTab('recover')">Recuperar</button></div><div class="auth-body"><div id="authError" class="auth-error"></div><div id="authSuccess" class="auth-success"></div>
 
-<!-- TRUCO: Campo oculto para engañar al navegador -->
-<form style="display:none"><input type="text" name="fakeusername"><input type="password" name="fakepassword"></form>
-
 <div id="formLogin">
-  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="loginUser" autocomplete="off" name="username"></div>
+  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="loginUser" autocomplete="off"></div>
   <div class="auth-field"><label class="auth-label">Código</label>
-    <input class="auth-input" type="password" id="loginCode" autocomplete="off" name="password" style="font-family:monospace">
+    <input class="auth-input password-mask" type="text" id="loginCode" autocomplete="off" inputmode="text">
   </div>
-  <button class="auth-btn" id="loginBtn" onclick="doLogin()" type="button">ENTRAR</button>
+  <button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
 </div>
 
 <div id="formRegister" style="display:none">
   <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="regUser" autocomplete="off"></div>
-  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="password" id="regCode" autocomplete="off"></div>
-  <div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="regCodeConfirm" autocomplete="off"></div>
+  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input password-mask" type="text" id="regCode" autocomplete="off"></div>
+  <div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input password-mask" type="text" id="regCodeConfirm" autocomplete="off"></div>
   <div class="auth-field"><label class="auth-label">Frase recuperación</label><input class="auth-input" type="text" id="regPhrase" autocomplete="off"></div>
-  <button class="auth-btn" id="registerBtn" onclick="doRegister()" type="button">CREAR</button>
+  <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR</button>
 </div>
 
 <div id="formRecover" style="display:none">
   <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="recoverUser" autocomplete="off"></div>
   <div class="auth-field"><label class="auth-label">Frase</label><input class="auth-input" type="text" id="recoverPhrase" autocomplete="off"></div>
-  <div id="recoverNewPw" style="display:none"><div class="auth-field"><label class="auth-label">Nuevo código</label><input class="auth-input" type="password" id="recoverNewCode" autocomplete="off"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="recoverConfirmCode" autocomplete="off"></div></div>
-  <button class="auth-btn" id="recoverBtn" onclick="doRecover()" type="button">RECUPERAR</button>
+  <div id="recoverNewPw" style="display:none"><div class="auth-field"><label class="auth-label">Nuevo código</label><input class="auth-input password-mask" type="text" id="recoverNewCode" autocomplete="off"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input password-mask" type="text" id="recoverConfirmCode" autocomplete="off"></div></div>
+  <button class="auth-btn" id="recoverBtn" onclick="doRecover()">RECUPERAR</button>
 </div>
 
 </div></div></div>
-
 <script>
 // ========== CONFIG ==========
 const SUPABASE_URL = 'https://hcfgdskjzaonelmimsho.supabase.co';
