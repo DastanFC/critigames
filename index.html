@@ -43,6 +43,8 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 15px;
   line-height: 1.5;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* BANNER */
@@ -211,6 +213,7 @@ nav {
   max-width: 1140px;
   margin: 0 auto;
   padding: 0 0.75rem;
+  overflow-x: hidden;
 }
 .section-header {
   padding: 1rem 0 0.75rem;
@@ -305,7 +308,7 @@ nav {
 .game-card-footer-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
 .game-card-footer-sub { font-size: 0.55rem; color: var(--gray-500); }
 
-/* FEATURED */
+/* FEATURED - CORREGIDO para que no se desborde */
 .featured-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -313,17 +316,30 @@ nav {
   background: var(--border);
   border: 1px solid var(--border);
   margin-bottom: 1.5rem;
+  width: 100%;
+  overflow: hidden;
 }
 .featured-card {
   background: var(--white);
   display: flex;
   cursor: pointer;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 .featured-card-img {
   width: 100px;
+  min-width: 80px;
+  height: auto;
   object-fit: cover;
+  flex-shrink: 0;
 }
-.featured-card-body { padding: 0.7rem; flex: 1; }
+.featured-card-body {
+  padding: 0.7rem;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
 .featured-card-label {
   font-size: 0.55rem;
   font-weight: 800;
@@ -334,6 +350,7 @@ nav {
   font-size: 0.9rem;
   font-weight: 800;
   margin: 0.2rem 0;
+  word-break: break-word;
 }
 .featured-card-genre { font-size: 0.65rem; color: var(--gray-500); }
 .featured-card-score-row {
@@ -341,6 +358,7 @@ nav {
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.4rem;
+  flex-wrap: wrap;
 }
 .featured-card-score-verdict { font-size: 0.7rem; font-weight: 700; }
 .featured-card-score-count { font-size: 0.6rem; color: var(--gray-500); }
@@ -861,7 +879,8 @@ input[type=range]::-webkit-slider-thumb {
   .nav-search input { font-size: 0.7rem; padding: 0.35rem 0.4rem; }
   .nav-search button { font-size: 0.6rem; padding: 0.35rem 0.5rem; }
   .nav-logo { font-size: 1.1rem; }
-  .featured-card-img { width: 80px; }
+  .featured-card-img { width: 80px; min-width: 70px; }
+  .featured-card-title { font-size: 0.8rem; }
 }
 
 /* ADMIN */
@@ -1021,8 +1040,27 @@ input[type=range]::-webkit-slider-thumb {
 <!-- MODAL JUEGO -->
 <div class="modal-overlay" id="gameModal"><div class="modal"><div class="modal-top"><h2 id="gameModalTitle">Detalles</h2><button class="modal-close" onclick="closeGameModal()">✕</button></div><div class="game-modal-tabs"><button class="game-tab" onclick="switchGameTab('reviews')">📋 RESEÑAS</button><button class="game-tab" onclick="switchGameTab('write')">✍️ ESCRIBIR</button></div><div id="gameModalInfo" class="modal-game-info">Cargando...</div><div id="gameReviewsTab" class="modal-body"><div id="gameReviewsGrid" class="reviews-grid"><div class="review-hint">Cargando reseñas...</div></div></div><div id="gameWriteTab" class="modal-body" style="display:none"><div class="overall-box"><div class="overall-number" id="modalOverallNum">70</div><div class="overall-bar-wrap"><p>Nota media</p><div class="overall-bar"><div class="overall-bar-fill" id="modalOverallFill" style="width:70%"></div></div></div></div><div class="form-block"><div class="form-block-title">Datos</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem"><div><div class="chips-row"><input type="radio" name="plat" id="plt-pc" class="chip-radio" checked><label for="plt-pc" class="chip-label">PC</label><input type="radio" name="plat" id="plt-ps5" class="chip-radio"><label for="plt-ps5" class="chip-label">PS5</label><input type="radio" name="plat" id="plt-xbs" class="chip-radio"><label for="plt-xbs" class="chip-label">Xbox</label><input type="radio" name="plat" id="plt-sw" class="chip-radio"><label for="plt-sw" class="chip-label">Switch</label></div></div><div><div class="chips-row"><input type="radio" name="hrs" id="h1" class="chip-radio"><label for="h1" class="chip-label">&lt;10h</label><input type="radio" name="hrs" id="h2" class="chip-radio" checked><label for="h2" class="chip-label">10-50h</label><input type="radio" name="hrs" id="h3" class="chip-radio"><label for="h3" class="chip-label">50-100h</label><input type="radio" name="hrs" id="h4" class="chip-radio"><label for="h4" class="chip-label">+100h</label></div></div></div></div><div class="form-block"><div class="form-block-title">Jugabilidad</div><div id="sliders-gameplay"></div></div><div class="form-block"><div class="form-block-title">IA y Diseño</div><div id="sliders-design"></div></div><div class="form-block"><div class="form-block-title">Gráficos y Rendimiento</div><div id="sliders-tech"></div></div><div class="form-block"><div class="form-block-title">Audio e Historia</div><div id="sliders-audio"></div></div><div class="form-block"><div class="form-block-title">Valor y Contenido</div><div id="sliders-value"></div></div><div class="form-block"><div class="form-block-title">Tu reseña</div><input type="text" class="form-input" id="reviewTitle" placeholder="Título"><textarea class="form-textarea" id="reviewPros" placeholder="Lo mejor..."></textarea><textarea class="form-textarea" id="reviewCons" placeholder="Lo peor..."></textarea></div><div class="form-block"><div class="form-block-title">¿Lo recomiendas?</div><div class="recommend-row"><input type="radio" name="rec" id="rec-yes" class="rec-radio yes" checked><label for="rec-yes" class="rec-btn">✓ Sí</label><input type="radio" name="rec" id="rec-no" class="rec-radio no"><label for="rec-no" class="rec-btn">✕ No</label></div></div><button class="submit-btn" id="submitReviewBtn" onclick="submitReview()">PUBLICAR</button></div></div></div>
 
-<!-- MODAL AUTH -->
-<div class="modal-overlay" id="authModal"><div class="modal auth-modal"><div class="modal-top"><h2>ENTRAR</h2><button class="modal-close" onclick="closeAuthModal()">✕</button></div><div class="auth-tabs"><button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</button><button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Registro</button><button class="auth-tab" id="tabRecover" onclick="switchAuthTab('recover')">Recuperar</button></div><div class="auth-body"><div id="authError" class="auth-error"></div><div id="authSuccess" class="auth-success"></div><div id="formLogin"><div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="loginUser" autocomplete="off"></div><div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="password" id="loginCode" autocomplete="new-password"></div><button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button></div><div id="formRegister" style="display:none"><div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="regUser" autocomplete="off"></div><div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="password" id="regCode" autocomplete="new-password"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="regCodeConfirm" autocomplete="new-password"></div><div class="auth-field"><label class="auth-label">Frase recuperación</label><input class="auth-input" type="text" id="regPhrase" autocomplete="off"></div><button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR</button></div><div id="formRecover" style="display:none"><div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="recoverUser" autocomplete="off"></div><div class="auth-field"><label class="auth-label">Frase</label><input class="auth-input" type="text" id="recoverPhrase" autocomplete="off"></div><div id="recoverNewPw" style="display:none"><div class="auth-field"><label class="auth-label">Nuevo código</label><input class="auth-input" type="password" id="recoverNewCode" autocomplete="new-password"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="recoverConfirmCode" autocomplete="new-password"></div></div><button class="auth-btn" id="recoverBtn" onclick="doRecover()">RECUPERAR</button></div></div></div></div>
+<!-- MODAL AUTH - CON TRUCO PARA EVITAR GUARDAR CONTRASEÑA EN STARGON -->
+<div class="modal-overlay" id="authModal"><div class="modal auth-modal"><div class="modal-top"><h2>ENTRAR</h2><button class="modal-close" onclick="closeAuthModal()">✕</button></div><div class="auth-tabs"><button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</button><button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Registro</button><button class="auth-tab" id="tabRecover" onclick="switchAuthTab('recover')">Recuperar</button></div><div class="auth-body"><div id="authError" class="auth-error"></div><div id="authSuccess" class="auth-success"></div>
+<div id="formLogin">
+  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="loginUser" autocomplete="off"></div>
+  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="text" id="loginCodeFake" placeholder="••••••••" style="display:none"><input class="auth-input" type="password" id="loginCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" placeholder="Código"></div>
+  <button class="auth-btn" id="loginBtn" onclick="doLogin()">ENTRAR</button>
+</div>
+<div id="formRegister" style="display:none">
+  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="regUser" autocomplete="off"></div>
+  <div class="auth-field"><label class="auth-label">Código</label><input class="auth-input" type="password" id="regCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div>
+  <div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="regCodeConfirm" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div>
+  <div class="auth-field"><label class="auth-label">Frase recuperación</label><input class="auth-input" type="text" id="regPhrase" autocomplete="off"></div>
+  <button class="auth-btn" id="registerBtn" onclick="doRegister()">CREAR</button>
+</div>
+<div id="formRecover" style="display:none">
+  <div class="auth-field"><label class="auth-label">Usuario</label><input class="auth-input" type="text" id="recoverUser" autocomplete="off"></div>
+  <div class="auth-field"><label class="auth-label">Frase</label><input class="auth-input" type="text" id="recoverPhrase" autocomplete="off"></div>
+  <div id="recoverNewPw" style="display:none"><div class="auth-field"><label class="auth-label">Nuevo código</label><input class="auth-input" type="password" id="recoverNewCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div><div class="auth-field"><label class="auth-label">Confirmar</label><input class="auth-input" type="password" id="recoverConfirmCode" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')"></div></div>
+  <button class="auth-btn" id="recoverBtn" onclick="doRecover()">RECUPERAR</button>
+</div>
+</div></div></div>
 
 <script>
 // ========== CONFIG ==========
@@ -1173,7 +1211,6 @@ async function loadGames(platform=null,genre=null){
     if(platform && platform!=='all') url+=`&platforms=${platform}`;
     if(genre) url+=`&genres=${genre}`;
     const data=await fetchGames(url);
-    // Solo juegos CON imagen
     const gamesWithImages=(data.results||[]).filter(g=>g.background_image && g.background_image.trim()!=='');
     allGames=gamesWithImages;
     renderFeatured(allGames.slice(0,4));
