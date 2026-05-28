@@ -261,8 +261,10 @@ nav {
 
 /* ─── SCORE BADGE ─── */
 .score {
-  width: 54px;
+  min-width: 54px;
+  width: auto;
   height: 54px;
+  padding: 0 8px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -271,6 +273,19 @@ nav {
   font-size: 1.6rem;
   font-weight: 800;
   border-radius: 4px;
+}
+.score.small {
+  min-width: 40px;
+  width: auto;
+  height: 40px;
+  padding: 0 6px;
+  font-size: 1rem;
+}
+.score.na {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 .score.green  { background: var(--green);  color: var(--gray-900); }
 .score.yellow { background: var(--yellow); color: var(--gray-900); }
@@ -425,7 +440,7 @@ nav {
   font-size: .72rem;
   color: var(--gray-500);
 }
-.featured-card-score-row { display: flex; align-items: center; gap: .5rem; margin-top: auto; padding-top: .4rem; }
+.featured-card-score-row { display: flex; align-items: center; gap: .5rem; margin-top: auto; padding-top: .4rem;  flex-wrap: wrap; }
 .featured-card-score-info { display: flex; flex-direction: column; }
 .featured-card-score-verdict { font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 700; color: var(--gray-700); }
 .featured-card-score-count { font-family: 'Roboto', sans-serif; font-size: .68rem; color: var(--gray-500); }
