@@ -1141,8 +1141,8 @@ input[type=range]::-webkit-slider-thumb {
       <div class="banner-form">
         <select id="bannerType"><option value="info">Info</option><option value="success">Éxito</option><option value="warning">Advertencia</option><option value="error">Error</option></select>
         <input type="text" id="bannerInput" placeholder="Mensaje del aviso">
-        <button onclick="saveBanner()">Publicar</button>
-        <button onclick="clearBanner()">Eliminar</button>
+        <button class="submit-btn" style="background: var(--red-dark); margin: 0; padding: 0.5rem 1.2rem; font-size: 0.75rem; display: inline-block; width: auto;" onclick="saveBanner()">📢 Publicar aviso</button>
+        <button class="submit-btn" style="background: var(--gray-700); margin: 0; padding: 0.5rem 1.2rem; font-size: 0.75rem; display: inline-block; width: auto;" onclick="clearBanner()">🗑️ Eliminar</button>
       </div>
     </div>
   </div>
