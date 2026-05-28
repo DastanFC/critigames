@@ -1423,7 +1423,7 @@ async function loadGames(platform=null,genre=null){
     allGames=gamesWithImages;
     renderFeatured(allGames.slice(0,4));
     renderGrid(allGames);
-    renderTopList(allGames);
+    await renderTopList(allGames);
   }catch(e){
     grid.innerHTML='<div style="padding:1rem">Error cargando juegos</div>';
   }
@@ -1481,9 +1481,47 @@ function getPlatformTags(platforms){
   return platforms.slice(0,3).map(p=>`<span class="platform-tag">${map[p.platform?.name]||p.platform?.name?.slice(0,4)||'?'}</span>`).join('');
 }
 
-function renderTopList(games){
-  const list=document.getElementById('topList');
-  list.innerHTML=games.slice(0,10).map((g,i)=>`<div class="list-item" onclick='openGameModal(${JSON.stringify(g)})'><span class="list-rank">${i+1}</span><img class="list-img" src="${g.background_image}" loading="lazy"><div class="list-info"><div class="list-title">${escapeHTML(g.name)}</div></div><div class="score small na">N/A</div></div>`).join('');
+async function renderTopList(games) {
+  const list = document.getElementById('topList');
+  if (!list) return;
+  
+  const sb = getSupabase();
+  let gameScores = {};
+  
+  if (sb) {
+    const { data: reviews } = await sb.from('reviews').select('game_id, score');
+    if (reviews) {
+      reviews.forEach(r => {
+        if (!gameScores[r.game_id]) gameScores[r.game_id] = { sum: 0, count: 0 };
+        gameScores[r.game_id].sum += r.score;
+        gameScores[r.game_id].count++;
+      });
+    }
+  }
+  
+  const gamesWithScores = games.map(g => {
+    const scoreData = gameScores[String(g.id)];
+    const avgScore = scoreData ? Math.round(scoreData.sum / scoreData.count) : null;
+    return { ...g, avgScore, reviewCount: scoreData?.count || 0 };
+  });
+  
+  const sorted = gamesWithScores.sort((a, b) => (b.avgScore || 0) - (a.avgScore || 0)).slice(0, 10);
+  
+  list.innerHTML = sorted.map((g, i) => {
+    const scoreClass = g.avgScore ? (g.avgScore >= 75 ? 'green' : (g.avgScore >= 50 ? 'yellow' : 'red')) : 'na';
+    const scoreText = g.avgScore ? g.avgScore : 'N/A';
+    const reviewText = g.reviewCount > 0 ? `${g.reviewCount} opiniones` : 'Sin reseñas';
+    
+    return `<div class="list-item" onclick='openGameModal(${JSON.stringify(g)})'>
+      <span class="list-rank">${i+1}</span>
+      <img class="list-img" src="${g.background_image}" loading="lazy">
+      <div class="list-info">
+        <div class="list-title">${escapeHTML(g.name)}</div>
+        <div class="list-meta">${reviewText}</div>
+      </div>
+      <div class="score small ${scoreClass}">${scoreText}</div>
+    </div>`;
+  }).join('');
 }
 
 async function doSearch(){
@@ -1493,7 +1531,7 @@ async function doSearch(){
   const gamesWithImages=(data.results||[]).filter(g=>g.background_image);
   allGames=gamesWithImages;
   renderGrid(allGames);
-  renderTopList(allGames);
+  await renderTopList(allGames);
   document.getElementById('featuredGrid').innerHTML='';
 }
 function showAllGames(){loadGames();}
