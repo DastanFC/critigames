@@ -63,7 +63,9 @@ body {
 nav {
   background: var(--gray-900);
   padding: 0 1rem;
-  display: flex; align-items: center; gap: .75rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
   height: 50px;
   position: sticky; top: 0; z-index: 100;
 }
@@ -76,16 +78,16 @@ nav {
 .nav-logo span { color: var(--green); }
 .nav-search {
   flex: 1;
-  display: flex;
-  align-items: center;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,.2);
   border-radius: 4px;
   overflow: hidden;
-  min-width: 0;
 }
 .nav-search input {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   background: none;
   border: none;
@@ -286,12 +288,12 @@ nav {
   color: var(--gray-500);
   font-size: 0.7rem;
   font-weight: 700;
+  padding: 0 4px;
+  min-width: 40px;
 }
 .score.green  { background: var(--green);  color: var(--gray-900); }
 .score.yellow { background: var(--yellow); color: var(--gray-900); }
 .score.red    { background: var(--red);    color: var(--white); }
-.score.na     { background: var(--gray-100); color: var(--gray-500); font-size: 1rem; }
-.score.small  { width: 40px; height: 40px; font-size: 1.2rem; }
 
 /* ─── GAME CARDS ─── */
 .games-grid {
@@ -319,7 +321,6 @@ nav {
   object-fit: cover;
   background: var(--gray-100);
   display: block;
-}
 }
 .game-card-img-placeholder {
   width: 100%;
@@ -2201,12 +2202,14 @@ async function loadGames(platform = null, genre = null) {
   grid.innerHTML = '<div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:80%"></div></div></div>'.repeat(8);
   
   try {
-    let url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=24&ordering=-metacritic`;
+    let url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=-metacritic`;
     if (platform && platform !== 'all') url += `&platforms=${platform}`;
     if (genre) url += `&genres=${genre}`;
     
     const data = await fetchGames(url);
-    allGames = data.results || [];
+    // Filtrar juegos que NO tengan imagen de portada
+    const gamesWithImages = (data.results || []).filter(game => game.background_image && game.background_image.trim() !== '');
+    allGames = gamesWithImages;
     
     renderFeatured(allGames.slice(0,4));
     renderGrid(allGames);
@@ -2327,7 +2330,8 @@ async function doSearch() {
   if (!q) return;
   try {
     const data = await fetchGames(`${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=20`);
-    allGames = data.results || [];
+    const gamesWithImages = (data.results || []).filter(game => game.background_image && game.background_image.trim() !== '');
+    allGames = gamesWithImages;
     renderGrid(allGames);
     renderTopList(allGames);
     document.getElementById('featuredGrid').innerHTML = '';
