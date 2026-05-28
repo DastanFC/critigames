@@ -281,7 +281,7 @@ nav {
 /* ─── GAME CARDS ─── */
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
@@ -300,9 +300,11 @@ nav {
 .game-card-img {
   width: 100%;
   aspect-ratio: 16/9;
+  max-height: 130px;
   object-fit: cover;
   background: var(--gray-100);
   display: block;
+}
 }
 .game-card-img-placeholder {
   width: 100%;
