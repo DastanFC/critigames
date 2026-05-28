@@ -1591,7 +1591,7 @@ function buildReviewCardHTML(r){
   // Permisos: el autor puede editar/borrar, el admin puede ocultar/editar, el moderador solo editar
   const isAuthor = currentUser && currentUser.id === r.player_id;
   const isAdmin = currentUser && currentUser.is_admin === true;
-  const isModerator = currentUser && currentUser.role === 'moderator'; // Asumiendo que tienes campo role, si no usa is_moderator
+  const isModerator = currentUser && currentUser.role === 'true'; // Asumiendo que tienes campo role, si no usa is_moderator
   
   // Ajusta según cómo manejes los roles de moderador en tu sistema
   // Por ahora usaremos is_admin para admin, y asumimos que si no es admin pero tiene permiso especial es moderador
@@ -2315,6 +2315,26 @@ async function toggleModerator(userId, makeModerator) {
     loadAdminUsers(); // Recargar la tabla de usuarios
   } catch (e) {
     showToast('Error: ' + e.message, true);
+  }
+}
+
+function switchGameTab(tab) {
+  const reviewsTab = document.getElementById('gameReviewsTab');
+  const writeTab = document.getElementById('gameWriteTab');
+  const tabs = document.querySelectorAll('.game-tab');
+  
+  if (tab === 'reviews') {
+    reviewsTab.style.display = 'block';
+    writeTab.style.display = 'none';
+    if (tabs[0]) tabs[0].classList.add('active');
+    if (tabs[1]) tabs[1].classList.remove('active');
+    if (currentGame) loadGameReviewsIntoModal(String(currentGame.id));
+  } else if (tab === 'write') {
+    reviewsTab.style.display = 'none';
+    writeTab.style.display = 'block';
+    if (tabs[0]) tabs[0].classList.remove('active');
+    if (tabs[1]) tabs[1].classList.add('active');
+    resetWriteForm();
   }
 }
 
