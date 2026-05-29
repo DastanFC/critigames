@@ -1470,18 +1470,18 @@ input[type=range]::-webkit-slider-thumb {
 .new-comment-input {
   flex: 1;
   border: 1px solid var(--border);
-  padding: 0.35rem 0.5rem;
+  padding: 0.45rem 0.6rem;
   font-family: inherit;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   border-radius: 4px;
   resize: none;
-  min-height: 32px;
-  max-height: 90px;
+  min-height: 48px;
+  max-height: 120px;
   overflow-y: auto;
   background: var(--gray-50);
   transition: border-color 0.15s, min-height 0.2s;
 }
-.new-comment-input:focus { outline: none; border-color: var(--blue-accent); background: var(--white); min-height: 52px; }
+.new-comment-input:focus { outline: none; border-color: var(--blue-accent); background: var(--white); min-height: 72px; }
 .new-comment-send {
   background: var(--blue-accent);
   color: white;
@@ -1954,6 +1954,49 @@ input[type=range]::-webkit-slider-thumb {
   background: var(--gray-50);
 }
 .forum-login-hint span { color: var(--blue-accent); cursor: pointer; font-weight: 700; }
+
+/* ── FORO GLOBAL ── */
+.global-forum-filter-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--gray-500);
+  font-family: inherit;
+}
+.global-forum-filter-btn:hover { background: var(--gray-50); color: var(--gray-900); }
+.global-forum-filter-btn.active { background: var(--gray-900); color: white; border-color: var(--gray-900); }
+.global-thread-game-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  background: var(--gray-100);
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  color: var(--gray-700);
+  cursor: pointer;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.global-thread-game-badge:hover { background: var(--gray-900); color: white; border-color: var(--gray-900); }
+.global-thread-game-img {
+  width: 14px;
+  height: 10px;
+  object-fit: cover;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  #globalForumSidebar { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -1985,12 +2028,51 @@ input[type=range]::-webkit-slider-thumb {
 </nav>
 
 <div class="sub-nav">
+  <a href="#" id="globalForumNavLink" onclick="showGlobalForum(); return false;" style="color:var(--green-dark);font-weight:800">🗨️ Foro</a>
   <a href="#" data-platform="all" class="active">Novedades</a>
   <a href="#" data-platform="pc">PC</a>
   <a href="#" data-platform="playstation5">PS5</a>
   <a href="#" data-platform="xbox-series-x">Xbox Series</a>
   <a href="#" data-platform="nintendo-switch">Switch</a>
   <a href="#" data-platform="ios">Móvil</a>
+</div>
+
+<!-- VISTA GLOBAL FORO -->
+<div id="globalForumView" style="display:none">
+<div class="page-wrap">
+  <div class="section-header">
+    <h2>🗨️ Foro general</h2>
+    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+      <button class="global-forum-filter-btn active" id="gff-recent" onclick="setGlobalForumFilter('recent')">Recientes</button>
+      <button class="global-forum-filter-btn" id="gff-hot" onclick="setGlobalForumFilter('hot')">🔥 Activos</button>
+      <button class="global-forum-filter-btn" id="gff-noreply" onclick="setGlobalForumFilter('noreply')">Sin respuesta</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:1rem">
+    <div style="flex:1;min-width:0">
+      <div id="globalForumThreadsList" class="forum-threads-list" style="border:1px solid var(--border);border-radius:4px;overflow:hidden;background:var(--white)">
+        <div class="forum-empty"><div class="forum-empty-icon">⏳</div>Cargando hilos...</div>
+      </div>
+      <div id="globalForumLoadMore" style="display:none;text-align:center;padding:0.8rem">
+        <button onclick="loadMoreGlobalThreads()" style="background:none;border:1px solid var(--border);padding:0.4rem 1.2rem;font-size:0.75rem;font-weight:700;border-radius:4px;cursor:pointer;color:var(--gray-700)">Cargar más</button>
+      </div>
+    </div>
+    <div style="width:220px;flex-shrink:0" id="globalForumSidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">📊 Stats del foro</div>
+        <div class="sidebar-card-body" id="globalForumStats" style="font-size:0.75rem;display:flex;flex-direction:column;gap:0.4rem">
+          <div>Cargando...</div>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">🎮 Más debatidos</div>
+        <div class="sidebar-card-body" id="globalForumTopGames" style="font-size:0.75rem;display:flex;flex-direction:column;gap:0.4rem">
+          <div>Cargando...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 <div id="homeView">
@@ -2616,8 +2698,8 @@ async function renderFeatured(games){
     const scoreData=gameScores[String(g.id)];
     const avgScore=scoreData?Math.round(scoreData.sum/scoreData.count):null;
     const cls=avgScore?(avgScore>=75?'green':avgScore>=50?'yellow':'red'):'na';
-    const verdict=avgScore?(cls==='green'?'Muy favorable':cls==='yellow'?'Mixto':'Desfavorable'):'Sin valoraciones';
-    const countText=avgScore?`${scoreData.count} opiniones`:'Sé el primero';
+    const verdict=avgScore?(cls==='green'?'Muy favorable':cls==='yellow'?'Mixto':'Desfavorable'):'Sin valoraciones (0)';
+    const countText=avgScore?`${scoreData.count} opiniones`:'';
     return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ DESTACADO</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span><span class="featured-card-score-count">${countText}</span></div></div></div></div>`;
   }).join('');
 }
@@ -2643,8 +2725,8 @@ async function renderGrid(games) {
     const scoreData = gameScores[String(g.id)];
     const avgScore = scoreData ? Math.round(scoreData.sum / scoreData.count) : null;
     const cls = avgScore ? (avgScore >= 75 ? 'green' : avgScore >= 50 ? 'yellow' : 'red') : 'na';
-    const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones ';
-    const countText = avgScore ? `${scoreData.count} opiniones` : '¡Opina!';
+    const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones (0)';
+    const countText = avgScore ? `${scoreData.count} opiniones` : '';
     return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ RECIENTE</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span><span class="featured-card-score-count">${countText}</span></div></div></div></div>`;
   }).join('');
 }
@@ -2798,16 +2880,14 @@ function buildReviewCardHTML(r){
   const scoreClass = r.score >= 75 ? 'green' : (r.score >= 50 ? 'yellow' : 'red');
   const date = new Date(r.created_at).toLocaleDateString();
   
-  // Permisos: el autor puede editar/borrar, el admin puede ocultar/editar, el moderador solo editar
+  // Permisos: autor edita/borra, admin oculta, moderador solo oculta (con su firma)
   const isAuthor = currentUser && currentUser.id === r.player_id;
   const isAdmin = currentUser && currentUser.is_admin === true;
-  const isModerator = currentUser && currentUser.role === 'true'; // Asumiendo que tienes campo role, si no usa is_moderator
-  
-  // Ajusta según cómo manejes los roles de moderador en tu sistema
-  // Por ahora usaremos is_admin para admin, y asumimos que si no es admin pero tiene permiso especial es moderador
-  const canEdit = currentUser && (isAuthor || isAdmin || isModerator);
-  const canDelete = isAuthor; // Solo el autor puede borrar REALMENTE
-  const canHide = isAdmin; // Solo admin puede ocultar (no borrar)
+  const isModerator = currentUser && currentUser.is_moderator === true;
+
+  const canEdit = currentUser && isAuthor;
+  const canDelete = isAuthor;
+  const canHide = isAdmin || isModerator;
   
   // Indicador de edición si la reseña fue editada
   const editedInfo = (r.edited_by && r.edited_at) ? `<div style="font-size: 0.55rem; color: var(--gray-500); margin-top: 0.2rem;">✏️ Editado por ${escapeHTML(r.edited_by)} el ${new Date(r.edited_at).toLocaleDateString()}</div>` : '';
@@ -2834,7 +2914,7 @@ function buildReviewCardHTML(r){
     ${(canEdit || canDelete || canHide) ? `<div class="review-card-actions">
       ${canEdit ? `<button class="review-card-action edit" onclick='editReviewFn("${r.id}")'>✏️ Editar</button>` : ''}
       ${canDelete ? `<button class="review-card-action delete" onclick='permanentDeleteReviewFn("${r.id}")'>🗑️ Borrar</button>` : ''}
-      ${canHide ? `<button class="review-card-action" style="color: var(--red-dark);" onclick='hideReviewByAdminFn("${r.id}", "${escapeHTML(r.username)}")'>🚫 Ocultar (aviso)</button>` : ''}
+      ${canHide ? `<button class="review-card-action" style="color: var(--red-dark);" onclick='hideReviewFn("${r.id}", "${escapeHTML(r.username)}")'>🚫 Ocultar (aviso)</button>` : ''}
     </div>` : ''}
     <button class="comments-toggle" id="comments-toggle-${r.id}" onclick="toggleComments('${r.id}')">💬 Ver comentarios</button>
     ${buildCommentsHTML(r.id)}
@@ -3484,38 +3564,32 @@ async function permanentDeleteReviewFn(reviewId) {
 }
 
 async function hideReviewByAdminFn(reviewId, username) {
-  if (!currentUser) {
-    openAuthModal();
+  return hideReviewFn(reviewId, username);
+}
+
+async function hideReviewFn(reviewId, username) {
+  if (!currentUser) { openAuthModal(); return; }
+  const isAdmin = currentUser.is_admin === true;
+  const isModerator = currentUser.is_moderator === true;
+  if (!isAdmin && !isModerator) {
+    showToast('Sin permisos para ocultar reseñas', true);
     return;
   }
-  
-  if (!currentUser.is_admin) {
-    showToast('Solo los administradores pueden ocultar reseñas', true);
-    return;
-  }
-  
-  if (!confirm(`¿Ocultar la reseña de "${username}" con el aviso de infracción?\n\nLa reseña no se borrará, pero mostrará un mensaje de advertencia.`)) return;
-  
+  const role = isAdmin ? 'admin' : 'moderator';
+  const roleLabel = isAdmin ? 'administrador' : 'moderador';
+  if (!confirm(`¿Ocultar la reseña de "${username}" con aviso de infracción?\n\nNo se borrará, pero mostrará un aviso firmado por ${roleLabel}.`)) return;
   const sb = getSupabase();
-  if (!sb) {
-    showToast('Demo: ocultar no disponible', true);
-    return;
-  }
-  
+  if (!sb) { showToast('Demo: ocultar no disponible', true); return; }
   const { error } = await sb.from('reviews').update({
     is_hidden: true,
     hidden_by: currentUser.username,
-    hidden_role: 'admin',
+    hidden_role: role,
     hidden_at: new Date().toISOString(),
     hidden_reason: 'Infracción de las normas de la comunidad'
   }).eq('id', reviewId);
-  
-  if (error) {
-    showToast('Error al ocultar: ' + error.message, true);
-  } else {
-    showToast(`🔒 Reseña ocultada por ${currentUser.username}`);
-    if (currentGame) await loadGameReviewsIntoModal(String(currentGame.id));
-  }
+  if (error) { showToast('Error: ' + error.message, true); return; }
+  showToast(`🔒 Reseña ocultada por ${currentUser.username}`);
+  if (currentGame) await loadGameReviewsIntoModal(String(currentGame.id));
 }
 
 async function toggleModerator(userId, makeModerator) {
@@ -3999,11 +4073,7 @@ async function togglePinThread(threadId, pin) {
 // ========== PERFIL ==========
 let profileViewedUser = null;
 
-function showAllViews(show) {
-  document.getElementById('homeView').style.display = show === 'home' ? 'block' : 'none';
-  document.getElementById('adminView').style.display = show === 'admin' ? 'block' : 'none';
-  document.getElementById('profileView').style.display = show === 'profile' ? 'block' : 'none';
-}
+
 
 async function showProfile(userId) {
   const sb = getSupabase();
@@ -4587,6 +4657,370 @@ function buildCommentsHTML(reviewId) {
 }
 
 
+
+
+// ========== FORO GLOBAL ==========
+let _globalForumFilter = 'recent';
+let _globalForumPage = 0;
+const _globalForumPageSize = 20;
+let _globalForumAllLoaded = false;
+
+async function showGlobalForum() {
+  // Marcar activo en sub-nav
+  document.querySelectorAll('.sub-nav a').forEach(l => l.classList.remove('active'));
+  document.getElementById('globalForumNavLink')?.classList.add('active');
+
+  showAllViews('globalForum');
+  _globalForumPage = 0;
+  _globalForumAllLoaded = false;
+  await loadGlobalForumThreads(true);
+  loadGlobalForumSidebar();
+}
+
+function showAllViews(show) {
+  document.getElementById('homeView').style.display        = show === 'home'        ? 'block' : 'none';
+  document.getElementById('adminView').style.display       = show === 'admin'       ? 'block' : 'none';
+  document.getElementById('profileView').style.display     = show === 'profile'     ? 'block' : 'none';
+  const gfv = document.getElementById('globalForumView');
+  if (gfv) gfv.style.display = show === 'globalForum' ? 'block' : 'none';
+}
+
+function setGlobalForumFilter(filter) {
+  _globalForumFilter = filter;
+  _globalForumPage = 0;
+  _globalForumAllLoaded = false;
+  document.querySelectorAll('.global-forum-filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('gff-' + filter)?.classList.add('active');
+  loadGlobalForumThreads(true);
+}
+
+async function loadGlobalForumThreads(reset = false) {
+  const container = document.getElementById('globalForumThreadsList');
+  if (reset) {
+    container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">⏳</div>Cargando...</div>';
+  }
+
+  const sb = getSupabase();
+  if (!sb) {
+    container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">🗨️</div>Sin conexión a base de datos</div>';
+    return;
+  }
+
+  let query = sb.from('forum_threads').select('*');
+
+  if (_globalForumFilter === 'recent') {
+    query = query.order('created_at', { ascending: false });
+  } else if (_globalForumFilter === 'hot') {
+    query = query.order('reply_count', { ascending: false }).order('last_reply_at', { ascending: false });
+  } else if (_globalForumFilter === 'noreply') {
+    query = query.eq('reply_count', 0).order('created_at', { ascending: false });
+  }
+
+  query = query.range(_globalForumPage * _globalForumPageSize, (_globalForumPage + 1) * _globalForumPageSize - 1);
+
+  const { data: threads, error } = await query;
+
+  if (error) {
+    container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">⚠️</div>Error al cargar</div>';
+    return;
+  }
+
+  if (!threads || threads.length === 0) {
+    if (reset) container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">🗨️</div>No hay hilos todavía</div>';
+    document.getElementById('globalForumLoadMore').style.display = 'none';
+    _globalForumAllLoaded = true;
+    return;
+  }
+
+  const html = threads.map(t => buildGlobalForumThreadHTML(t)).join('');
+  if (reset) {
+    container.innerHTML = html;
+  } else {
+    container.insertAdjacentHTML('beforeend', html);
+  }
+
+  _globalForumAllLoaded = threads.length < _globalForumPageSize;
+  document.getElementById('globalForumLoadMore').style.display = _globalForumAllLoaded ? 'none' : 'block';
+}
+
+function buildGlobalForumThreadHTML(t) {
+  const avatarUrl = t.author_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.author_username)}&background=1a1a18&color=6ac46a&size=56`;
+  const created = relativeTime(t.created_at);
+  const lastReply = t.last_reply_at && t.last_reply_at !== t.created_at ? relativeTime(t.last_reply_at) : null;
+  const replyCount = t.reply_count || 0;
+  const gameName = t.game_name || '';
+  const gameId = t.game_id || '';
+
+  const gameBadge = gameName
+    ? `<span class="global-thread-game-badge" onclick="event.stopPropagation(); openGameFromForum(${JSON.stringify(gameId)}, ${JSON.stringify(gameName)})" title="${escapeHTML(gameName)}">🎮 ${escapeHTML(gameName.length > 22 ? gameName.slice(0, 22) + '…' : gameName)}</span>`
+    : '';
+
+  return `<div class="forum-thread-item${t.is_pinned ? ' pinned' : ''}" onclick="openGlobalForumThread('${t.id}', ${JSON.stringify(escapeHTML(t.title))}, ${JSON.stringify(gameId)}, ${JSON.stringify(gameName)})">
+    <img class="forum-thread-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.author_username)}&background=1a1a18&color=6ac46a&size=56'">
+    <div class="forum-thread-body">
+      <div class="forum-thread-title">
+        ${t.is_pinned ? '<span class="forum-thread-pin-badge">📌</span>' : ''}
+        ${escapeHTML(t.title)}
+      </div>
+      <div class="forum-thread-meta">
+        ${gameBadge}
+        <span class="forum-thread-author">${escapeHTML(t.author_username)}</span>
+        <span>·</span>
+        <span>${created}</span>
+        ${lastReply ? `<span>· últ. actividad ${lastReply}</span>` : ''}
+      </div>
+    </div>
+    <div class="forum-thread-stats">
+      <span class="forum-thread-reply-count">💬 ${replyCount}</span>
+    </div>
+  </div>`;
+}
+
+async function loadMoreGlobalThreads() {
+  if (_globalForumAllLoaded) return;
+  _globalForumPage++;
+  await loadGlobalForumThreads(false);
+}
+
+async function loadGlobalForumSidebar() {
+  const sb = getSupabase();
+  if (!sb) return;
+
+  // Stats
+  const [{ count: threadCount }, { count: postCount }] = await Promise.all([
+    sb.from('forum_threads').select('id', { count: 'exact', head: true }),
+    sb.from('forum_posts').select('id', { count: 'exact', head: true })
+  ]);
+  document.getElementById('globalForumStats').innerHTML = `
+    <div>🗨️ <strong>${threadCount || 0}</strong> hilos abiertos</div>
+    <div>💬 <strong>${postCount || 0}</strong> respuestas</div>`;
+
+  // Top juegos por nº de hilos
+  const { data: threads } = await sb.from('forum_threads').select('game_id, game_name');
+  if (threads && threads.length) {
+    const freq = {};
+    threads.forEach(t => {
+      if (!t.game_name) return;
+      if (!freq[t.game_name]) freq[t.game_name] = { count: 0, game_id: t.game_id };
+      freq[t.game_name].count++;
+    });
+    const sorted = Object.entries(freq).sort((a, b) => b[1].count - a[1].count).slice(0, 6);
+    document.getElementById('globalForumTopGames').innerHTML = sorted.map(([name, data]) =>
+      `<div style="display:flex;justify-content:space-between;align-items:center;padding:0.2rem 0;border-bottom:1px solid var(--border)">
+        <span style="cursor:pointer;color:var(--blue-accent);font-weight:700;font-size:0.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px" onclick="openGameFromForum(${JSON.stringify(data.game_id)}, ${JSON.stringify(name)})">${escapeHTML(name.length > 20 ? name.slice(0,20)+'…' : name)}</span>
+        <span style="color:var(--gray-500);font-size:0.65rem;flex-shrink:0">${data.count} hilos</span>
+      </div>`
+    ).join('');
+  }
+}
+
+// Abrir hilo desde el foro global (sin cambiar de juego)
+async function openGlobalForumThread(threadId, threadTitle, gameId, gameName) {
+  // Guardar contexto del foro global
+  _forumCurrentThreadId = threadId;
+  _forumCurrentThreadTitle = threadTitle;
+  _forumGameId = gameId;
+
+  // Montar una vista temporal de hilo dentro del globalForumView
+  const container = document.getElementById('globalForumThreadsList');
+  const loadMore = document.getElementById('globalForumLoadMore');
+  container.style.display = 'none';
+  if (loadMore) loadMore.style.display = 'none';
+
+  // Reutilizar el thread view del foro de modal si existe; si no, crear uno inline
+  let inlineView = document.getElementById('globalForumInlineThread');
+  if (!inlineView) {
+    inlineView = document.createElement('div');
+    inlineView.id = 'globalForumInlineThread';
+    container.parentNode.insertBefore(inlineView, container);
+  }
+  inlineView.style.display = 'block';
+  inlineView.innerHTML = `
+    <div class="forum-thread-header" style="border:1px solid var(--border);border-radius:4px 4px 0 0">
+      <button class="forum-back-btn" onclick="closeGlobalForumThread()">← Volver al foro</button>
+      <span class="forum-thread-view-title">${escapeHTML(threadTitle)}</span>
+      ${gameName ? `<span class="global-thread-game-badge" style="margin-left:auto">🎮 ${escapeHTML(gameName.length > 18 ? gameName.slice(0,18)+'…' : gameName)}</span>` : ''}
+    </div>
+    <div id="globalForumPostsList" class="forum-posts-list" style="border:1px solid var(--border);border-top:none;background:var(--white)"></div>
+    ${currentUser
+      ? `<div class="forum-quick-reply" style="border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px">
+          <div class="forum-quick-reply-header">Respuesta rápida</div>
+          <div id="globalForumQuotePreview" style="display:none" class="forum-quote-preview">
+            <div style="flex:1;min-width:0"><strong id="globalForumQuoteAuthor"></strong><span class="forum-quote-preview-text" id="globalForumQuoteText"></span></div>
+            <button class="forum-quote-clear" onclick="clearGlobalForumQuote()">✕</button>
+          </div>
+          <div class="forum-editor-wrap">
+            <div class="forum-editor-toolbar">
+              <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','bold')"><b>B</b></button>
+              <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','italic')"><i>I</i></button>
+              <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','code')">⌨</button>
+            </div>
+            <textarea class="forum-editor-textarea" id="globalForumReplyBody" placeholder="Escribe tu respuesta... @usuario para mencionar" rows="3"
+              onkeydown="if(event.key==='Enter'&&event.ctrlKey){event.preventDefault();submitGlobalForumReply()}"></textarea>
+            <div class="forum-editor-footer">
+              <span class="forum-editor-hint">Ctrl+Enter para enviar</span>
+              <button class="forum-editor-send" onclick="submitGlobalForumReply()">Responder</button>
+            </div>
+          </div>
+        </div>`
+      : `<div class="forum-login-hint" style="border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px">💬 <span onclick="openAuthModal()">Inicia sesión</span> para participar</div>`
+    }`;
+
+  // Cargar posts usando el contenedor inline
+  await loadGlobalForumPosts(threadId, gameName);
+}
+
+async function loadGlobalForumPosts(threadId) {
+  const container = document.getElementById('globalForumPostsList');
+  container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.8rem">Cargando...</div>';
+  const sb = getSupabase();
+  if (!sb) return;
+
+  const { data: thread } = await sb.from('forum_threads').select('*').eq('id', threadId).single();
+  const { data: posts }  = await sb.from('forum_posts').select('*').eq('thread_id', threadId).order('created_at', { ascending: true });
+
+  const all = [];
+  if (thread) all.push({ ...thread, _isOP: true });
+  if (posts)  all.push(...posts.map(p => ({ ...p, _isOP: false })));
+
+  if (!all.length) {
+    container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.8rem">Sin mensajes</div>';
+    return;
+  }
+
+  container.innerHTML = all.map((p, i) => buildGlobalForumPostHTML(p, i)).join('');
+}
+
+function buildGlobalForumPostHTML(p, index) {
+  const isOP = p._isOP;
+  const authorUsername = p.author_username;
+  const authorId = p.author_id;
+  const avatarUrl = p.author_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52`;
+  const created = relativeTime(p.created_at);
+  const isAuthor = currentUser && currentUser.id === authorId;
+  const isAdmin  = currentUser && currentUser.is_admin;
+
+  let quoteHtml = '';
+  if (!isOP && p.quote_author && p.quote_body) {
+    quoteHtml = `<div class="forum-post-quote"><strong>@${escapeHTML(p.quote_author)} dijo:</strong>${escapeHTML(p.quote_body.slice(0,150))}${p.quote_body.length>150?'…':''}</div>`;
+  }
+  const bodyHtml = quoteHtml + `<div class="forum-post-body">${renderForumBody(p.body)}</div>`;
+
+  const actions = [];
+  if (currentUser) {
+    actions.push(`<button class="forum-post-action quote" onclick="setGlobalForumQuote('${escapeHTML(authorUsername)}', ${JSON.stringify(p.body.slice(0,200))})">💬 Citar</button>`);
+    actions.push(`<button class="forum-post-action" onclick="globalForumMentionUser('${escapeHTML(authorUsername)}')">@ Mencionar</button>`);
+  }
+  if ((isAuthor || isAdmin) && !isOP) {
+    actions.push(`<button class="forum-post-action delete" onclick="deleteGlobalForumPost('${p.id}')">🗑️ Borrar</button>`);
+  }
+
+  return `<div class="forum-post${isOP ? ' is-op' : ''}" id="gforum-post-${p.id}">
+    <div class="forum-post-header">
+      <img class="forum-post-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52'">
+      <span class="forum-post-author ${authorUsername==='dastan'?'is-admin':''}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
+      ${isOP ? '<span class="forum-post-op-badge">OP</span>' : ''}
+      <span class="forum-post-time">${created}</span>
+    </div>
+    ${bodyHtml}
+    ${actions.length ? `<div class="forum-post-actions">${actions.join('')}</div>` : ''}
+  </div>`;
+}
+
+function setGlobalForumQuote(author, body) {
+  _forumQuoteData = { author, body };
+  document.getElementById('globalForumQuoteAuthor').textContent = '@' + author + ' dijo:';
+  document.getElementById('globalForumQuoteText').textContent = body.slice(0, 120) + (body.length > 120 ? '…' : '');
+  document.getElementById('globalForumQuotePreview').style.display = 'flex';
+  document.getElementById('globalForumReplyBody')?.focus();
+}
+function clearGlobalForumQuote() {
+  _forumQuoteData = null;
+  const el = document.getElementById('globalForumQuotePreview');
+  if (el) el.style.display = 'none';
+}
+function globalForumMentionUser(username) {
+  const ta = document.getElementById('globalForumReplyBody');
+  if (!ta) return;
+  const pos = ta.selectionStart;
+  const mention = `@${username} `;
+  ta.value = ta.value.slice(0, pos) + mention + ta.value.slice(pos);
+  ta.focus();
+  ta.setSelectionRange(pos + mention.length, pos + mention.length);
+}
+
+async function submitGlobalForumReply() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (currentUser.is_banned) { showToast('Cuenta suspendida', true); return; }
+  if (!_forumCurrentThreadId) return;
+  const ta = document.getElementById('globalForumReplyBody');
+  const body = ta?.value.trim();
+  if (!body) { showToast('Escribe algo', true); return; }
+
+  const sb = getSupabase();
+  const postData = {
+    thread_id: _forumCurrentThreadId,
+    game_id: _forumGameId,
+    author_id: currentUser.id,
+    author_username: currentUser.username,
+    author_avatar: currentUser.avatar_url || '',
+    body,
+    quote_author: _forumQuoteData?.author || null,
+    quote_body:   _forumQuoteData?.body   || null,
+    created_at: new Date().toISOString()
+  };
+
+  if (!sb) { showToast('Demo: respuesta enviada'); ta.value = ''; clearGlobalForumQuote(); return; }
+
+  const { error } = await sb.from('forum_posts').insert(postData);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+
+  const { data: td } = await sb.from('forum_threads').select('reply_count').eq('id', _forumCurrentThreadId).single();
+  await sb.from('forum_threads').update({ reply_count: (td?.reply_count||0)+1, last_reply_at: new Date().toISOString() }).eq('id', _forumCurrentThreadId);
+
+  // Notificaciones de mención
+  const mentions = [...body.matchAll(/@([a-z0-9_]{2,20})/gi)].map(m=>m[1].toLowerCase());
+  const unique = [...new Set(mentions)].filter(u=>u!==currentUser.username);
+  for (const u of unique) {
+    const { data: mUser } = await sb.from('players').select('id').eq('username', u).single();
+    if (mUser && mUser.id !== currentUser.id) {
+      await sb.from('comments').insert({ body: `[Foro] ${body.slice(0,100)}`, player_id: currentUser.id, username: currentUser.username, player_avatar: currentUser.avatar_url||'', target_user_id: mUser.id, notif_type:'mention', from_username: currentUser.username, read_by_target: false, game_id: _forumGameId, game_name: currentGame?.name||'', created_at: new Date().toISOString() }).then(()=>{}).catch(()=>{});
+    }
+  }
+
+  ta.value = '';
+  clearGlobalForumQuote();
+  showToast('✓ Respuesta publicada');
+  await loadGlobalForumPosts(_forumCurrentThreadId);
+}
+
+async function deleteGlobalForumPost(postId) {
+  if (!confirm('¿Borrar esta respuesta?')) return;
+  const sb = getSupabase();
+  if (!sb) return;
+  await sb.from('forum_posts').delete().eq('id', postId);
+  const { data: td } = await sb.from('forum_threads').select('reply_count').eq('id', _forumCurrentThreadId).single();
+  await sb.from('forum_threads').update({ reply_count: Math.max(0,(td?.reply_count||1)-1) }).eq('id', _forumCurrentThreadId);
+  showToast('Respuesta borrada');
+  await loadGlobalForumPosts(_forumCurrentThreadId);
+}
+
+function closeGlobalForumThread() {
+  _forumCurrentThreadId = null;
+  _forumQuoteData = null;
+  const inlineView = document.getElementById('globalForumInlineThread');
+  if (inlineView) inlineView.style.display = 'none';
+  document.getElementById('globalForumThreadsList').style.display = '';
+  const loadMore = document.getElementById('globalForumLoadMore');
+  if (loadMore && !_globalForumAllLoaded) loadMore.style.display = 'block';
+}
+
+function openGameFromForum(gameId, gameName) {
+  // Buscar el juego en allGames o abrir modal con datos básicos
+  const found = allGames.find(g => String(g.id) === String(gameId));
+  if (found) { openGameModal(found); return; }
+  openGameModal({ id: gameId, name: gameName, background_image: '', genres: [] });
+}
 
 </script>
 </body>
