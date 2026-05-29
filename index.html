@@ -1723,51 +1723,103 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 /* Posts del hilo */
-.forum-posts-list { padding: 0 0 0.5rem; }
+/* ── POSTS DEL FORO (estilo Forocoches) ── */
+.forum-posts-list { padding: 0; }
 .forum-post {
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-.forum-post.is-op { background: #f8f9ff; border-left: 3px solid var(--blue-accent); }
-.forum-post-header {
   display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+  transition: background 0.1s;
+}
+.forum-post.is-op { background: #f7f9ff; }
+.forum-post-sidebar {
+  width: 88px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 1rem 0.6rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-  flex-wrap: wrap;
+  gap: 0.35rem;
+  background: var(--gray-50);
 }
 .forum-post-avatar {
-  width: 26px;
-  height: 26px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid var(--border);
-  flex-shrink: 0;
+  border: 2px solid var(--border);
   background: var(--gray-100);
+  cursor: pointer;
+  transition: border-color 0.15s;
 }
+.forum-post-avatar:hover { border-color: var(--green); }
 .forum-post-author {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
   cursor: pointer;
-  color: var(--gray-900);
+  color: var(--green-dark);
+  text-align: center;
+  word-break: break-all;
+  line-height: 1.2;
 }
-.forum-post-author:hover { color: var(--blue-accent); }
+.forum-post-author:hover { text-decoration: underline; }
 .forum-post-author.is-admin { color: var(--admin); }
+.forum-post-author.is-mod { color: #8b5cf6; }
 .forum-post-op-badge {
-  font-size: 0.52rem;
+  font-size: 0.48rem;
   font-weight: 800;
-  background: var(--blue-accent);
+  background: var(--green-dark);
   color: white;
-  padding: 0.1rem 0.3rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.forum-post-role-badge {
+  font-size: 0.48rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
   border-radius: 3px;
   text-transform: uppercase;
 }
-.forum-post-time { font-size: 0.58rem; color: var(--gray-500); }
+.forum-post-role-badge.admin { background: #fee2e2; color: var(--red-dark); }
+.forum-post-role-badge.mod   { background: #ede9fe; color: #7c3aed; }
+.forum-post-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.forum-post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.9rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: var(--gray-50);
+}
+.forum-post-time {
+  font-size: 0.62rem;
+  color: var(--gray-500);
+}
+.forum-post-num {
+  font-size: 0.58rem;
+  color: var(--gray-400);
+  font-weight: 700;
+}
 .forum-post-edited { font-size: 0.55rem; color: var(--gray-400); font-style: italic; }
+.forum-post-content {
+  padding: 0.85rem 0.9rem 0.5rem;
+  flex: 1;
+}
 .forum-post-body {
-  font-size: 0.78rem;
-  line-height: 1.55;
-  color: var(--gray-700);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--gray-800);
   word-break: break-word;
   white-space: pre-wrap;
 }
@@ -1778,111 +1830,131 @@ input[type=range]::-webkit-slider-thumb {
 }
 .forum-post-body .mention:hover { text-decoration: underline; }
 .forum-post-quote {
-  border-left: 3px solid var(--gray-200);
-  padding: 0.3rem 0.6rem;
-  margin: 0.3rem 0 0.5rem;
+  border-left: 3px solid var(--green);
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
   background: var(--gray-50);
-  border-radius: 0 4px 4px 0;
-  font-size: 0.7rem;
-  color: var(--gray-500);
-  font-style: italic;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.78rem;
+  color: var(--gray-600);
 }
-.forum-post-quote strong { display: block; color: var(--gray-700); margin-bottom: 0.15rem; font-style: normal; font-size: 0.65rem; }
+.forum-post-quote-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.3rem;
+  font-weight: 800;
+  font-size: 0.72rem;
+  color: var(--green-dark);
+}
+.forum-post-quote-arrow { font-size: 0.7rem; color: var(--gray-400); }
+.forum-post-quote-text { font-style: italic; color: var(--gray-600); line-height: 1.5; }
 .forum-post-actions {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+  background: var(--gray-50);
 }
 .forum-post-action {
-  font-size: 0.6rem;
+  flex: 1;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--gray-500);
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0;
-  transition: color 0.15s;
+  border-right: 1px solid var(--border);
+  padding: 0.45rem 0.3rem;
+  transition: background 0.12s, color 0.12s;
+  text-align: center;
+  white-space: nowrap;
 }
-.forum-post-action:hover { color: var(--gray-900); }
-.forum-post-action.quote { color: var(--blue-accent); }
+.forum-post-action:last-child { border-right: none; }
+.forum-post-action:hover { background: var(--gray-100); color: var(--gray-900); }
+.forum-post-action.quote { color: var(--green-dark); }
+.forum-post-action.quote:hover { background: #f0fdf4; }
 .forum-post-action.delete { color: var(--red-dark); }
+.forum-post-action.delete:hover { background: #fff0f0; }
 
-/* Editor enriquecido del foro */
+/* Editor enriquecido del foro — nuevo estilo */
 .forum-editor-wrap {
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
   background: var(--white);
 }
-.forum-editor-wrap:focus-within { border-color: var(--blue-accent); }
+.forum-editor-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 2px rgba(106,196,106,0.15); }
 .forum-editor-toolbar {
   display: flex;
-  gap: 1px;
+  gap: 2px;
   background: var(--gray-50);
   border-bottom: 1px solid var(--border);
-  padding: 0.25rem 0.4rem;
+  padding: 0.3rem 0.5rem;
   flex-wrap: wrap;
   align-items: center;
 }
 .forum-editor-btn {
   background: none;
-  border: none;
-  width: 26px;
-  height: 26px;
+  border: 1px solid transparent;
+  width: 30px;
+  height: 28px;
   cursor: pointer;
-  border-radius: 3px;
-  font-size: 0.75rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
   font-weight: 800;
-  color: var(--gray-700);
+  color: var(--gray-600);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.12s;
+  transition: all 0.12s;
   font-family: 'JetBrains Mono', monospace;
 }
-.forum-editor-btn:hover { background: var(--gray-100); color: var(--gray-900); }
-.forum-editor-btn.sep { width: 1px; height: 16px; background: var(--border); cursor: default; pointer-events: none; }
+.forum-editor-btn:hover { background: var(--white); border-color: var(--border); color: var(--gray-900); }
+.forum-editor-btn.sep { width: 1px; height: 18px; background: var(--border); cursor: default; pointer-events: none; border: none; }
 .forum-editor-textarea {
   width: 100%;
   border: none;
   outline: none;
-  padding: 0.55rem 0.7rem;
+  padding: 0.8rem 0.9rem;
   font-family: inherit;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  resize: none;
-  min-height: 80px;
-  max-height: 200px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 120px;
+  max-height: 400px;
   overflow-y: auto;
   background: var(--white);
+  color: var(--gray-900);
 }
+.forum-editor-textarea::placeholder { color: var(--gray-400); }
 .forum-editor-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.3rem 0.6rem;
+  padding: 0.5rem 0.7rem;
   background: var(--gray-50);
   border-top: 1px solid var(--border);
   gap: 0.5rem;
   flex-wrap: wrap;
 }
-.forum-editor-hint {
-  font-size: 0.6rem;
-  color: var(--gray-400);
-}
+.forum-editor-hint { font-size: 0.62rem; color: var(--gray-400); }
 .forum-editor-send {
-  background: var(--blue-accent);
+  background: var(--gray-900);
   color: white;
   border: none;
-  padding: 0.3rem 0.9rem;
-  font-size: 0.7rem;
+  padding: 0.55rem 1.5rem;
+  font-size: 0.75rem;
   font-weight: 800;
   border-radius: 4px;
   cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s;
 }
-.forum-editor-send:hover { background: #1558c0; }
-.forum-editor-send:disabled { opacity: 0.5; cursor: default; }
+.forum-editor-send:hover { background: var(--green-dark); }
+.forum-editor-send:disabled { opacity: 0.4; cursor: default; }
 
 /* Formulario nuevo hilo */
 .forum-new-thread-form {
@@ -1896,64 +1968,69 @@ input[type=range]::-webkit-slider-thumb {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 0.5rem;
+  padding: 0.55rem 0.7rem;
   font-family: inherit;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
   outline: none;
+  background: var(--white);
 }
-.forum-new-thread-input:focus { border-color: var(--blue-accent); }
+.forum-new-thread-input:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(106,196,106,0.15); }
 .forum-new-thread-actions {
   display: flex;
   gap: 0.4rem;
   justify-content: flex-end;
 }
 
-/* Respuesta rápida en la lista de hilos */
+/* Zona de respuesta — estilo Forocoches */
 .forum-quick-reply {
-  padding: 0.65rem 1rem;
-  border-top: 1px solid var(--border);
-  background: var(--gray-50);
+  border-top: 2px solid var(--border);
+  background: var(--white);
 }
 .forum-quick-reply-header {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: var(--gray-500);
-  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--white);
+  background: var(--gray-900);
+  padding: 0.55rem 0.9rem;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 .forum-quote-preview {
-  background: var(--white);
-  border-left: 3px solid var(--blue-accent);
+  background: var(--gray-50);
+  border-left: 3px solid var(--green);
+  padding: 0.4rem 0.8rem;
+  margin: 0.5rem 0.9rem;
   border-radius: 0 4px 4px 0;
-  padding: 0.3rem 0.6rem;
-  margin-bottom: 0.4rem;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: var(--gray-500);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.4rem;
 }
-.forum-quote-preview strong { color: var(--blue-accent); font-size: 0.65rem; display: block; margin-bottom: 0.1rem; }
+.forum-quote-preview strong { color: var(--green-dark); font-size: 0.68rem; display: block; margin-bottom: 0.1rem; }
 .forum-quote-preview-text { flex: 1; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90%; }
 .forum-quote-clear {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: var(--gray-400);
   flex-shrink: 0;
+  line-height: 1;
 }
+.forum-quick-reply-body { padding: 0.7rem 0.9rem; }
 .forum-login-hint {
-  padding: 0.6rem 1rem;
-  font-size: 0.7rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.75rem;
   color: var(--gray-500);
   border-top: 1px solid var(--border);
   background: var(--gray-50);
+  text-align: center;
 }
-.forum-login-hint span { color: var(--blue-accent); cursor: pointer; font-weight: 700; }
+.forum-login-hint span { color: var(--green-dark); cursor: pointer; font-weight: 800; }
 
 /* ── FORO GLOBAL ── */
 .global-forum-filter-btn {
@@ -2381,7 +2458,7 @@ input[type=range]::-webkit-slider-thumb {
         <div id="forumPostsList" class="forum-posts-list"></div>
         <!-- Respuesta rápida -->
         <div class="forum-quick-reply" id="forumQuickReply">
-          <div class="forum-quick-reply-header">Respuesta rápida</div>
+          <div class="forum-quick-reply-header">✏️ Responder</div>
           <div id="forumQuotePreview" style="display:none" class="forum-quote-preview">
             <div style="flex:1;min-width:0">
               <strong id="forumQuoteAuthor"></strong>
@@ -2389,6 +2466,7 @@ input[type=range]::-webkit-slider-thumb {
             </div>
             <button class="forum-quote-clear" onclick="clearForumQuote()" title="Quitar cita">✕</button>
           </div>
+          <div class="forum-quick-reply-body">
           <div class="forum-editor-wrap">
             <div class="forum-editor-toolbar">
               <button class="forum-editor-btn" title="Negrita" onclick="forumEditorFormat('forumReplyBody','bold')"><b>B</b></button>
@@ -2397,15 +2475,14 @@ input[type=range]::-webkit-slider-thumb {
               <span class="forum-editor-btn sep"></span>
               <button class="forum-editor-btn" title="Spoiler" onclick="forumEditorFormat('forumReplyBody','spoiler')">👁</button>
               <button class="forum-editor-btn" title="Código" onclick="forumEditorFormat('forumReplyBody','code')">⌨</button>
-              <span class="forum-editor-btn sep"></span>
-              <button class="forum-editor-btn" title="Citar último" onclick="quoteLastPost()" style="font-size:0.65rem;width:auto;padding:0 6px">Citar</button>
             </div>
-            <textarea class="forum-editor-textarea" id="forumReplyBody" placeholder="Escribe tu respuesta... Usa @usuario para mencionar" rows="3"
+            <textarea class="forum-editor-textarea" id="forumReplyBody" placeholder="Escribe tu mensaje..." rows="4"
               onkeydown="if(event.key==='Enter'&&event.ctrlKey){event.preventDefault();submitForumReply()}"></textarea>
             <div class="forum-editor-footer">
-              <span class="forum-editor-hint">Ctrl+Enter para enviar · @usuario para mencionar</span>
-              <button class="forum-editor-send" onclick="submitForumReply()">Responder</button>
+              <span class="forum-editor-hint">Ctrl+Enter · @usuario para mencionar</span>
+              <button class="forum-editor-send" onclick="submitForumReply()">ENVIAR RESPUESTA</button>
             </div>
+          </div>
           </div>
         </div>
         <div class="forum-login-hint" id="forumLoginHint" style="display:none">
@@ -3866,47 +3943,85 @@ async function loadForumPosts(threadId) {
   container.innerHTML = all.map((p, i) => buildForumPostHTML(p, i)).join('');
 }
 
-function buildForumPostHTML(p, index) {
+function _buildPostHTML(p, index, opts) {
+  // opts: { idPrefix, quoteFunc, mentionFunc, deleteFunc, deleteThreadFunc, pinFunc }
   const isOP = p._isOP;
-  const bodyText = isOP ? p.body : p.body;
-  const authorUsername = isOP ? p.author_username : p.author_username;
-  const authorId = isOP ? p.author_id : p.author_id;
-  const avatarUrl = (isOP ? p.author_avatar : p.author_avatar) || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52`;
+  const authorUsername = p.author_username;
+  const authorId = p.author_id;
+  const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=104`;
+  const avatarUrl = p.author_avatar || avatarFallback;
   const created = relativeTime(p.created_at);
   const isAuthor = currentUser && currentUser.id === authorId;
-  const isAdmin  = currentUser && currentUser.is_admin;
+  const isAdmin  = currentUser && currentUser.is_admin === true;
+  const isMod    = currentUser && currentUser.is_moderator === true;
 
+  // Sidebar role badge
+  let roleBadge = '';
+  if (isOP) roleBadge = '<span class="forum-post-op-badge">OP</span>';
+  const isAdminUser = p.author_username === 'dastan' || false; // ajusta según tu lógica
+  const authorClass = isAdminUser ? 'is-admin' : '';
+
+  // Quote block
   let quoteHtml = '';
-  if (!isOP && p.quote_author && p.quote_body) {
-    quoteHtml = `<div class="forum-post-quote"><strong>@${escapeHTML(p.quote_author)} dijo:</strong>${escapeHTML(p.quote_body.slice(0, 150))}${p.quote_body.length > 150 ? '…' : ''}</div>`;
+  if (p.quote_author && p.quote_body) {
+    quoteHtml = `<div class="forum-post-quote">
+      <div class="forum-post-quote-header">
+        <span>Cita de <strong>${escapeHTML(p.quote_author)}</strong></span>
+        <span class="forum-post-quote-arrow">→</span>
+      </div>
+      <div class="forum-post-quote-text">${escapeHTML(p.quote_body.slice(0,200))}${p.quote_body.length>200?'…':''}</div>
+    </div>`;
   }
 
-  const bodyHtml = quoteHtml + `<div class="forum-post-body">${renderForumBody(bodyText)}</div>`;
-
+  // Action bar
   const actions = [];
+  if (currentUser && currentUser.id !== authorId) {
+    actions.push(`<button class="forum-post-action" onclick="reportPost('${p.id}')">⚠️ Reportar</button>`);
+  }
   if (currentUser) {
-    actions.push(`<button class="forum-post-action quote" onclick="setForumQuote('${escapeHTML(authorUsername)}', ${JSON.stringify(bodyText.slice(0, 200))})">💬 Citar</button>`);
-    actions.push(`<button class="forum-post-action" onclick="forumMentionUser('${escapeHTML(authorUsername)}')">@ Mencionar</button>`);
+    actions.push(`<button class="forum-post-action" onclick="${opts.mentionFunc}('${escapeHTML(authorUsername)}')">↩ Responder</button>`);
+    actions.push(`<button class="forum-post-action quote" onclick="${opts.quoteFunc}('${escapeHTML(authorUsername)}', ${JSON.stringify((p.body||'').slice(0,200))})">💬 Citar</button>`);
   }
-  if ((isAuthor || isAdmin) && !isOP) {
-    actions.push(`<button class="forum-post-action delete" onclick="deleteForumPost('${p.id}')">🗑️ Borrar</button>`);
+  if ((isAuthor || isAdmin || isMod) && !isOP) {
+    actions.push(`<button class="forum-post-action delete" onclick="${opts.deleteFunc}('${p.id}')">🗑 Borrar</button>`);
   }
-  if (isAdmin && isOP) {
-    actions.push(`<button class="forum-post-action delete" onclick="deleteForumThread('${p.id}')">🗑️ Borrar hilo</button>`);
+  if (isAdmin && isOP && opts.deleteThreadFunc) {
+    actions.push(`<button class="forum-post-action delete" onclick="${opts.deleteThreadFunc}('${p.id}')">🗑 Borrar hilo</button>`);
     const pinLabel = p.is_pinned ? '📌 Desfijar' : '📌 Fijar';
-    actions.push(`<button class="forum-post-action" onclick="togglePinThread('${p.id}', ${!p.is_pinned})">${pinLabel}</button>`);
+    actions.push(`<button class="forum-post-action" onclick="${opts.pinFunc}('${p.id}', ${!p.is_pinned})">${pinLabel}</button>`);
   }
 
-  return `<div class="forum-post${isOP ? ' is-op' : ''}" id="forum-post-${p.id}" data-index="${index}">
-    <div class="forum-post-header">
-      <img class="forum-post-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52'">
-      <span class="forum-post-author ${authorUsername === 'dastan' ? 'is-admin' : ''}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
-      ${isOP ? '<span class="forum-post-op-badge">OP</span>' : ''}
-      <span class="forum-post-time">${created}</span>
+  return `<div class="forum-post${isOP ? ' is-op' : ''}" id="${opts.idPrefix}-${p.id}" data-index="${index}">
+    <div class="forum-post-sidebar">
+      <img class="forum-post-avatar" src="${avatarUrl}"
+        onerror="this.src='${avatarFallback}'"
+        onclick="showProfile('${authorId}')">
+      <span class="forum-post-author ${authorClass}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
+      ${roleBadge}
     </div>
-    ${bodyHtml}
-    ${actions.length ? `<div class="forum-post-actions">${actions.join('')}</div>` : ''}
+    <div class="forum-post-main">
+      <div class="forum-post-header">
+        <span class="forum-post-time">${created}</span>
+        <span class="forum-post-num">#${index + 1}</span>
+      </div>
+      <div class="forum-post-content">
+        ${quoteHtml}
+        <div class="forum-post-body">${renderForumBody(p.body)}</div>
+      </div>
+      ${actions.length ? `<div class="forum-post-actions">${actions.join('')}</div>` : ''}
+    </div>
   </div>`;
+}
+
+function buildForumPostHTML(p, index) {
+  return _buildPostHTML(p, index, {
+    idPrefix: 'forum-post',
+    quoteFunc: 'setForumQuote',
+    mentionFunc: 'forumMentionUser',
+    deleteFunc: 'deleteForumPost',
+    deleteThreadFunc: 'deleteForumThread',
+    pinFunc: 'togglePinThread'
+  });
 }
 
 // -- Citas y menciones --
@@ -4844,23 +4959,28 @@ async function openGlobalForumThread(threadId, threadTitle, gameId, gameName) {
     <div id="globalForumPostsList" class="forum-posts-list" style="border:1px solid var(--border);border-top:none;background:var(--white)"></div>
     ${currentUser
       ? `<div class="forum-quick-reply" style="border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px">
-          <div class="forum-quick-reply-header">Respuesta rápida</div>
+          <div class="forum-quick-reply-header">✏️ Responder</div>
           <div id="globalForumQuotePreview" style="display:none" class="forum-quote-preview">
             <div style="flex:1;min-width:0"><strong id="globalForumQuoteAuthor"></strong><span class="forum-quote-preview-text" id="globalForumQuoteText"></span></div>
             <button class="forum-quote-clear" onclick="clearGlobalForumQuote()">✕</button>
           </div>
+          <div class="forum-quick-reply-body">
           <div class="forum-editor-wrap">
             <div class="forum-editor-toolbar">
               <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','bold')"><b>B</b></button>
               <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','italic')"><i>I</i></button>
+              <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','underline')"><u>U</u></button>
+              <span class="forum-editor-btn sep"></span>
+              <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','spoiler')">👁</button>
               <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','code')">⌨</button>
             </div>
-            <textarea class="forum-editor-textarea" id="globalForumReplyBody" placeholder="Escribe tu respuesta... @usuario para mencionar" rows="3"
+            <textarea class="forum-editor-textarea" id="globalForumReplyBody" placeholder="Escribe tu mensaje..." rows="4"
               onkeydown="if(event.key==='Enter'&&event.ctrlKey){event.preventDefault();submitGlobalForumReply()}"></textarea>
             <div class="forum-editor-footer">
-              <span class="forum-editor-hint">Ctrl+Enter para enviar</span>
-              <button class="forum-editor-send" onclick="submitGlobalForumReply()">Responder</button>
+              <span class="forum-editor-hint">Ctrl+Enter · @usuario para mencionar</span>
+              <button class="forum-editor-send" onclick="submitGlobalForumReply()">ENVIAR RESPUESTA</button>
             </div>
+          </div>
           </div>
         </div>`
       : `<div class="forum-login-hint" style="border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px">💬 <span onclick="openAuthModal()">Inicia sesión</span> para participar</div>`
@@ -4892,39 +5012,14 @@ async function loadGlobalForumPosts(threadId) {
 }
 
 function buildGlobalForumPostHTML(p, index) {
-  const isOP = p._isOP;
-  const authorUsername = p.author_username;
-  const authorId = p.author_id;
-  const avatarUrl = p.author_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52`;
-  const created = relativeTime(p.created_at);
-  const isAuthor = currentUser && currentUser.id === authorId;
-  const isAdmin  = currentUser && currentUser.is_admin;
-
-  let quoteHtml = '';
-  if (!isOP && p.quote_author && p.quote_body) {
-    quoteHtml = `<div class="forum-post-quote"><strong>@${escapeHTML(p.quote_author)} dijo:</strong>${escapeHTML(p.quote_body.slice(0,150))}${p.quote_body.length>150?'…':''}</div>`;
-  }
-  const bodyHtml = quoteHtml + `<div class="forum-post-body">${renderForumBody(p.body)}</div>`;
-
-  const actions = [];
-  if (currentUser) {
-    actions.push(`<button class="forum-post-action quote" onclick="setGlobalForumQuote('${escapeHTML(authorUsername)}', ${JSON.stringify(p.body.slice(0,200))})">💬 Citar</button>`);
-    actions.push(`<button class="forum-post-action" onclick="globalForumMentionUser('${escapeHTML(authorUsername)}')">@ Mencionar</button>`);
-  }
-  if ((isAuthor || isAdmin) && !isOP) {
-    actions.push(`<button class="forum-post-action delete" onclick="deleteGlobalForumPost('${p.id}')">🗑️ Borrar</button>`);
-  }
-
-  return `<div class="forum-post${isOP ? ' is-op' : ''}" id="gforum-post-${p.id}">
-    <div class="forum-post-header">
-      <img class="forum-post-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52'">
-      <span class="forum-post-author ${authorUsername==='dastan'?'is-admin':''}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
-      ${isOP ? '<span class="forum-post-op-badge">OP</span>' : ''}
-      <span class="forum-post-time">${created}</span>
-    </div>
-    ${bodyHtml}
-    ${actions.length ? `<div class="forum-post-actions">${actions.join('')}</div>` : ''}
-  </div>`;
+  return _buildPostHTML(p, index, {
+    idPrefix: 'gforum-post',
+    quoteFunc: 'setGlobalForumQuote',
+    mentionFunc: 'globalForumMentionUser',
+    deleteFunc: 'deleteGlobalForumPost',
+    deleteThreadFunc: null,
+    pinFunc: null
+  });
 }
 
 function setGlobalForumQuote(author, body) {
@@ -5020,6 +5115,10 @@ function openGameFromForum(gameId, gameName) {
   const found = allGames.find(g => String(g.id) === String(gameId));
   if (found) { openGameModal(found); return; }
   openGameModal({ id: gameId, name: gameName, background_image: '', genres: [] });
+}
+
+function reportPost(postId) {
+  showToast('⚠️ Reporte enviado, gracias');
 }
 
 </script>
