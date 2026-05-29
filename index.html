@@ -94,7 +94,8 @@ nav {
 .nav-logo span { color: var(--green); }
 .nav-search {
   flex: 1;
-  min-width: 100px;
+  min-width: 0;
+  max-width: 260px;
   display: flex;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
@@ -155,6 +156,9 @@ nav {
   cursor: pointer;
   border-radius: 4px;
   white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .nav-user-btn.admin-btn { background: var(--admin-dark); }
 .nav-dropdown {
@@ -366,7 +370,7 @@ nav {
   flex-wrap: wrap;
 }
 .featured-card-score-verdict { font-size: 0.7rem; font-weight: 700; }
-.featured-card-score-count { font-size: 0.6rem; color: var(--gray-500); }
+.featured-card-score-count { font-size: 0.6rem; color: var(--gray-500); display: block; margin-top: 0.05rem; }
 
 /* TWO COLUMN */
 .two-col {
@@ -2777,7 +2781,7 @@ async function renderFeatured(games){
     const cls=avgScore?(avgScore>=75?'green':avgScore>=50?'yellow':'red'):'na';
     const verdict=avgScore?(cls==='green'?'Muy favorable':cls==='yellow'?'Mixto':'Desfavorable'):'Sin valoraciones (0)';
     const countText=avgScore?`${scoreData.count} opiniones`:'';
-    return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ DESTACADO</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span><span class="featured-card-score-count">${countText}</span></div></div></div></div>`;
+    return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ DESTACADO</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span>${countText ? `<span class="featured-card-score-count">${countText}</span>` : ''}</div></div></div></div>`;
   }).join('');
 }
 
@@ -2804,7 +2808,7 @@ async function renderGrid(games) {
     const cls = avgScore ? (avgScore >= 75 ? 'green' : avgScore >= 50 ? 'yellow' : 'red') : 'na';
     const verdict = avgScore ? (cls === 'green' ? 'Muy favorable' : cls === 'yellow' ? 'Mixto' : 'Desfavorable') : 'Sin valoraciones (0)';
     const countText = avgScore ? `${scoreData.count} opiniones` : '';
-    return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ RECIENTE</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span><span class="featured-card-score-count">${countText}</span></div></div></div></div>`;
+    return `<div class="featured-card" onclick='openGameModal(${JSON.stringify(g)})'><img class="featured-card-img" src="${g.background_image}" loading="lazy"><div class="featured-card-body"><div class="featured-card-label">▶ RECIENTE</div><div class="featured-card-title">${escapeHTML(g.name)}</div><div class="featured-card-genre">${g.genres?.map(x=>x.name).slice(0,2).join(' · ')||''}</div><div class="featured-card-score-row"><div class="score small ${cls}">${avgScore||'N/A'}</div><div class="featured-card-score-info"><span class="featured-card-score-verdict">${verdict}</span>${countText ? `<span class="featured-card-score-count">${countText}</span>` : ''}</div></div></div></div>`;
   }).join('');
 }
 
@@ -3789,7 +3793,7 @@ function buildForumThreadItemHTML(t) {
   const created = relativeTime(t.created_at);
   const lastReply = t.last_reply_at ? relativeTime(t.last_reply_at) : null;
   const replyCount = t.reply_count || 0;
-  return `<div class="forum-thread-item${t.is_pinned ? ' pinned' : ''}" onclick="openForumThread('${t.id}', ${JSON.stringify(escapeHTML(t.title))})">
+  return `<div class="forum-thread-item${t.is_pinned ? ' pinned' : ''}" onclick="openForumThread('${t.id}', ${JSON.stringify(t.title).replace(/'/g, '&#39;')})">
     <img class="forum-thread-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.author_username)}&background=1a1a18&color=6ac46a&size=56'">
     <div class="forum-thread-body">
       <div class="forum-thread-title">
@@ -3887,6 +3891,7 @@ async function openForumThread(threadId, threadTitle) {
   document.getElementById('forumThreadsList').style.display = 'none';
   const view = document.getElementById('forumThreadView');
   view.classList.add('open');
+  view.style.display = 'block';
 
   // Mostrar/ocultar zona de reply
   const quickReply = document.getElementById('forumQuickReply');
@@ -3912,6 +3917,7 @@ function closeForumThread() {
   document.getElementById('forumThreadsList').style.display = 'block';
   const view = document.getElementById('forumThreadView');
   view.classList.remove('open');
+  view.style.display = 'none';
   document.getElementById('forumPostsList').innerHTML = '';
 }
 
