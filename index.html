@@ -2207,6 +2207,15 @@ input[type=range]::-webkit-slider-thumb {
   </div>
   <div style="display:flex;gap:1rem">
     <div style="flex:1;min-width:0">
+      <div style="position:relative;margin-bottom:0.5rem">
+        <input type="text" id="globalForumSearch"
+          placeholder="🔍  Buscar por título, autor o juego..."
+          oninput="filterGlobalForumThreads(this.value)"
+          style="width:100%;border:1px solid var(--border);border-radius:4px;padding:0.55rem 0.75rem 0.55rem 0.75rem;font-size:0.82rem;font-family:inherit;outline:none;background:var(--white);color:var(--gray-900);box-sizing:border-box"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+        <button id="globalForumSearchClear" onclick="clearGlobalForumSearch()" title="Limpiar"
+          style="display:none;position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--gray-400);line-height:1">✕</button>
+      </div>
       <div id="globalForumThreadsList" class="forum-threads-list" style="border:1px solid var(--border);border-radius:4px;overflow:hidden;background:var(--white)">
         <div class="forum-empty"><div class="forum-empty-icon">⏳</div>Cargando hilos...</div>
       </div>
@@ -4897,6 +4906,11 @@ async function showGlobalForum() {
   showAllViews('globalForum');
   _globalForumPage = 0;
   _globalForumAllLoaded = false;
+  _globalForumAllThreads = [];
+  const inp = document.getElementById('globalForumSearch');
+  if (inp) inp.value = '';
+  const clear = document.getElementById('globalForumSearchClear');
+  if (clear) clear.style.display = 'none';
   await loadGlobalForumThreads(true);
   loadGlobalForumSidebar();
 }
@@ -5423,6 +5437,78 @@ showHome = function() {
 };
 
 // Escuchar cambios de hash (botón atrás/adelante)
+// ========== BUSCADOR FORO GLOBAL ==========
+// Cache de todos los hilos cargados para poder filtrar sin re-fetch
+let _globalForumAllThreads = [];
+
+// Sobrescribir insertAdjacentHTML/innerHTML de la lista para mantener caché
+const _origLoadGlobalForumThreads = loadGlobalForumThreads;
+loadGlobalForumThreads = async function(reset = false) {
+  await _origLoadGlobalForumThreads(reset);
+  // Actualizar caché desde el DOM data-attributes
+  _syncGlobalForumCache();
+  // Si hay búsqueda activa, re-aplicar
+  const q = document.getElementById('globalForumSearch')?.value;
+  if (q) filterGlobalForumThreads(q);
+};
+
+function _syncGlobalForumCache() {
+  const items = document.querySelectorAll('#globalForumThreadsList .forum-thread-item');
+  items.forEach(el => {
+    const tid = el.dataset.tid;
+    if (tid && !_globalForumAllThreads.find(t => t.tid === tid)) {
+      _globalForumAllThreads.push({
+        tid,
+        title:    (el.dataset.ttitle    || '').toLowerCase(),
+        gameName: (el.dataset.tgamename || '').toLowerCase(),
+        author:   el.querySelector('.forum-thread-author')?.textContent.toLowerCase() || '',
+        el
+      });
+    }
+  });
+}
+
+function filterGlobalForumThreads(q) {
+  const clear = document.getElementById('globalForumSearchClear');
+  if (clear) clear.style.display = q ? 'block' : 'none';
+
+  _syncGlobalForumCache();
+  const term = q.trim().toLowerCase();
+
+  if (!term) {
+    // Mostrar todo
+    document.querySelectorAll('#globalForumThreadsList .forum-thread-item').forEach(el => el.style.display = '');
+    document.getElementById('globalForumLoadMore').style.display = _globalForumAllLoaded ? 'none' : 'block';
+    document.getElementById('gfs-noresults')?.remove();
+    return;
+  }
+
+  // Ocultar "cargar más" mientras se busca
+  document.getElementById('globalForumLoadMore').style.display = 'none';
+
+  let found = 0;
+  _globalForumAllThreads.forEach(t => {
+    const match = t.title.includes(term) || t.gameName.includes(term) || t.author.includes(term);
+    t.el.style.display = match ? '' : 'none';
+    if (match) found++;
+  });
+
+  // Mensaje sin resultados
+  document.getElementById('gfs-noresults')?.remove();
+  if (found === 0) {
+    const msg = document.createElement('div');
+    msg.id = 'gfs-noresults';
+    msg.className = 'forum-empty';
+    msg.innerHTML = '<div class="forum-empty-icon">🔍</div>Sin resultados para <strong>' + q.trim() + '</strong>';
+    document.getElementById('globalForumThreadsList').appendChild(msg);
+  }
+}
+
+function clearGlobalForumSearch() {
+  const inp = document.getElementById('globalForumSearch');
+  if (inp) { inp.value = ''; filterGlobalForumThreads(''); inp.focus(); }
+}
+
 window.addEventListener('hashchange', () => {
   if (!_router._silent) _router.dispatch();
 });
