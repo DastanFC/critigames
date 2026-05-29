@@ -1215,6 +1215,372 @@ input[type=range]::-webkit-slider-thumb {
   object-fit: cover;
 }
 .profile-follower-name { font-weight: 700; font-size: 0.85rem; }
+
+/* ── NOTIFICACIONES ── */
+.notif-bell-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.notif-bell-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background 0.15s;
+}
+.notif-bell-btn:hover { background: rgba(255,255,255,0.22); }
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--red);
+  color: white;
+  font-size: 0.55rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+}
+.notif-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  width: 320px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  z-index: 500;
+  display: none;
+  overflow: hidden;
+}
+.notif-panel.open { display: block; }
+.notif-panel-header {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.notif-mark-all {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--blue-accent);
+  cursor: pointer;
+  text-transform: none;
+}
+.notif-list { max-height: 340px; overflow-y: auto; }
+.notif-item {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--gray-50);
+  cursor: pointer;
+  transition: background 0.12s;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.notif-item:hover { background: var(--gray-50); }
+.notif-item.unread { background: #f0f5ff; }
+.notif-item.unread:hover { background: #e8f0ff; }
+.notif-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-text { font-size: 0.75rem; font-weight: 600; line-height: 1.3; }
+.notif-text strong { color: var(--blue-accent); }
+.notif-meta { font-size: 0.6rem; color: var(--gray-500); margin-top: 0.2rem; }
+.notif-empty { padding: 1.5rem; text-align: center; color: var(--gray-500); font-size: 0.8rem; }
+
+/* ── COMENTARIOS ANIDADOS REDDIT-STYLE ── */
+.comments-section {
+  margin-top: 0.8rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+}
+.comments-toggle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--blue-accent);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.comments-toggle:hover { text-decoration: underline; }
+.comments-list { margin-top: 0.5rem; }
+.comment-thread { margin-bottom: 0.4rem; }
+.comment-item {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+.comment-indent-line {
+  width: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin: 0 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.comment-indent-line:hover { background: var(--blue-accent); }
+.comment-body {
+  flex: 1;
+  min-width: 0;
+}
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+.comment-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.comment-author {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  cursor: pointer;
+}
+.comment-author:hover { color: var(--blue-accent); }
+.comment-author.is-admin { color: var(--admin); }
+.comment-time { font-size: 0.58rem; color: var(--gray-500); }
+.comment-edited { font-size: 0.55rem; color: var(--gray-400); font-style: italic; }
+.comment-text {
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--gray-700);
+  word-break: break-word;
+}
+.comment-text .mention {
+  color: var(--blue-accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+.comment-text .mention:hover { text-decoration: underline; }
+.comment-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+.comment-action {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s;
+}
+.comment-action:hover { color: var(--gray-900); }
+.comment-action.reply { color: var(--blue-accent); }
+.comment-action.delete { color: var(--red-dark); }
+.comment-action.edit { color: var(--green-dark); }
+
+/* Caja de reply */
+.reply-box {
+  margin-top: 0.4rem;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: none;
+}
+.reply-box.open { display: block; }
+.reply-box-header {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  margin-bottom: 0.3rem;
+}
+.reply-box-header span { color: var(--blue-accent); }
+.reply-textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: 0.4rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  border-radius: 4px;
+  resize: none;
+  min-height: 54px;
+  background: var(--white);
+}
+.reply-textarea:focus { outline: none; border-color: var(--blue-accent); }
+.reply-box-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+.reply-btn {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+.reply-btn.send { background: var(--blue-accent); color: white; }
+.reply-btn.cancel { background: var(--gray-100); color: var(--gray-700); }
+
+/* Área de nuevo comentario en tarjeta de reseña */
+.new-comment-area {
+  margin-top: 0.5rem;
+}
+.new-comment-input-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+.new-comment-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.new-comment-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  border-radius: 4px;
+  resize: none;
+  min-height: 32px;
+  max-height: 90px;
+  overflow-y: auto;
+  background: var(--gray-50);
+  transition: border-color 0.15s, min-height 0.2s;
+}
+.new-comment-input:focus { outline: none; border-color: var(--blue-accent); background: var(--white); min-height: 52px; }
+.new-comment-send {
+  background: var(--blue-accent);
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.new-comment-send:hover { background: #1558c0; }
+.new-comment-login-hint {
+  font-size: 0.65rem;
+  color: var(--gray-500);
+  padding: 0.3rem 0;
+}
+.new-comment-login-hint span {
+  color: var(--blue-accent);
+  cursor: pointer;
+  font-weight: 700;
+}
+.new-comment-login-hint span:hover { text-decoration: underline; }
+
+/* Edición inline de comentario */
+.comment-edit-area {
+  margin-top: 0.25rem;
+  display: none;
+}
+.comment-edit-area.open { display: block; }
+.comment-edit-textarea {
+  width: 100%;
+  border: 1px solid var(--blue-accent);
+  padding: 0.35rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  border-radius: 4px;
+  resize: none;
+  min-height: 48px;
+}
+.comment-edit-btns {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+  margin-top: 0.25rem;
+}
+
+/* Pestañas de notificaciones en perfil */
+.profile-notif-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.profile-notif-tab {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--gray-500);
+  border-bottom: 2px solid transparent;
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.15s;
+}
+.profile-notif-tab.active {
+  color: var(--gray-900);
+  border-bottom-color: var(--gray-900);
+  margin-bottom: -1px;
+}
+.notif-profile-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.notif-profile-item {
+  padding: 0.7rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  font-size: 0.75rem;
+}
+.notif-profile-item:hover { border-color: var(--gray-900); }
+.notif-profile-item.unread { border-left: 3px solid var(--blue-accent); }
+.notif-profile-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+.notif-profile-item-title { font-weight: 700; font-size: 0.78rem; }
+.notif-profile-item-time { font-size: 0.6rem; color: var(--gray-500); }
+.notif-profile-item-preview {
+  font-size: 0.7rem;
+  color: var(--gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
 </head>
 <body>
@@ -1227,6 +1593,21 @@ input[type=range]::-webkit-slider-thumb {
   <input type="text" id="searchInput" placeholder="Buscar..." autocomplete="off" onkeydown="if(event.key==='Enter')doSearch()">
 </div>
  
+  <div class="notif-bell-wrap" id="notifBellWrap" style="display:none">
+    <button class="notif-bell-btn" onclick="toggleNotifPanel()" id="notifBellBtn" title="Notificaciones">
+      🔔
+      <span class="notif-badge" id="notifBadge" style="display:none">0</span>
+    </button>
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-panel-header">
+        🔔 Notificaciones
+        <span class="notif-mark-all" onclick="markAllNotifsRead()">Marcar todo leído</span>
+      </div>
+      <div class="notif-list" id="notifList">
+        <div class="notif-empty">Sin notificaciones</div>
+      </div>
+    </div>
+  </div>
   <div id="authArea"><button class="nav-btn-login" onclick="openAuthModal()">Entrar</button></div>
 </nav>
 
@@ -1419,6 +1800,7 @@ input[type=range]::-webkit-slider-thumb {
       <button class="profile-tab" onclick="switchProfileTab('seguidores')">👥 Seguidores</button>
       <button class="profile-tab" id="profileEditTab" onclick="switchProfileTab('editar')" style="display:none">⚙️ Editar perfil</button>
       <button class="profile-tab" id="profileVerifyTab" onclick="switchProfileTab('verificar')" style="display:none">🔐 Verificar</button>
+      <button class="profile-tab" id="profileNotifsTab" onclick="switchProfileTab('notificaciones')" style="display:none">🔔 Avisos <span id="profileNotifCount" style="display:none;background:var(--red);color:white;font-size:0.55rem;padding:1px 5px;border-radius:8px;margin-left:3px">0</span></button>
     </div>
     <div id="profile-tab-resenas" class="profile-section active">
       <div id="profileReviewsList"></div>
@@ -1465,6 +1847,18 @@ input[type=range]::-webkit-slider-thumb {
           ✅ Más credibilidad en tus reseñas.<br>
           ✅ Los demás sabrán que eres quien dices ser en Forocoches.
         </div>
+      </div>
+    </div>
+    <div id="profile-tab-notificaciones" class="profile-section">
+      <div class="profile-notif-tabs">
+        <button class="profile-notif-tab active" id="pnt-citas" onclick="switchProfileNotifTab('citas')">💬 Mis citas <span id="pntCitasCount" style="display:none;background:var(--red);color:white;font-size:0.55rem;padding:1px 5px;border-radius:8px;margin-left:3px">0</span></button>
+        <button class="profile-notif-tab" id="pnt-menciones" onclick="switchProfileNotifTab('menciones')">@ Mis menciones <span id="pntMencionesCount" style="display:none;background:var(--red);color:white;font-size:0.55rem;padding:1px 5px;border-radius:8px;margin-left:3px">0</span></button>
+      </div>
+      <div id="profileNotifsCitas" class="notif-profile-list">
+        <div style="text-align:center;padding:2rem;color:var(--gray-500);font-size:0.8rem">💬 Sin citas todavía</div>
+      </div>
+      <div id="profileNotifsMenciones" class="notif-profile-list" style="display:none">
+        <div style="text-align:center;padding:2rem;color:var(--gray-500);font-size:0.8rem">@ Sin menciones todavía</div>
       </div>
     </div>
   </div>
@@ -1710,10 +2104,18 @@ function loadSession(){try{const s=localStorage.getItem('pc_session'); if(s) cur
 function doLogout(){currentUser=null; localStorage.removeItem('pc_session'); updateNavAuth(); showToast('Sesión cerrada'); loadReviews();}
 function updateNavAuth(){
   const area=document.getElementById('authArea');
+  const bellWrap=document.getElementById('notifBellWrap');
   if(currentUser){
     area.innerHTML=`<div class="nav-user-menu"><button class="nav-user-btn ${currentUser.is_admin?'admin-btn':''}" onclick="toggleDropdown()">${currentUser.is_admin?'👑 ':''}${currentUser.username} ▾</button><div class="nav-dropdown" id="userDropdown">${currentUser.is_admin?'<a onclick="showAdminPanel()">⚙ Panel Admin</a><div class="sep"></div>':''}<a onclick="showProfile(currentUser.id)">👤 Mi perfil</a><div class="sep"></div><button onclick="doLogout()">Cerrar sesión</button></div></div>`;
+    if(bellWrap) bellWrap.style.display='block';
+    loadNotifs(true);
+    // Poll notifications every 30s
+    if(window._notifInterval) clearInterval(window._notifInterval);
+    window._notifInterval=setInterval(()=>loadNotifs(true),30000);
   }else{
     area.innerHTML='<button class="nav-btn-login" onclick="openAuthModal()">Entrar</button>';
+    if(bellWrap) bellWrap.style.display='none';
+    if(window._notifInterval) clearInterval(window._notifInterval);
   }
 }
 function toggleDropdown(){const d=document.getElementById('userDropdown'); if(d) d.classList.toggle('open');}
@@ -1985,6 +2387,8 @@ function buildReviewCardHTML(r){
       ${canDelete ? `<button class="review-card-action delete" onclick='permanentDeleteReviewFn("${r.id}")'>🗑️ Borrar</button>` : ''}
       ${canHide ? `<button class="review-card-action" style="color: var(--red-dark);" onclick='hideReviewByAdminFn("${r.id}", "${escapeHTML(r.username)}")'>🚫 Ocultar (aviso)</button>` : ''}
     </div>` : ''}
+    <button class="comments-toggle" id="comments-toggle-${r.id}" onclick="toggleComments('${r.id}')">💬 Ver comentarios</button>
+    ${buildCommentsHTML(r.id)}
   </div>`;
 }
 
@@ -2752,9 +3156,13 @@ async function showProfile(userId) {
   // Botón seguir: ocultar si es tu propio perfil
   document.getElementById('profileFollowBtn').style.display = isOwnProfile ? 'none' : 'block';
 
-  // Pestañas editar/verificar: solo visibles si es tu propio perfil
+  // Pestañas editar/verificar/notificaciones: solo visibles si es tu propio perfil
   document.getElementById('profileEditTab').style.display = isOwnProfile ? 'flex' : 'none';
   document.getElementById('profileVerifyTab').style.display = isOwnProfile ? 'flex' : 'none';
+  document.getElementById('profileNotifsTab').style.display = isOwnProfile ? 'flex' : 'none';
+  if (isOwnProfile) {
+    renderProfileNotifs();
+  }
 
   // Editar: rellenar datos
   if (isOwnProfile) {
@@ -2805,7 +3213,7 @@ async function loadProfileReviews(userId) {
 }
 
 function switchProfileTab(tabId) {
-  const tabs = ['resenas', 'siguiendo', 'seguidores', 'editar', 'verificar'];
+  const tabs = ['resenas', 'siguiendo', 'seguidores', 'editar', 'verificar', 'notificaciones'];
   tabs.forEach(id => {
     const s = document.getElementById(`profile-tab-${id}`);
     if (s) s.classList.remove('active');
@@ -2813,9 +3221,13 @@ function switchProfileTab(tabId) {
   document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
   const active = document.getElementById(`profile-tab-${tabId}`);
   if (active) active.classList.add('active');
-  const map = { resenas: 0, siguiendo: 1, seguidores: 2, editar: 3, verificar: 4 };
+  const map = { resenas: 0, siguiendo: 1, seguidores: 2, editar: 3, verificar: 4, notificaciones: 5 };
   const btns = document.querySelectorAll('.profile-tab');
   if (btns[map[tabId]]) btns[map[tabId]].classList.add('active');
+  if (tabId === 'notificaciones') {
+    markAllNotifsRead();
+    renderProfileNotifs();
+  }
 }
 
 async function saveAvatar() {
@@ -2843,6 +3255,451 @@ async function toggleVerifyUser(userId, verify) {
   showToast(`Usuario ${verify ? '✅ verificado' : 'verificación eliminada'}`);
   loadAdminUsers();
 }
+
+// ========== NOTIFICACIONES ==========
+let _notifs = [];
+
+function toggleNotifPanel() {
+  const panel = document.getElementById('notifPanel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    loadNotifs();
+  }
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#notifBellWrap')) {
+    document.getElementById('notifPanel')?.classList.remove('open');
+  }
+});
+
+async function loadNotifs(silent = false) {
+  if (!currentUser) return;
+  const sb = getSupabase();
+  if (!sb) return;
+  try {
+    const { data } = await sb.from('comments')
+      .select('*')
+      .eq('target_user_id', currentUser.id)
+      .order('created_at', { ascending: false })
+      .limit(30);
+    _notifs = data || [];
+    renderNotifPanel();
+    renderNotifBadge();
+    if (!silent) renderProfileNotifs();
+  } catch (e) {}
+}
+
+function renderNotifBadge() {
+  const unread = _notifs.filter(n => !n.read_by_target).length;
+  const badge = document.getElementById('notifBadge');
+  const profileCount = document.getElementById('profileNotifCount');
+  if (badge) {
+    if (unread > 0) {
+      badge.textContent = unread > 99 ? '99+' : unread;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  if (profileCount) {
+    if (unread > 0) {
+      profileCount.textContent = unread > 99 ? '99+' : unread;
+      profileCount.style.display = 'inline';
+    } else {
+      profileCount.style.display = 'none';
+    }
+  }
+}
+
+function renderNotifPanel() {
+  const list = document.getElementById('notifList');
+  if (!list) return;
+  if (_notifs.length === 0) {
+    list.innerHTML = '<div class="notif-empty">🔔 Sin notificaciones</div>';
+    return;
+  }
+  list.innerHTML = _notifs.map(n => {
+    const isMention = n.notif_type === 'mention';
+    const icon = isMention ? '@' : '💬';
+    const timeAgo = relativeTime(n.created_at);
+    return `<div class="notif-item ${n.read_by_target ? '' : 'unread'}" onclick="notifClicked('${n.id}', '${n.review_id}', '${n.game_id}', '${n.game_name?.replace(/'/g,"\\'")||''}')">
+      <div class="notif-icon">${icon}</div>
+      <div class="notif-body">
+        <div class="notif-text"><strong>${escapeHTML(n.from_username)}</strong> ${isMention ? 'te mencionó' : 'citó tu reseña'}</div>
+        <div class="notif-meta">${escapeHTML(n.game_name || '')} · ${timeAgo}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function notifClicked(notifId, reviewId, gameId, gameName) {
+  // Marcar como leída
+  const sb = getSupabase();
+  if (sb && notifId) {
+    await sb.from('comments').update({ read_by_target: true }).eq('id', notifId);
+    const n = _notifs.find(x => x.id === notifId);
+    if (n) n.read_by_target = true;
+    renderNotifBadge();
+    renderNotifPanel();
+  }
+  // Abrir el juego/reseña correspondiente
+  if (gameId && gameName) {
+    document.getElementById('notifPanel')?.classList.remove('open');
+    openGameModal({ id: gameId, name: gameName, background_image: '' });
+  }
+}
+
+async function markAllNotifsRead() {
+  const sb = getSupabase();
+  if (!sb || !currentUser) return;
+  await sb.from('comments').update({ read_by_target: true })
+    .eq('target_user_id', currentUser.id)
+    .eq('read_by_target', false);
+  _notifs.forEach(n => n.read_by_target = true);
+  renderNotifBadge();
+  renderNotifPanel();
+  renderProfileNotifs();
+}
+
+function renderProfileNotifs() {
+  const citas = _notifs.filter(n => n.notif_type === 'quote');
+  const menciones = _notifs.filter(n => n.notif_type === 'mention');
+
+  // Count badges
+  const citasUnread = citas.filter(n => !n.read_by_target).length;
+  const mencionesUnread = menciones.filter(n => !n.read_by_target).length;
+  const cCount = document.getElementById('pntCitasCount');
+  const mCount = document.getElementById('pntMencionesCount');
+  if (cCount) { cCount.textContent = citasUnread; cCount.style.display = citasUnread > 0 ? 'inline' : 'none'; }
+  if (mCount) { mCount.textContent = mencionesUnread; mCount.style.display = mencionesUnread > 0 ? 'inline' : 'none'; }
+
+  const citasList = document.getElementById('profileNotifsCitas');
+  const mencionesListEl = document.getElementById('profileNotifsMenciones');
+  if (!citasList || !mencionesListEl) return;
+
+  const renderNotifProfileItems = (items) => {
+    if (!items.length) return '<div style="text-align:center;padding:2rem;color:var(--gray-500);font-size:0.8rem">Sin elementos</div>';
+    return items.map(n => `
+      <div class="notif-profile-item ${n.read_by_target ? '' : 'unread'}" onclick="notifClicked('${n.id}','${n.review_id}','${n.game_id}','${(n.game_name||'').replace(/'/g,"\\'")}')">
+        <div class="notif-profile-item-header">
+          <div class="notif-profile-item-title">${escapeHTML(n.from_username)} ${n.notif_type === 'mention' ? 'te mencionó' : 'citó tu reseña'}</div>
+          <div class="notif-profile-item-time">${relativeTime(n.created_at)}</div>
+        </div>
+        <div class="notif-profile-item-preview">${escapeHTML((n.body||'').slice(0, 70))}${(n.body||'').length > 70 ? '…' : ''}</div>
+      </div>`).join('');
+  };
+
+  citasList.innerHTML = renderNotifProfileItems(citas);
+  mencionesListEl.innerHTML = renderNotifProfileItems(menciones);
+}
+
+function switchProfileNotifTab(tab) {
+  document.getElementById('pnt-citas').classList.toggle('active', tab === 'citas');
+  document.getElementById('pnt-menciones').classList.toggle('active', tab === 'menciones');
+  document.getElementById('profileNotifsCitas').style.display = tab === 'citas' ? 'flex' : 'none';
+  document.getElementById('profileNotifsMenciones').style.display = tab === 'menciones' ? 'flex' : 'none';
+}
+
+function relativeTime(isoStr) {
+  const diff = Date.now() - new Date(isoStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'ahora';
+  if (mins < 60) return `hace ${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `hace ${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `hace ${days}d`;
+  return new Date(isoStr).toLocaleDateString('es-ES');
+}
+
+// ========== COMENTARIOS ANIDADOS (Reddit-style) ==========
+// comments table: id, review_id, parent_id, player_id, username, player_avatar,
+//   body, created_at, edited_at, game_id, game_name,
+//   notif_type ('quote'|'mention'), target_user_id, from_username, read_by_target
+
+let _commentsCache = {}; // reviewId → [comments]
+
+async function loadComments(reviewId) {
+  const sb = getSupabase();
+  if (!sb) return [];
+  try {
+    const { data } = await sb.from('comments')
+      .select('*')
+      .eq('review_id', reviewId)
+      .order('created_at', { ascending: true });
+    _commentsCache[reviewId] = data || [];
+    return data || [];
+  } catch (e) { return []; }
+}
+
+function buildCommentTree(comments) {
+  const map = {};
+  const roots = [];
+  comments.forEach(c => { map[c.id] = { ...c, children: [] }; });
+  comments.forEach(c => {
+    if (c.parent_id && map[c.parent_id]) {
+      map[c.parent_id].children.push(map[c.id]);
+    } else {
+      roots.push(map[c.id]);
+    }
+  });
+  return roots;
+}
+
+function renderCommentNode(node, depth = 0) {
+  const isOwnComment = currentUser && currentUser.id === node.player_id;
+  const isAdmin = currentUser && currentUser.is_admin;
+  const canDelete = isOwnComment || isAdmin;
+  const canEdit = isOwnComment;
+  const maxDepth = 6;
+  const avatarUrl = node.player_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(node.username)}&background=1a1a18&color=6ac46a&size=36`;
+  const timeStr = relativeTime(node.created_at);
+  const editedStr = node.edited_at ? `<span class="comment-edited"> (editado)</span>` : '';
+  const bodyHtml = renderCommentBody(node.body);
+
+  const childrenHtml = node.children.length > 0
+    ? node.children.map(child => renderCommentNode(child, depth + 1)).join('')
+    : '';
+
+  const indentLines = depth > 0
+    ? `<div class="comment-indent-line" onclick="collapseThread(this)" title="Colapsar hilo"></div>`.repeat(Math.min(depth, maxDepth))
+    : '';
+
+  return `<div class="comment-thread" id="cthread-${node.id}">
+    <div class="comment-item">
+      ${indentLines}
+      <div class="comment-body">
+        <div class="comment-header">
+          <img class="comment-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(node.username)}&background=1a1a18&color=6ac46a&size=36'">
+          <span class="comment-author ${node.username === 'dastan' ? 'is-admin' : ''}" onclick="showProfile('${node.player_id}')">${escapeHTML(node.username)}</span>
+          <span class="comment-time">${timeStr}</span>${editedStr}
+        </div>
+        <div class="comment-text" id="ctext-${node.id}">${bodyHtml}</div>
+        <div class="comment-edit-area" id="cedit-${node.id}">
+          <textarea class="comment-edit-textarea" id="cedit-ta-${node.id}" rows="2">${escapeHTML(node.body)}</textarea>
+          <div class="comment-edit-btns">
+            <button class="reply-btn cancel" onclick="cancelEditComment('${node.id}')">Cancelar</button>
+            <button class="reply-btn send" onclick="saveEditComment('${node.id}','${node.review_id}')">Guardar</button>
+          </div>
+        </div>
+        <div class="comment-actions">
+          ${currentUser ? `<button class="comment-action reply" onclick="openReplyBox('${node.id}','${escapeHTML(node.username)}','${node.review_id}')">↩ Responder</button>` : ''}
+          ${canEdit ? `<button class="comment-action edit" onclick="openEditComment('${node.id}')">✏️ Editar</button>` : ''}
+          ${canDelete ? `<button class="comment-action delete" onclick="deleteComment('${node.id}','${node.review_id}')">🗑️ Borrar</button>` : ''}
+        </div>
+        <div class="reply-box" id="replybox-${node.id}">
+          <div class="reply-box-header">Respondiendo a <span>@${escapeHTML(node.username)}</span></div>
+          <textarea class="reply-textarea" id="reply-ta-${node.id}" placeholder="Escribe tu respuesta... Usa @usuario para mencionar" rows="2"></textarea>
+          <div class="reply-box-actions">
+            <button class="reply-btn cancel" onclick="closeReplyBox('${node.id}')">Cancelar</button>
+            <button class="reply-btn send" onclick="submitComment('${node.review_id}','${node.id}','${escapeHTML(node.username)}','reply-ta-${node.id}')">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${childrenHtml ? `<div style="padding-left:${depth < maxDepth ? '0' : '0'}px">${childrenHtml}</div>` : ''}
+  </div>`;
+}
+
+function renderCommentBody(text) {
+  if (!text) return '';
+  // Resaltar menciones @usuario
+  return escapeHTML(text).replace(/@([a-z0-9_]{2,20})/gi, (match, user) =>
+    `<span class="mention" onclick="mentionClick('${user}')">@${user}</span>`
+  );
+}
+
+function mentionClick(username) {
+  // Buscar usuario y mostrar perfil
+  const sb = getSupabase();
+  if (!sb) return;
+  sb.from('players').select('id').eq('username', username.toLowerCase()).single().then(({ data }) => {
+    if (data) showProfile(data.id);
+  });
+}
+
+function openReplyBox(commentId, username, reviewId) {
+  if (!currentUser) { openAuthModal(); return; }
+  // Cerrar otros reply boxes
+  document.querySelectorAll('.reply-box.open').forEach(b => b.classList.remove('open'));
+  const box = document.getElementById(`replybox-${commentId}`);
+  if (box) {
+    box.classList.add('open');
+    const ta = document.getElementById(`reply-ta-${commentId}`);
+    if (ta) { ta.value = `@${username} `; ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+function closeReplyBox(commentId) {
+  document.getElementById(`replybox-${commentId}`)?.classList.remove('open');
+}
+
+function openEditComment(commentId) {
+  const textEl = document.getElementById(`ctext-${commentId}`);
+  const editArea = document.getElementById(`cedit-${commentId}`);
+  if (textEl) textEl.style.display = 'none';
+  if (editArea) { editArea.classList.add('open'); document.getElementById(`cedit-ta-${commentId}`)?.focus(); }
+}
+function cancelEditComment(commentId) {
+  document.getElementById(`ctext-${commentId}`)?.style.removeProperty('display');
+  document.getElementById(`cedit-${commentId}`)?.classList.remove('open');
+}
+async function saveEditComment(commentId, reviewId) {
+  const ta = document.getElementById(`cedit-ta-${commentId}`);
+  const newBody = ta?.value.trim();
+  if (!newBody) { showToast('El comentario no puede estar vacío', true); return; }
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: edición no disponible', true); return; }
+  const { error } = await sb.from('comments').update({ body: newBody, edited_at: new Date().toISOString() }).eq('id', commentId);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+  showToast('Comentario actualizado');
+  await refreshComments(reviewId);
+}
+
+async function deleteComment(commentId, reviewId) {
+  if (!confirm('¿Borrar este comentario?')) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: borrado no disponible', true); return; }
+  // Borrado en cascada o marcar como eliminado
+  const { error } = await sb.from('comments').delete().eq('id', commentId);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+  showToast('Comentario borrado');
+  await refreshComments(reviewId);
+}
+
+async function submitComment(reviewId, parentId, parentUsername, textareaId) {
+  if (!currentUser) { openAuthModal(); return; }
+  if (currentUser.is_banned) { showToast('Cuenta suspendida', true); return; }
+  const ta = document.getElementById(textareaId);
+  const body = ta?.value.trim();
+  if (!body) { showToast('Escribe algo', true); return; }
+
+  const sb = getSupabase();
+  // Detectar menciones
+  const mentionMatches = [...body.matchAll(/@([a-z0-9_]{2,20})/gi)].map(m => m[1].toLowerCase());
+  const uniqueMentions = [...new Set(mentionMatches)].filter(u => u !== currentUser.username);
+
+  const commentData = {
+    review_id: reviewId,
+    parent_id: parentId || null,
+    player_id: currentUser.id,
+    username: currentUser.username,
+    player_avatar: currentUser.avatar_url || '',
+    body: body,
+    game_id: currentGame?.id ? String(currentGame.id) : null,
+    game_name: currentGame?.name || null,
+    notif_type: parentId ? 'quote' : (uniqueMentions.length > 0 ? 'mention' : null),
+    from_username: currentUser.username,
+    read_by_target: false,
+    created_at: new Date().toISOString()
+  };
+
+  if (!sb) {
+    // Demo mode
+    showToast('✓ Demo: comentario enviado');
+    if (ta) ta.value = '';
+    closeReplyBox(parentId);
+    return;
+  }
+
+  // Si es respuesta directa a un comentario, crear notificación de cita
+  if (parentId) {
+    // Obtener el propietario del comentario padre
+    const { data: parentComment } = await sb.from('comments').select('player_id, username').eq('id', parentId).single();
+    if (parentComment && parentComment.player_id !== currentUser.id) {
+      commentData.target_user_id = parentComment.player_id;
+      commentData.notif_type = 'quote';
+    }
+  }
+
+  const { error } = await sb.from('comments').insert(commentData);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+
+  // Crear notificaciones de mención para usuarios mencionados
+  if (uniqueMentions.length > 0) {
+    for (const mentionedUser of uniqueMentions) {
+      const { data: mUser } = await sb.from('players').select('id').eq('username', mentionedUser).single();
+      if (mUser && mUser.id !== currentUser.id) {
+        await sb.from('comments').insert({
+          ...commentData,
+          target_user_id: mUser.id,
+          notif_type: 'mention',
+          parent_id: parentId || null
+        }).then(() => {}).catch(() => {});
+      }
+    }
+  }
+
+  if (ta) ta.value = '';
+  closeReplyBox(parentId);
+  showToast('✓ Comentario enviado');
+  await refreshComments(reviewId);
+}
+
+async function refreshComments(reviewId) {
+  const container = document.getElementById(`comments-list-${reviewId}`);
+  if (!container) return;
+  const comments = await loadComments(reviewId);
+  const tree = buildCommentTree(comments);
+  if (tree.length === 0) {
+    container.innerHTML = '<div style="font-size:0.68rem;color:var(--gray-500);padding:0.3rem 0">Sé el primero en comentar</div>';
+  } else {
+    container.innerHTML = tree.map(n => renderCommentNode(n)).join('');
+  }
+  // Actualizar botón toggle
+  const toggle = document.getElementById(`comments-toggle-${reviewId}`);
+  if (toggle) toggle.textContent = `💬 ${comments.length} comentario${comments.length !== 1 ? 's' : ''}`;
+}
+
+function collapseThread(lineEl) {
+  const threadEl = lineEl.closest('.comment-thread');
+  if (!threadEl) return;
+  // Buscar el subtree después del primer comment-item
+  const items = threadEl.querySelectorAll(':scope > div:not(.comment-item)');
+  items.forEach(el => {
+    el.style.display = el.style.display === 'none' ? '' : 'none';
+  });
+}
+
+async function toggleComments(reviewId) {
+  const section = document.getElementById(`comments-section-${reviewId}`);
+  if (!section) return;
+  const isVisible = section.style.display !== 'none';
+  if (isVisible) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  // Load on first open
+  if (!_commentsCache[reviewId]) {
+    await refreshComments(reviewId);
+  }
+}
+
+function buildCommentsHTML(reviewId) {
+  const userAvatar = currentUser
+    ? (currentUser.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.username)}&background=1a1a18&color=6ac46a&size=36`)
+    : '';
+
+  const newCommentArea = currentUser
+    ? `<div class="new-comment-area">
+        <div class="new-comment-input-row">
+          <img class="new-comment-avatar" src="${userAvatar}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.username)}&background=1a1a18&color=6ac46a&size=36'">
+          <textarea class="new-comment-input" id="nc-${reviewId}" placeholder="Añade un comentario... Usa @usuario para mencionar" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment('${reviewId}',null,null,'nc-${reviewId}')}"></textarea>
+          <button class="new-comment-send" onclick="submitComment('${reviewId}',null,null,'nc-${reviewId}')">Enviar</button>
+        </div>
+      </div>`
+    : `<div class="new-comment-login-hint">💬 <span onclick="openAuthModal()">Inicia sesión</span> para comentar</div>`;
+
+  return `<div class="comments-section" id="comments-section-${reviewId}" style="display:none">
+    <div class="comments-list" id="comments-list-${reviewId}">
+      <div style="font-size:0.68rem;color:var(--gray-500);padding:0.3rem 0">Cargando comentarios...</div>
+    </div>
+    ${newCommentArea}
+  </div>`;
+}
+
+
 
 </script>
 </body>
