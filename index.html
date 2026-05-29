@@ -1016,6 +1016,19 @@ input[type=range]::-webkit-slider-thumb {
 }
 .stat-num { font-size: 1.5rem; font-weight: 800; }
 .stat-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+.games-filter-btn {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--white);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.games-filter-btn:hover { background: var(--gray-100); }
+.games-filter-btn.active { background: var(--gray-900); color: var(--white); border-color: var(--gray-900); }
 .banner-form { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .banner-form input { flex: 1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; }
 .changelog-entry {
@@ -2296,9 +2309,15 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="two-col">
     <div>
-      <div class="section-header"><h2>Destacados</h2><a onclick="showAllGames()">Ver todas →</a></div>
-      <div class="featured-grid" id="featuredGrid"></div>
-      <div class="section-header"><h2>Juegos recientes</h2><a onclick="showAllGames()">Ver más →</a></div>
+      <div class="section-header" style="flex-wrap:wrap;gap:0.4rem">
+        <h2 id="gamesListTitle">Juegos</h2>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-left:auto">
+          <button class="games-filter-btn active" onclick="applyGamesFilter('recent')" id="gfbRecent">🕐 Recientes</button>
+          <button class="games-filter-btn" onclick="applyGamesFilter('top')" id="gfbTop">⭐ Mejor valorados</button>
+          <button class="games-filter-btn" onclick="applyGamesFilter('popular')" id="gfbPopular">🔥 Populares</button>
+        </div>
+      </div>
+      <div id="featuredGrid" style="display:none"></div>
       <div id="gamesGrid" class="featured-grid"></div>
     </div>
     <div>
@@ -2876,23 +2895,52 @@ async function fetchGames(url){
   }
 }
 
-async function loadGames(platform=null,genre=null){
-  const grid=document.getElementById('gamesGrid');
-  grid.innerHTML='<div class="skeleton"><div class="skeleton-img"></div></div>'.repeat(8);
-  try{
-    const platformIds = { 'pc':'4', 'playstation5':'187', 'xbox-series-x':'186', 'nintendo-switch':'7', 'android':'21' };
-    const ordering = (platform && platform !== 'all') ? '-added' : '-metacritic';
-    let url=`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=${ordering}`;
-    if(platform && platform!=='all') url+=`&platforms=${platformIds[platform]||platform}`;
-    if(genre) url+=`&genres=${genre}`;
-    const data=await fetchGames(url);
-    const gamesWithImages=(data.results||[]).filter(g=>g.background_image && g.background_image.trim()!=='');
-    allGames=gamesWithImages;
-    renderFeatured(allGames.slice(0,4));
+let _currentPlatform = null;
+let _currentGenre = null;
+let _currentFilter = 'recent';
+
+const _platformIds = { 'pc':'4', 'playstation5':'187', 'xbox-series-x':'186', 'nintendo-switch':'7', 'android':'21' };
+
+async function loadGames(platform=null, genre=null){
+  _currentPlatform = platform;
+  _currentGenre = genre;
+  await applyGamesFilter(_currentFilter, true);
+}
+
+async function applyGamesFilter(filter, skipButtonUpdate=false){
+  _currentFilter = filter;
+
+  if (!skipButtonUpdate) {
+    document.querySelectorAll('.games-filter-btn').forEach(b => b.classList.remove('active'));
+    const btnMap = { recent:'gfbRecent', top:'gfbTop', popular:'gfbPopular' };
+    document.getElementById(btnMap[filter])?.classList.add('active');
+  }
+
+  const grid = document.getElementById('gamesGrid');
+  grid.innerHTML = '<div class="skeleton"><div class="skeleton-img"></div></div>'.repeat(8);
+
+  const platform = _currentPlatform;
+  const genre = _currentGenre;
+  const isFiltered = platform && platform !== 'all';
+  const platParam = isFiltered ? `&platforms=${_platformIds[platform]||platform}` : '';
+  const genreParam = genre ? `&genres=${genre}` : '';
+
+  let url;
+  if (filter === 'recent') {
+    url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=-released&dates=2023-01-01,2026-12-31${platParam}${genreParam}`;
+  } else if (filter === 'top') {
+    url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=-metacritic&metacritic=70,100${platParam}${genreParam}`;
+  } else {
+    url = `${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=-added${platParam}${genreParam}`;
+  }
+
+  try {
+    const data = await fetchGames(url);
+    allGames = (data.results||[]).filter(g => g.background_image && g.background_image.trim() !== '');
     renderGrid(allGames);
     await renderTopList(allGames);
-  }catch(e){
-    grid.innerHTML='<div style="padding:1rem">Error cargando juegos</div>';
+  } catch(e) {
+    grid.innerHTML = '<div style="padding:1rem">Error cargando juegos</div>';
   }
 }
 
@@ -3003,7 +3051,7 @@ async function doSearch(){
   document.getElementById('featuredGrid').innerHTML='';
 }
 function showAllGames(){loadGames();}
-function filterByGenre(genre){loadGames(null,genre);}
+function filterByGenre(genre){ _currentGenre=genre; applyGamesFilter(_currentFilter); }
 
 // ========== MODAL JUEGO ==========
 async function openGameModal(game) {
