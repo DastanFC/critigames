@@ -1581,6 +1581,379 @@ input[type=range]::-webkit-slider-thumb {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ── FORO ── */
+.forum-container { padding: 0; }
+.forum-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.forum-toolbar-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--gray-900);
+}
+.forum-new-thread-btn {
+  background: var(--gray-900);
+  color: white;
+  border: none;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.forum-new-thread-btn:hover { background: var(--green-dark); }
+
+/* Lista de hilos */
+.forum-threads-list { display: flex; flex-direction: column; }
+.forum-thread-item {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.12s;
+  align-items: flex-start;
+}
+.forum-thread-item:hover { background: var(--gray-50); }
+.forum-thread-item.pinned { background: #fffbf0; border-left: 3px solid var(--yellow); }
+.forum-thread-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border);
+  background: var(--gray-100);
+}
+.forum-thread-body { flex: 1; min-width: 0; }
+.forum-thread-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 0.2rem;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.forum-thread-pin-badge {
+  font-size: 0.55rem;
+  font-weight: 800;
+  background: var(--yellow);
+  color: var(--gray-900);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.forum-thread-meta {
+  font-size: 0.62rem;
+  color: var(--gray-500);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.forum-thread-author { font-weight: 700; color: var(--gray-700); }
+.forum-thread-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: 0.15rem;
+}
+.forum-thread-reply-count {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--blue-accent);
+}
+.forum-thread-last-reply {
+  font-size: 0.55rem;
+  color: var(--gray-400);
+  white-space: nowrap;
+}
+.forum-empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--gray-500);
+  font-size: 0.8rem;
+}
+.forum-empty-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+/* Vista de un hilo */
+.forum-thread-view { display: none; }
+.forum-thread-view.open { display: block; }
+.forum-thread-header {
+  background: var(--gray-50);
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.forum-back-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.25rem 0.6rem;
+  color: var(--gray-700);
+  white-space: nowrap;
+}
+.forum-back-btn:hover { background: var(--gray-100); }
+.forum-thread-view-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Posts del hilo */
+.forum-posts-list { padding: 0 0 0.5rem; }
+.forum-post {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.forum-post.is-op { background: #f8f9ff; border-left: 3px solid var(--blue-accent); }
+.forum-post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+.forum-post-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  background: var(--gray-100);
+}
+.forum-post-author {
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  color: var(--gray-900);
+}
+.forum-post-author:hover { color: var(--blue-accent); }
+.forum-post-author.is-admin { color: var(--admin); }
+.forum-post-op-badge {
+  font-size: 0.52rem;
+  font-weight: 800;
+  background: var(--blue-accent);
+  color: white;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.forum-post-time { font-size: 0.58rem; color: var(--gray-500); }
+.forum-post-edited { font-size: 0.55rem; color: var(--gray-400); font-style: italic; }
+.forum-post-body {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--gray-700);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.forum-post-body .mention {
+  color: var(--blue-accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+.forum-post-body .mention:hover { text-decoration: underline; }
+.forum-post-quote {
+  border-left: 3px solid var(--gray-200);
+  padding: 0.3rem 0.6rem;
+  margin: 0.3rem 0 0.5rem;
+  background: var(--gray-50);
+  border-radius: 0 4px 4px 0;
+  font-size: 0.7rem;
+  color: var(--gray-500);
+  font-style: italic;
+}
+.forum-post-quote strong { display: block; color: var(--gray-700); margin-bottom: 0.15rem; font-style: normal; font-size: 0.65rem; }
+.forum-post-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+}
+.forum-post-action {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s;
+}
+.forum-post-action:hover { color: var(--gray-900); }
+.forum-post-action.quote { color: var(--blue-accent); }
+.forum-post-action.delete { color: var(--red-dark); }
+
+/* Editor enriquecido del foro */
+.forum-editor-wrap {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--white);
+}
+.forum-editor-wrap:focus-within { border-color: var(--blue-accent); }
+.forum-editor-toolbar {
+  display: flex;
+  gap: 1px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border);
+  padding: 0.25rem 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.forum-editor-btn {
+  background: none;
+  border: none;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+  font-family: 'JetBrains Mono', monospace;
+}
+.forum-editor-btn:hover { background: var(--gray-100); color: var(--gray-900); }
+.forum-editor-btn.sep { width: 1px; height: 16px; background: var(--border); cursor: default; pointer-events: none; }
+.forum-editor-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0.55rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  resize: none;
+  min-height: 80px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--white);
+}
+.forum-editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.6rem;
+  background: var(--gray-50);
+  border-top: 1px solid var(--border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.forum-editor-hint {
+  font-size: 0.6rem;
+  color: var(--gray-400);
+}
+.forum-editor-send {
+  background: var(--blue-accent);
+  color: white;
+  border: none;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.forum-editor-send:hover { background: #1558c0; }
+.forum-editor-send:disabled { opacity: 0.5; cursor: default; }
+
+/* Formulario nuevo hilo */
+.forum-new-thread-form {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--gray-50);
+  display: none;
+}
+.forum-new-thread-form.open { display: block; }
+.forum-new-thread-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  outline: none;
+}
+.forum-new-thread-input:focus { border-color: var(--blue-accent); }
+.forum-new-thread-actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+/* Respuesta rápida en la lista de hilos */
+.forum-quick-reply {
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--gray-50);
+}
+.forum-quick-reply-header {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+.forum-quote-preview {
+  background: var(--white);
+  border-left: 3px solid var(--blue-accent);
+  border-radius: 0 4px 4px 0;
+  padding: 0.3rem 0.6rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.68rem;
+  color: var(--gray-500);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.forum-quote-preview strong { color: var(--blue-accent); font-size: 0.65rem; display: block; margin-bottom: 0.1rem; }
+.forum-quote-preview-text { flex: 1; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90%; }
+.forum-quote-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: var(--gray-400);
+  flex-shrink: 0;
+}
+.forum-login-hint {
+  padding: 0.6rem 1rem;
+  font-size: 0.7rem;
+  color: var(--gray-500);
+  border-top: 1px solid var(--border);
+  background: var(--gray-50);
+}
+.forum-login-hint span { color: var(--blue-accent); cursor: pointer; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -1876,11 +2249,87 @@ input[type=range]::-webkit-slider-thumb {
     <div class="modal-game-info" id="gameModalInfo"></div>
     <div class="game-modal-tabs">
       <button class="game-tab active" onclick="switchGameTab('reviews')">Reseñas</button>
+      <button class="game-tab" onclick="switchGameTab('forum')">🗨️ Foro</button>
       <button class="game-tab" onclick="switchGameTab('write')">Escribir reseña</button>
     </div>
     <!-- TAB: Reseñas -->
     <div id="gameReviewsTab" class="modal-body">
       <div id="gameReviewsGrid" class="reviews-grid"></div>
+    </div>
+    <!-- TAB: Foro -->
+    <div id="gameForumTab" class="forum-container" style="display:none">
+      <!-- Lista de hilos -->
+      <div id="forumThreadsList">
+        <div class="forum-toolbar">
+          <span class="forum-toolbar-title">💬 Foro del juego</span>
+          <button class="forum-new-thread-btn" onclick="toggleNewThreadForm()">+ Nuevo hilo</button>
+        </div>
+        <!-- Formulario nuevo hilo -->
+        <div class="forum-new-thread-form" id="forumNewThreadForm">
+          <input class="forum-new-thread-input" id="forumNewThreadTitle" placeholder="Título del hilo..." maxlength="120">
+          <div class="forum-editor-wrap">
+            <div class="forum-editor-toolbar">
+              <button class="forum-editor-btn" title="Negrita" onclick="forumEditorFormat('forumNewThreadBody','bold')"><b>B</b></button>
+              <button class="forum-editor-btn" title="Cursiva" onclick="forumEditorFormat('forumNewThreadBody','italic')"><i>I</i></button>
+              <button class="forum-editor-btn" title="Subrayado" onclick="forumEditorFormat('forumNewThreadBody','underline')"><u>U</u>  </button>
+              <span class="forum-editor-btn sep"></span>
+              <button class="forum-editor-btn" title="Spoiler" onclick="forumEditorFormat('forumNewThreadBody','spoiler')">👁</button>
+              <button class="forum-editor-btn" title="Código" onclick="forumEditorFormat('forumNewThreadBody','code')">⌨</button>
+            </div>
+            <textarea class="forum-editor-textarea" id="forumNewThreadBody" placeholder="Escribe el contenido del hilo... Usa @usuario para mencionar" rows="4"></textarea>
+            <div class="forum-editor-footer">
+              <span class="forum-editor-hint">@usuario para mencionar · **negrita** · *cursiva*</span>
+              <div style="display:flex;gap:0.4rem">
+                <button class="reply-btn cancel" onclick="toggleNewThreadForm()">Cancelar</button>
+                <button class="forum-editor-send" onclick="submitNewThread()">Publicar hilo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="forumThreadsItems" class="forum-threads-list">
+          <div class="forum-empty"><div class="forum-empty-icon">🗨️</div>No hay hilos aún. ¡Abre el primero!</div>
+        </div>
+      </div>
+      <!-- Vista de un hilo -->
+      <div id="forumThreadView" class="forum-thread-view">
+        <div class="forum-thread-header">
+          <button class="forum-back-btn" onclick="closeForumThread()">← Volver</button>
+          <span class="forum-thread-view-title" id="forumThreadViewTitle"></span>
+        </div>
+        <div id="forumPostsList" class="forum-posts-list"></div>
+        <!-- Respuesta rápida -->
+        <div class="forum-quick-reply" id="forumQuickReply">
+          <div class="forum-quick-reply-header">Respuesta rápida</div>
+          <div id="forumQuotePreview" style="display:none" class="forum-quote-preview">
+            <div style="flex:1;min-width:0">
+              <strong id="forumQuoteAuthor"></strong>
+              <span class="forum-quote-preview-text" id="forumQuoteText"></span>
+            </div>
+            <button class="forum-quote-clear" onclick="clearForumQuote()" title="Quitar cita">✕</button>
+          </div>
+          <div class="forum-editor-wrap">
+            <div class="forum-editor-toolbar">
+              <button class="forum-editor-btn" title="Negrita" onclick="forumEditorFormat('forumReplyBody','bold')"><b>B</b></button>
+              <button class="forum-editor-btn" title="Cursiva" onclick="forumEditorFormat('forumReplyBody','italic')"><i>I</i></button>
+              <button class="forum-editor-btn" title="Subrayado" onclick="forumEditorFormat('forumReplyBody','underline')"><u>U</u></button>
+              <span class="forum-editor-btn sep"></span>
+              <button class="forum-editor-btn" title="Spoiler" onclick="forumEditorFormat('forumReplyBody','spoiler')">👁</button>
+              <button class="forum-editor-btn" title="Código" onclick="forumEditorFormat('forumReplyBody','code')">⌨</button>
+              <span class="forum-editor-btn sep"></span>
+              <button class="forum-editor-btn" title="Citar último" onclick="quoteLastPost()" style="font-size:0.65rem;width:auto;padding:0 6px">Citar</button>
+            </div>
+            <textarea class="forum-editor-textarea" id="forumReplyBody" placeholder="Escribe tu respuesta... Usa @usuario para mencionar" rows="3"
+              onkeydown="if(event.key==='Enter'&&event.ctrlKey){event.preventDefault();submitForumReply()}"></textarea>
+            <div class="forum-editor-footer">
+              <span class="forum-editor-hint">Ctrl+Enter para enviar · @usuario para mencionar</span>
+              <button class="forum-editor-send" onclick="submitForumReply()">Responder</button>
+            </div>
+          </div>
+        </div>
+        <div class="forum-login-hint" id="forumLoginHint" style="display:none">
+          💬 <span onclick="openAuthModal()">Inicia sesión</span> para participar en el foro
+        </div>
+      </div>
     </div>
     <!-- TAB: Escribir -->
     <div id="gameWriteTab" class="modal-body" style="display:none">
@@ -3091,22 +3540,460 @@ async function toggleModerator(userId, makeModerator) {
 
 function switchGameTab(tab) {
   const reviewsTab = document.getElementById('gameReviewsTab');
-  const writeTab = document.getElementById('gameWriteTab');
-  const tabs = document.querySelectorAll('.game-tab');
-  
+  const forumTab   = document.getElementById('gameForumTab');
+  const writeTab   = document.getElementById('gameWriteTab');
+  const tabs       = document.querySelectorAll('.game-tab');
+
+  reviewsTab.style.display = 'none';
+  forumTab.style.display   = 'none';
+  writeTab.style.display   = 'none';
+  tabs.forEach(t => t.classList.remove('active'));
+
   if (tab === 'reviews') {
     reviewsTab.style.display = 'block';
-    writeTab.style.display = 'none';
-    if (tabs[0]) tabs[0].classList.add('active');
-    if (tabs[1]) tabs[1].classList.remove('active');
+    tabs[0]?.classList.add('active');
     if (currentGame) loadGameReviewsIntoModal(String(currentGame.id));
+  } else if (tab === 'forum') {
+    forumTab.style.display = 'block';
+    tabs[1]?.classList.add('active');
+    if (currentGame) loadForumThreads(String(currentGame.id));
   } else if (tab === 'write') {
-    reviewsTab.style.display = 'none';
     writeTab.style.display = 'block';
-    if (tabs[0]) tabs[0].classList.remove('active');
-    if (tabs[1]) tabs[1].classList.add('active');
+    tabs[2]?.classList.add('active');
     resetWriteForm();
   }
+}
+
+// ========== FORO ==========
+let _forumCurrentThreadId = null;
+let _forumCurrentThreadTitle = '';
+let _forumQuoteData = null; // { author, body }
+let _forumGameId = null;
+
+// -- Helpers de formato enriquecido --
+function forumEditorFormat(taId, type) {
+  const ta = document.getElementById(taId);
+  if (!ta) return;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.slice(start, end);
+  const maps = {
+    bold: `**${sel || 'texto'}**`,
+    italic: `*${sel || 'texto'}*`,
+    underline: `__${sel || 'texto'}__`,
+    spoiler: `||${sel || 'spoiler'}||`,
+    code: `\`${sel || 'código'}\``
+  };
+  const insert = maps[type] || sel;
+  ta.value = ta.value.slice(0, start) + insert + ta.value.slice(end);
+  ta.focus();
+  const cursorPos = start + insert.length;
+  ta.setSelectionRange(cursorPos, cursorPos);
+}
+
+function renderForumBody(text) {
+  if (!text) return '';
+  let html = escapeHTML(text);
+  // Formato enriquecido
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  html = html.replace(/__(.+?)__/g, '<u>$1</u>');
+  html = html.replace(/\|\|(.+?)\|\|/g, '<span style="background:var(--gray-900);color:var(--gray-900);border-radius:3px;padding:0 3px;cursor:pointer" onclick="this.style.color=\'white\'">$1</span>');
+  html = html.replace(/`(.+?)`/g, '<code style="background:var(--gray-100);padding:0.1rem 0.3rem;border-radius:3px;font-family:monospace;font-size:0.85em">$1</code>');
+  // Menciones
+  html = html.replace(/@([a-z0-9_]{2,20})/gi, (m, u) => `<span class="mention" onclick="mentionClick('${u}')">@${u}</span>`);
+  return html;
+}
+
+// -- Cargar hilos --
+async function loadForumThreads(gameId) {
+  _forumGameId = gameId;
+  closeForumThread();
+  const container = document.getElementById('forumThreadsItems');
+  container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">⏳</div>Cargando hilos...</div>';
+
+  const sb = getSupabase();
+  if (!sb) {
+    container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">🗨️</div>No hay hilos aún. ¡Abre el primero!</div>';
+    return;
+  }
+
+  const { data: threads, error } = await sb
+    .from('forum_threads')
+    .select('*')
+    .eq('game_id', gameId)
+    .order('is_pinned', { ascending: false })
+    .order('last_reply_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false });
+
+  if (error || !threads || threads.length === 0) {
+    container.innerHTML = '<div class="forum-empty"><div class="forum-empty-icon">🗨️</div>No hay hilos aún. ¡Abre el primero!</div>';
+    return;
+  }
+
+  container.innerHTML = threads.map(t => buildForumThreadItemHTML(t)).join('');
+}
+
+function buildForumThreadItemHTML(t) {
+  const avatarUrl = t.author_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.author_username)}&background=1a1a18&color=6ac46a&size=56`;
+  const created = relativeTime(t.created_at);
+  const lastReply = t.last_reply_at ? relativeTime(t.last_reply_at) : null;
+  const replyCount = t.reply_count || 0;
+  return `<div class="forum-thread-item${t.is_pinned ? ' pinned' : ''}" onclick="openForumThread('${t.id}', ${JSON.stringify(escapeHTML(t.title))})">
+    <img class="forum-thread-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.author_username)}&background=1a1a18&color=6ac46a&size=56'">
+    <div class="forum-thread-body">
+      <div class="forum-thread-title">
+        ${t.is_pinned ? '<span class="forum-thread-pin-badge">📌 Fijado</span>' : ''}
+        ${escapeHTML(t.title)}
+      </div>
+      <div class="forum-thread-meta">
+        <span class="forum-thread-author">${escapeHTML(t.author_username)}</span>
+        <span>·</span>
+        <span>${created}</span>
+      </div>
+    </div>
+    <div class="forum-thread-stats">
+      <span class="forum-thread-reply-count">💬 ${replyCount}</span>
+      ${lastReply ? `<span class="forum-thread-last-reply">Últ. ${lastReply}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function relativeTime(iso) {
+  if (!iso) return '';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'ahora';
+  if (m < 60) return `hace ${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `hace ${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `hace ${d}d`;
+  return new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+}
+
+// -- Nuevo hilo --
+function toggleNewThreadForm() {
+  if (!currentUser) { openAuthModal(); return; }
+  const form = document.getElementById('forumNewThreadForm');
+  form.classList.toggle('open');
+  if (form.classList.contains('open')) {
+    document.getElementById('forumNewThreadTitle').focus();
+  }
+}
+
+async function submitNewThread() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (currentUser.is_banned) { showToast('Cuenta suspendida', true); return; }
+  const title = document.getElementById('forumNewThreadTitle').value.trim();
+  const body  = document.getElementById('forumNewThreadBody').value.trim();
+  if (!title) { showToast('El hilo necesita un título', true); return; }
+  if (!body)  { showToast('Escribe algo en el hilo', true); return; }
+
+  const sb = getSupabase();
+  const gameId = _forumGameId || (currentGame ? String(currentGame.id) : null);
+  if (!gameId) { showToast('Error: juego no detectado', true); return; }
+
+  const threadData = {
+    game_id: gameId,
+    game_name: currentGame?.name || '',
+    title: title,
+    body: body,
+    author_id: currentUser.id,
+    author_username: currentUser.username,
+    author_avatar: currentUser.avatar_url || '',
+    reply_count: 0,
+    is_pinned: false,
+    created_at: new Date().toISOString(),
+    last_reply_at: new Date().toISOString()
+  };
+
+  if (!sb) {
+    showToast('✓ Demo: hilo creado', false);
+    document.getElementById('forumNewThreadTitle').value = '';
+    document.getElementById('forumNewThreadBody').value = '';
+    document.getElementById('forumNewThreadForm').classList.remove('open');
+    return;
+  }
+
+  const { data: inserted, error } = await sb.from('forum_threads').insert(threadData).select().single();
+  if (error) { showToast('Error: ' + error.message, true); return; }
+
+  document.getElementById('forumNewThreadTitle').value = '';
+  document.getElementById('forumNewThreadBody').value = '';
+  document.getElementById('forumNewThreadForm').classList.remove('open');
+  showToast('✓ Hilo publicado');
+
+  // Abrir el hilo recién creado
+  await loadForumThreads(gameId);
+  openForumThread(inserted.id, inserted.title);
+}
+
+// -- Abrir hilo --
+async function openForumThread(threadId, threadTitle) {
+  _forumCurrentThreadId = threadId;
+  _forumCurrentThreadTitle = threadTitle;
+  document.getElementById('forumThreadViewTitle').textContent = threadTitle;
+  document.getElementById('forumThreadsList').style.display = 'none';
+  const view = document.getElementById('forumThreadView');
+  view.classList.add('open');
+
+  // Mostrar/ocultar zona de reply
+  const quickReply = document.getElementById('forumQuickReply');
+  const loginHint  = document.getElementById('forumLoginHint');
+  if (currentUser) {
+    quickReply.style.display = 'block';
+    loginHint.style.display  = 'none';
+  } else {
+    quickReply.style.display = 'none';
+    loginHint.style.display  = 'block';
+  }
+
+  // Limpiar cita previa
+  clearForumQuote();
+
+  await loadForumPosts(threadId);
+}
+
+function closeForumThread() {
+  _forumCurrentThreadId = null;
+  _forumCurrentThreadTitle = '';
+  clearForumQuote();
+  document.getElementById('forumThreadsList').style.display = 'block';
+  const view = document.getElementById('forumThreadView');
+  view.classList.remove('open');
+  document.getElementById('forumPostsList').innerHTML = '';
+}
+
+// -- Posts del hilo --
+async function loadForumPosts(threadId) {
+  const container = document.getElementById('forumPostsList');
+  container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.8rem">Cargando...</div>';
+
+  const sb = getSupabase();
+  if (!sb) {
+    container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.8rem">Sin conexión a base de datos</div>';
+    return;
+  }
+
+  // Cargar el hilo (post OP)
+  const { data: thread } = await sb.from('forum_threads').select('*').eq('id', threadId).single();
+  // Cargar replies
+  const { data: posts } = await sb.from('forum_posts').select('*').eq('thread_id', threadId).order('created_at', { ascending: true });
+
+  const all = [];
+  if (thread) all.push({ ...thread, _isOP: true });
+  if (posts) all.push(...posts.map(p => ({ ...p, _isOP: false })));
+
+  if (all.length === 0) {
+    container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.8rem">No hay mensajes</div>';
+    return;
+  }
+
+  container.innerHTML = all.map((p, i) => buildForumPostHTML(p, i)).join('');
+}
+
+function buildForumPostHTML(p, index) {
+  const isOP = p._isOP;
+  const bodyText = isOP ? p.body : p.body;
+  const authorUsername = isOP ? p.author_username : p.author_username;
+  const authorId = isOP ? p.author_id : p.author_id;
+  const avatarUrl = (isOP ? p.author_avatar : p.author_avatar) || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52`;
+  const created = relativeTime(p.created_at);
+  const isAuthor = currentUser && currentUser.id === authorId;
+  const isAdmin  = currentUser && currentUser.is_admin;
+
+  let quoteHtml = '';
+  if (!isOP && p.quote_author && p.quote_body) {
+    quoteHtml = `<div class="forum-post-quote"><strong>@${escapeHTML(p.quote_author)} dijo:</strong>${escapeHTML(p.quote_body.slice(0, 150))}${p.quote_body.length > 150 ? '…' : ''}</div>`;
+  }
+
+  const bodyHtml = quoteHtml + `<div class="forum-post-body">${renderForumBody(bodyText)}</div>`;
+
+  const actions = [];
+  if (currentUser) {
+    actions.push(`<button class="forum-post-action quote" onclick="setForumQuote('${escapeHTML(authorUsername)}', ${JSON.stringify(bodyText.slice(0, 200))})">💬 Citar</button>`);
+    actions.push(`<button class="forum-post-action" onclick="forumMentionUser('${escapeHTML(authorUsername)}')">@ Mencionar</button>`);
+  }
+  if ((isAuthor || isAdmin) && !isOP) {
+    actions.push(`<button class="forum-post-action delete" onclick="deleteForumPost('${p.id}')">🗑️ Borrar</button>`);
+  }
+  if (isAdmin && isOP) {
+    actions.push(`<button class="forum-post-action delete" onclick="deleteForumThread('${p.id}')">🗑️ Borrar hilo</button>`);
+    const pinLabel = p.is_pinned ? '📌 Desfijar' : '📌 Fijar';
+    actions.push(`<button class="forum-post-action" onclick="togglePinThread('${p.id}', ${!p.is_pinned})">${pinLabel}</button>`);
+  }
+
+  return `<div class="forum-post${isOP ? ' is-op' : ''}" id="forum-post-${p.id}" data-index="${index}">
+    <div class="forum-post-header">
+      <img class="forum-post-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(authorUsername)}&background=1a1a18&color=6ac46a&size=52'">
+      <span class="forum-post-author ${authorUsername === 'dastan' ? 'is-admin' : ''}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
+      ${isOP ? '<span class="forum-post-op-badge">OP</span>' : ''}
+      <span class="forum-post-time">${created}</span>
+    </div>
+    ${bodyHtml}
+    ${actions.length ? `<div class="forum-post-actions">${actions.join('')}</div>` : ''}
+  </div>`;
+}
+
+// -- Citas y menciones --
+function setForumQuote(author, body) {
+  _forumQuoteData = { author, body };
+  document.getElementById('forumQuoteAuthor').textContent = '@' + author + ' dijo:';
+  document.getElementById('forumQuoteText').textContent = body.slice(0, 120) + (body.length > 120 ? '…' : '');
+  document.getElementById('forumQuotePreview').style.display = 'flex';
+  document.getElementById('forumReplyBody').focus();
+}
+
+function clearForumQuote() {
+  _forumQuoteData = null;
+  const preview = document.getElementById('forumQuotePreview');
+  if (preview) preview.style.display = 'none';
+}
+
+function forumMentionUser(username) {
+  const ta = document.getElementById('forumReplyBody');
+  if (!ta) return;
+  const mention = `@${username} `;
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + mention + ta.value.slice(pos);
+  ta.focus();
+  ta.setSelectionRange(pos + mention.length, pos + mention.length);
+}
+
+function quoteLastPost() {
+  const posts = document.querySelectorAll('#forumPostsList .forum-post');
+  if (!posts.length) return;
+  const last = posts[posts.length - 1];
+  const authorEl = last.querySelector('.forum-post-author');
+  const bodyEl   = last.querySelector('.forum-post-body');
+  if (authorEl && bodyEl) {
+    setForumQuote(authorEl.textContent.trim(), bodyEl.textContent.trim().slice(0, 200));
+  }
+}
+
+// -- Enviar reply --
+async function submitForumReply() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (currentUser.is_banned) { showToast('Cuenta suspendida', true); return; }
+  if (!_forumCurrentThreadId) return;
+
+  const ta = document.getElementById('forumReplyBody');
+  const body = ta?.value.trim();
+  if (!body) { showToast('Escribe algo', true); return; }
+
+  const sb = getSupabase();
+  const postData = {
+    thread_id: _forumCurrentThreadId,
+    game_id: _forumGameId || (currentGame ? String(currentGame.id) : null),
+    author_id: currentUser.id,
+    author_username: currentUser.username,
+    author_avatar: currentUser.avatar_url || '',
+    body: body,
+    quote_author: _forumQuoteData?.author || null,
+    quote_body: _forumQuoteData?.body || null,
+    created_at: new Date().toISOString()
+  };
+
+  if (!sb) {
+    showToast('✓ Demo: respuesta enviada');
+    if (ta) ta.value = '';
+    clearForumQuote();
+    return;
+  }
+
+  // Detectar menciones para notificaciones
+  const mentionMatches = [...body.matchAll(/@([a-z0-9_]{2,20})/gi)].map(m => m[1].toLowerCase());
+  const uniqueMentions = [...new Set(mentionMatches)].filter(u => u !== currentUser.username);
+
+  const { error } = await sb.from('forum_posts').insert(postData);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+
+  // Actualizar reply_count y last_reply_at en el hilo
+  const { data: threadData } = await sb.from('forum_threads').select('reply_count').eq('id', _forumCurrentThreadId).single();
+  await sb.from('forum_threads').update({
+    reply_count: (threadData?.reply_count || 0) + 1,
+    last_reply_at: new Date().toISOString()
+  }).eq('id', _forumCurrentThreadId);
+
+  // Notificaciones de mención (reutilizando el sistema de comments)
+  if (uniqueMentions.length > 0) {
+    for (const mentionedUser of uniqueMentions) {
+      const { data: mUser } = await sb.from('players').select('id').eq('username', mentionedUser).single();
+      if (mUser && mUser.id !== currentUser.id) {
+        await sb.from('comments').insert({
+          body: `[Foro] ${body.slice(0, 100)}`,
+          player_id: currentUser.id,
+          username: currentUser.username,
+          player_avatar: currentUser.avatar_url || '',
+          target_user_id: mUser.id,
+          notif_type: 'mention',
+          from_username: currentUser.username,
+          read_by_target: false,
+          game_id: _forumGameId,
+          game_name: currentGame?.name || '',
+          created_at: new Date().toISOString()
+        }).then(() => {}).catch(() => {});
+      }
+    }
+  }
+
+  // Notificación al OP si es reply y no es el mismo usuario
+  if (_forumQuoteData) {
+    const { data: threadOP } = await sb.from('forum_threads').select('author_id, author_username').eq('id', _forumCurrentThreadId).single();
+    if (threadOP && threadOP.author_id !== currentUser.id) {
+      await sb.from('comments').insert({
+        body: `[Foro] Citó tu hilo: ${body.slice(0, 80)}`,
+        player_id: currentUser.id,
+        username: currentUser.username,
+        player_avatar: currentUser.avatar_url || '',
+        target_user_id: threadOP.author_id,
+        notif_type: 'quote',
+        from_username: currentUser.username,
+        read_by_target: false,
+        game_id: _forumGameId,
+        game_name: currentGame?.name || '',
+        created_at: new Date().toISOString()
+      }).then(() => {}).catch(() => {});
+    }
+  }
+
+  if (ta) ta.value = '';
+  clearForumQuote();
+  showToast('✓ Respuesta publicada');
+  await loadForumPosts(_forumCurrentThreadId);
+}
+
+// -- Borrar post / hilo --
+async function deleteForumPost(postId) {
+  if (!confirm('¿Borrar esta respuesta?')) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: borrado no disponible', true); return; }
+  const { error } = await sb.from('forum_posts').delete().eq('id', postId);
+  if (error) { showToast('Error: ' + error.message, true); return; }
+  // Decrementar reply_count
+  const { data: threadData } = await sb.from('forum_threads').select('reply_count').eq('id', _forumCurrentThreadId).single();
+  await sb.from('forum_threads').update({ reply_count: Math.max(0, (threadData?.reply_count || 1) - 1) }).eq('id', _forumCurrentThreadId);
+  showToast('Respuesta borrada');
+  await loadForumPosts(_forumCurrentThreadId);
+}
+
+async function deleteForumThread(threadId) {
+  if (!confirm('¿Borrar este hilo y todos sus mensajes?')) return;
+  const sb = getSupabase();
+  if (!sb) { showToast('Demo: borrado no disponible', true); return; }
+  await sb.from('forum_posts').delete().eq('thread_id', threadId);
+  await sb.from('forum_threads').delete().eq('id', threadId);
+  showToast('Hilo borrado');
+  closeForumThread();
+  if (_forumGameId) loadForumThreads(_forumGameId);
+}
+
+async function togglePinThread(threadId, pin) {
+  const sb = getSupabase();
+  if (!sb) return;
+  await sb.from('forum_threads').update({ is_pinned: pin }).eq('id', threadId);
+  showToast(pin ? '📌 Hilo fijado' : 'Hilo desfijado');
+  if (_forumGameId) loadForumThreads(_forumGameId);
 }
 
 // ========== PERFIL ==========
