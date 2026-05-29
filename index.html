@@ -2881,7 +2881,8 @@ async function loadGames(platform=null,genre=null){
   grid.innerHTML='<div class="skeleton"><div class="skeleton-img"></div></div>'.repeat(8);
   try{
     const platformIds = { 'pc':'4', 'playstation5':'187', 'xbox-series-x':'186', 'nintendo-switch':'7', 'android':'21' };
-    let url=`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=-metacritic`;
+    const ordering = (platform && platform !== 'all') ? '-added' : '-metacritic';
+    let url=`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=${ordering}`;
     if(platform && platform!=='all') url+=`&platforms=${platformIds[platform]||platform}`;
     if(genre) url+=`&genres=${genre}`;
     const data=await fetchGames(url);
