@@ -3552,12 +3552,14 @@ async function quickBan(ban){
 }
 
 // ========== SUB-NAV ==========
-document.querySelectorAll('.sub-nav a').forEach(link=>{
+document.querySelectorAll('.sub-nav a[data-platform]').forEach(link=>{
   link.addEventListener('click',(e)=>{
     e.preventDefault();
     document.querySelectorAll('.sub-nav a').forEach(l=>l.classList.remove('active'));
     link.classList.add('active');
     const platform=link.getAttribute('data-platform');
+    showAllViews('home');
+    _router.replace('home');
     loadGames(platform==='all'?null:platform);
   });
 });
