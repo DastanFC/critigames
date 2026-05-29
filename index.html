@@ -5090,6 +5090,7 @@ async function openGlobalForumThread(threadId, threadTitle, gameId, gameName) {
 
   // Mostrar la vista de página completa, ocultar el resto
   showAllViews('globalForumThread');
+  _router.replace(`thread/${threadId}`);
   window.scrollTo(0, 0);
 
   await loadGlobalForumPosts(threadId);
@@ -5209,6 +5210,7 @@ function closeGlobalForumThread() {
   _forumCurrentThreadId = null;
   _forumQuoteData = null;
   showAllViews('globalForum');
+  _router.replace('forum');
   window.scrollTo(0, 0);
 }
 
@@ -5385,17 +5387,7 @@ closeForumThread = function() {
   if (currentGame && currentGame.id) _router.replace(`game/${currentGame.id}/forum`);
 };
 
-const _origOpenGlobalForumThread = openGlobalForumThread;
-openGlobalForumThread = async function(threadId, threadTitle, gameId, gameName) {
-  await _origOpenGlobalForumThread(threadId, threadTitle, gameId, gameName);
-  _router.replace(`thread/${threadId}`);
-};
-
-const _origCloseGlobalForumThread = closeGlobalForumThread;
-closeGlobalForumThread = function() {
-  _origCloseGlobalForumThread();
-  _router.replace('forum');
-};
+// openGlobalForumThread y closeGlobalForumThread ya actualizan la URL internamente
 
 const _origShowGlobalForum = showGlobalForum;
 showGlobalForum = async function() {
