@@ -792,6 +792,115 @@ footer strong { color: var(--green); }
   color: var(--gray-500);
 }
 
+/* ── DESGLOSE DE SLIDERS EN TARJETA ── */
+.review-sliders-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 0.5rem;
+}
+.review-sliders-toggle:hover { background: var(--gray-50); color: var(--gray-900); }
+.review-sliders-panel {
+  display: none;
+  margin-top: 0.75rem;
+  background: var(--gray-900);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  overflow: hidden;
+}
+.review-sliders-panel.open { display: block; }
+.rsp-group { margin-bottom: 0.7rem; }
+.rsp-group:last-child { margin-bottom: 0; }
+.rsp-group-title {
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0.4rem;
+}
+.rsp-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+.rsp-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  width: 90px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rsp-bar-wrap {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.rsp-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.rsp-val {
+  font-size: 0.68rem;
+  font-weight: 800;
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.rsp-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 0.55rem 0;
+}
+.rsp-online-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  background: rgba(106,196,106,0.2);
+  color: var(--green);
+  border: 1px solid rgba(106,196,106,0.3);
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+  margin-bottom: 0.5rem;
+}
+@media(max-width:480px){
+  .rsp-label { width: 72px; font-size: 0.62rem; }
+  .rsp-val { font-size: 0.62rem; width: 24px; }
+  .review-sliders-panel { padding: 0.7rem 0.75rem; }
+}
+
+/* ── VALIDACIÓN FORMULARIO ── */
+.form-input-error {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 0 2px rgba(232,64,64,0.15);
+}
+.form-error-msg {
+  font-size: 0.65rem;
+  color: var(--red-dark);
+  font-weight: 700;
+  margin-top: 0.2rem;
+  display: none;
+}
+.form-error-msg.show { display: block; }
+
 /* FORMULARIOS */
 .form-block { margin-bottom: 1rem; }
 .form-block-title {
@@ -2789,16 +2898,19 @@ input[type=range]::-webkit-slider-thumb {
         </div>
       </div>
       <div class="form-block">
-        <div class="form-block-title">Título de tu reseña</div>
+        <div class="form-block-title">Título de tu reseña <span style="color:var(--red)">*</span></div>
         <input class="form-input" type="text" id="reviewTitle" placeholder="Resumen en una frase...">
+        <div class="form-error-msg" id="err-title">El título es obligatorio.</div>
       </div>
       <div class="form-block">
-        <div class="form-block-title">Lo mejor</div>
-        <textarea class="form-textarea" id="reviewPros" rows="3" placeholder="¿Qué te gustó?"></textarea>
+        <div class="form-block-title">Lo mejor <span style="color:var(--red)">*</span></div>
+        <textarea class="form-textarea" id="reviewPros" rows="3" placeholder="¿Qué te gustó? (una línea por punto)"></textarea>
+        <div class="form-error-msg" id="err-pros">Escribe al menos un punto positivo.</div>
       </div>
       <div class="form-block">
-        <div class="form-block-title">Lo peor</div>
-        <textarea class="form-textarea" id="reviewCons" rows="3" placeholder="¿Qué mejorarías?"></textarea>
+        <div class="form-block-title">Lo peor <span style="color:var(--red)">*</span></div>
+        <textarea class="form-textarea" id="reviewCons" rows="3" placeholder="¿Qué mejorarías? (una línea por punto)"></textarea>
+        <div class="form-error-msg" id="err-cons">Escribe al menos un punto negativo.</div>
       </div>
       <div class="form-block">
         <div class="form-block-title">¿Lo recomiendas?</div>
@@ -3214,6 +3326,70 @@ async function loadGameReviewsIntoModal(gameId){
   container.innerHTML=reviews.map(r=>buildReviewCardHTML(r)).join('');
 }
 
+function buildSliderBreakdownHTML(r) {
+  if (!r.slider_data) return '';
+  let data;
+  try { data = typeof r.slider_data === 'string' ? JSON.parse(r.slider_data) : r.slider_data; }
+  catch(e) { return ''; }
+  if (!data || !Object.keys(data).length) return '';
+
+  const GROUPS = [
+    { key: 'gameplay', label: '🎮 Gameplay',   keys: ['combate','controles','curva','variedad'], labels: ['Mecánicas','Controles','Dificultad','Variedad'] },
+    { key: 'design',   label: '🎨 Diseño',     keys: ['ia','jefes','niveles','dificultad'],     labels: ['IA','Jefes','Niveles','Equilibrio'] },
+    { key: 'tech',     label: '⚙️ Técnico',    keys: ['graficos','arte','rendimiento','bugs'],   labels: ['Gráficos','Arte','Rendimiento','Estabilidad'] },
+    { key: 'audio',    label: '🎵 Audio/Historia', keys: ['musica','sfx','historia','lore'],     labels: ['Música','FX','Historia','Lore'] },
+    { key: 'value',    label: '💰 Valor',      keys: ['duracion','precio','replay'],             labels: ['Duración','Precio','Rejugabilidad'] },
+  ];
+  const ONLINE_GROUP = { key: 'online', label: '🌐 Online',  keys: ['multi','servers','comunidad'], labels: ['Multijugador','Servidores','Comunidad'] };
+
+  function barColor(v) {
+    if (v >= 8) return 'var(--green)';
+    if (v >= 5) return 'var(--yellow)';
+    return 'var(--red)';
+  }
+  function valColor(v) {
+    if (v >= 8) return '#6ac46a';
+    if (v >= 5) return '#ffbe00';
+    return '#e84040';
+  }
+
+  function renderGroup(g) {
+    const rows = g.keys.map((k, i) => {
+      if (data[k] === undefined) return '';
+      const v = data[k];
+      return `<div class="rsp-row">
+        <span class="rsp-label">${g.labels[i]}</span>
+        <div class="rsp-bar-wrap"><div class="rsp-bar-fill" style="width:${v*10}%;background:${barColor(v)}"></div></div>
+        <span class="rsp-val" style="color:${valColor(v)}">${v}/10</span>
+      </div>`;
+    }).join('');
+    if (!rows.replace(/\s/g,'')) return '';
+    return `<div class="rsp-group"><div class="rsp-group-title">${g.label}</div>${rows}</div>`;
+  }
+
+  const hasOnline = r.has_online && ONLINE_GROUP.keys.some(k => data[k] !== undefined);
+  const groups = GROUPS.map(renderGroup).filter(Boolean);
+  if (hasOnline) groups.push(renderGroup(ONLINE_GROUP));
+  if (!groups.length) return '';
+
+  const id = 'rsp-' + r.id;
+  return `
+    <button class="review-sliders-toggle" onclick="toggleSliderPanel('${id}',this)" id="btn-${id}">
+      📊 Ver desglose de puntuación
+    </button>
+    <div class="review-sliders-panel" id="${id}">
+      ${hasOnline ? '<div class="rsp-online-badge">🌐 Con online</div>' : ''}
+      ${groups.join('<div class="rsp-divider"></div>')}
+    </div>`;
+}
+
+function toggleSliderPanel(id, btn) {
+  const panel = document.getElementById(id);
+  if (!panel) return;
+  const open = panel.classList.toggle('open');
+  btn.textContent = open ? '📊 Ocultar desglose' : '📊 Ver desglose de puntuación';
+}
+
 function buildReviewCardHTML(r){
   // ── RESEÑA OCULTA ──
   if(r.is_hidden === true){
@@ -3294,6 +3470,7 @@ function buildReviewCardHTML(r){
         <div class="review-cons-block"><h4>✗ Contras</h4><ul>${consItems.length ? consItems.map(c=>`<li>${escapeHTML(c)}</li>`).join('') : '<li style="color:#9ca3af;list-style:none">—</li>'}</ul></div>
       </div>` : ''}
       ${r.body ? `<div class="review-verdict"><h4>Veredicto</h4><p>${escapeHTML(r.body)}</p></div>` : ''}
+      ${buildSliderBreakdownHTML(r)}
       ${editedInfo}
       ${(canEdit || canDelete || canHide) ? `<div class="review-card-actions">
         ${canEdit   ? `<button class="review-card-action edit"   onclick='editReviewFn("${r.id}")'>✏️ Editar</button>` : ''}
@@ -3357,14 +3534,33 @@ async function submitReview(){
   }
 
   btn.textContent='PUBLICANDO...';
+
+  // ── VALIDACIÓN OBLIGATORIA ──
+  const title=document.getElementById('reviewTitle')?.value.trim()||'';
+  const pros=document.getElementById('reviewPros')?.value.trim()||'';
+  const cons=document.getElementById('reviewCons')?.value.trim()||'';
+  let valid = true;
+  const setErr = (id, fieldId, show) => {
+    const el = document.getElementById(id);
+    const input = document.getElementById(fieldId);
+    if (el) { el.classList.toggle('show', show); }
+    if (input) { input.classList.toggle('form-input-error', show); }
+    if (show) valid = false;
+  };
+  setErr('err-title','reviewTitle', !title);
+  setErr('err-pros','reviewPros', !pros);
+  setErr('err-cons','reviewCons', !cons);
+  if (!valid) {
+    showToast('⚠️ Rellena los campos obligatorios.',true);
+    btn.disabled=false; btn.textContent='PUBLICAR RESEÑA';
+    return;
+  }
+
   const vals=Object.values(sliderVals);
   const score=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10);
   const platform=['PC','PS5','Xbox','Switch'][['plt-pc','plt-ps5','plt-xbs','plt-sw'].findIndex(id=>document.getElementById(id)?.checked)]||'PC';
   const hours=['<10h','10-50h','50-100h','+100h'][['h1','h2','h3','h4'].findIndex(id=>document.getElementById(id)?.checked)]||'10-50h';
   const recommend=document.getElementById('rec-yes')?.checked!==false;
-  const title=document.getElementById('reviewTitle')?.value.trim()||'';
-  const pros=document.getElementById('reviewPros')?.value.trim()||'';
-  const cons=document.getElementById('reviewCons')?.value.trim()||'';
   const hasOnline=document.getElementById('hasOnline')?.checked||false;
   const review={
     player_id:currentUser.id,
@@ -3373,7 +3569,9 @@ async function submitReview(){
     game_id:String(currentGame.id),
     game_name:currentGame.name,
     game_image:currentGame.background_image||'',
-    score, platform, hours, title, pros, cons, recommend, has_online:hasOnline,
+    score, platform, hours, title, pros, cons, recommend,
+    has_online:hasOnline,
+    slider_data: JSON.stringify({...sliderVals}),
     created_at:new Date().toISOString()
   };
   if(!sb){
@@ -3508,6 +3706,13 @@ function resetWriteForm(){
   document.getElementById('reviewPros').value='';
   document.getElementById('reviewCons').value='';
   document.getElementById('rec-yes').checked=true;
+  // Limpiar errores de validación
+  ['err-title','err-pros','err-cons'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('show');
+  });
+  ['reviewTitle','reviewPros','reviewCons'].forEach(id=>{
+    document.getElementById(id)?.classList.remove('form-input-error');
+  });
 }
 function requireLoginOrOpenModal(){
   if(!currentUser) openAuthModal();
@@ -3981,6 +4186,7 @@ async function updateReviewFn(reviewId) {
     pros: pros,
     cons: cons,
     recommend: recommend,
+    slider_data: JSON.stringify({...sliderVals}),
     updated_at: new Date().toISOString(),
     edited_by: editedBy,
     edited_role: editedRole,
