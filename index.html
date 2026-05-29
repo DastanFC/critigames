@@ -2028,6 +2028,87 @@ input[type=range]::-webkit-slider-thumb {
 }
 .forum-login-hint span { color: var(--green-dark); cursor: pointer; font-weight: 800; }
 
+/* ── VISTA COMPLETA DE HILO (foro global) ── */
+#globalForumThreadView { display: none; }
+#globalForumThreadView.open { display: block; }
+.gft-header {
+  background: var(--gray-900);
+  padding: 0.7rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: sticky;
+  top: 50px;
+  z-index: 50;
+}
+.gft-back-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.gft-back-btn:hover { background: rgba(255,255,255,0.1); }
+.gft-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: white;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gft-game-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.8);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.gft-game-badge:hover { background: rgba(255,255,255,0.22); }
+.gft-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1rem 0.75rem 2rem;
+}
+.gft-posts { margin-bottom: 1.5rem; }
+.gft-reply-box {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--white);
+  margin-top: 1rem;
+}
+.gft-reply-header {
+  background: var(--gray-900);
+  color: white;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.gft-reply-body { padding: 0.7rem 0.9rem; }
+.gft-login-hint {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  border-top: 1px solid var(--border);
+}
+.gft-login-hint span { color: var(--green-dark); font-weight: 800; cursor: pointer; }
+
 /* ── FORO GLOBAL ── */
 .global-forum-filter-btn {
   background: none;
@@ -2149,6 +2230,21 @@ input[type=range]::-webkit-slider-thumb {
     </div>
   </div>
 </div>
+</div>
+
+<!-- VISTA DE PÁGINA COMPLETA PARA UN HILO DEL FORO GLOBAL -->
+<div id="globalForumThreadView">
+  <div class="gft-header">
+    <button class="gft-back-btn" onclick="closeGlobalForumThread()">← Volver al foro</button>
+    <span class="gft-title" id="gftTitle"></span>
+    <span class="gft-game-badge" id="gftGameBadge" style="display:none" onclick="gftOpenGame()"></span>
+  </div>
+  <div class="gft-body">
+    <div class="gft-posts" id="gftPostsList">
+      <div class="forum-empty"><div class="forum-empty-icon">⏳</div>Cargando...</div>
+    </div>
+    <div id="gftReplyArea"></div>
+  </div>
 </div>
 
 <div id="homeView">
@@ -4811,6 +4907,8 @@ function showAllViews(show) {
   document.getElementById('profileView').style.display     = show === 'profile'     ? 'block' : 'none';
   const gfv = document.getElementById('globalForumView');
   if (gfv) gfv.style.display = show === 'globalForum' ? 'block' : 'none';
+  const gftv = document.getElementById('globalForumThreadView');
+  if (gftv) gftv.classList.toggle('open', show === 'globalForumThread');
 }
 
 function setGlobalForumFilter(filter) {
@@ -4944,40 +5042,32 @@ async function loadGlobalForumSidebar() {
 
 // Abrir hilo desde el foro global (sin cambiar de juego)
 async function openGlobalForumThread(threadId, threadTitle, gameId, gameName) {
-  // Guardar contexto del foro global
   _forumCurrentThreadId = threadId;
   _forumCurrentThreadTitle = threadTitle;
   _forumGameId = gameId;
 
-  // Montar una vista temporal de hilo dentro del globalForumView
-  const container = document.getElementById('globalForumThreadsList');
-  const loadMore = document.getElementById('globalForumLoadMore');
-  container.style.display = 'none';
-  if (loadMore) loadMore.style.display = 'none';
-
-  // Reutilizar el thread view del foro de modal si existe; si no, crear uno inline
-  let inlineView = document.getElementById('globalForumInlineThread');
-  if (!inlineView) {
-    inlineView = document.createElement('div');
-    inlineView.id = 'globalForumInlineThread';
-    container.parentNode.insertBefore(inlineView, container);
+  // Rellenar cabecera de la vista de página completa
+  document.getElementById('gftTitle').textContent = threadTitle;
+  const badge = document.getElementById('gftGameBadge');
+  if (gameName) {
+    badge.textContent = '🎮 ' + (gameName.length > 22 ? gameName.slice(0, 22) + '…' : gameName);
+    badge.style.display = 'inline-block';
+    badge._gameId = gameId;
+    badge._gameName = gameName;
+  } else {
+    badge.style.display = 'none';
   }
-  inlineView.style.display = 'block';
-  inlineView.innerHTML = `
-    <div class="forum-thread-header" style="border:1px solid var(--border);border-radius:4px 4px 0 0">
-      <button class="forum-back-btn" onclick="closeGlobalForumThread()">← Volver al foro</button>
-      <span class="forum-thread-view-title">${escapeHTML(threadTitle)}</span>
-      ${gameName ? `<span class="global-thread-game-badge" style="margin-left:auto">🎮 ${escapeHTML(gameName.length > 18 ? gameName.slice(0,18)+'…' : gameName)}</span>` : ''}
-    </div>
-    <div id="globalForumPostsList" class="forum-posts-list" style="border:1px solid var(--border);border-top:none;background:var(--white)"></div>
-    ${currentUser
-      ? `<div class="forum-quick-reply" style="border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px">
-          <div class="forum-quick-reply-header">✏️ Responder</div>
-          <div id="globalForumQuotePreview" style="display:none" class="forum-quote-preview">
-            <div style="flex:1;min-width:0"><strong id="globalForumQuoteAuthor"></strong><span class="forum-quote-preview-text" id="globalForumQuoteText"></span></div>
-            <button class="forum-quote-clear" onclick="clearGlobalForumQuote()">✕</button>
-          </div>
-          <div class="forum-quick-reply-body">
+
+  // Zona de respuesta
+  const replyArea = document.getElementById('gftReplyArea');
+  replyArea.innerHTML = currentUser
+    ? `<div class="gft-reply-box">
+        <div class="gft-reply-header">✏️ Responder</div>
+        <div id="globalForumQuotePreview" style="display:none" class="forum-quote-preview" style="margin:0.5rem 0.9rem">
+          <div style="flex:1;min-width:0"><strong id="globalForumQuoteAuthor"></strong><span class="forum-quote-preview-text" id="globalForumQuoteText"></span></div>
+          <button class="forum-quote-clear" onclick="clearGlobalForumQuote()">✕</button>
+        </div>
+        <div class="gft-reply-body">
           <div class="forum-editor-wrap">
             <div class="forum-editor-toolbar">
               <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','bold')"><b>B</b></button>
@@ -4987,24 +5077,26 @@ async function openGlobalForumThread(threadId, threadTitle, gameId, gameName) {
               <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','spoiler')">👁</button>
               <button class="forum-editor-btn" onclick="forumEditorFormat('globalForumReplyBody','code')">⌨</button>
             </div>
-            <textarea class="forum-editor-textarea" id="globalForumReplyBody" placeholder="Escribe tu mensaje..." rows="4"
+            <textarea class="forum-editor-textarea" id="globalForumReplyBody" placeholder="Escribe tu mensaje... (Ctrl+Enter para enviar)" rows="4"
               onkeydown="if(event.key==='Enter'&&event.ctrlKey){event.preventDefault();submitGlobalForumReply()}"></textarea>
             <div class="forum-editor-footer">
               <span class="forum-editor-hint">Ctrl+Enter · @usuario para mencionar</span>
               <button class="forum-editor-send" onclick="submitGlobalForumReply()">ENVIAR RESPUESTA</button>
             </div>
           </div>
-          </div>
-        </div>`
-      : `<div class="forum-login-hint" style="border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px">💬 <span onclick="openAuthModal()">Inicia sesión</span> para participar</div>`
-    }`;
+        </div>
+      </div>`
+    : `<div class="gft-login-hint">💬 <span onclick="openAuthModal()">Inicia sesión</span> para participar en el foro</div>`;
 
-  // Cargar posts usando el contenedor inline
-  await loadGlobalForumPosts(threadId, gameName);
+  // Mostrar la vista de página completa, ocultar el resto
+  showAllViews('globalForumThread');
+  window.scrollTo(0, 0);
+
+  await loadGlobalForumPosts(threadId);
 }
 
 async function loadGlobalForumPosts(threadId) {
-  const container = document.getElementById('globalForumPostsList');
+  const container = document.getElementById('gftPostsList');
   container.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.8rem">Cargando...</div>';
   const sb = getSupabase();
   if (!sb) return;
@@ -5116,11 +5208,13 @@ async function deleteGlobalForumPost(postId) {
 function closeGlobalForumThread() {
   _forumCurrentThreadId = null;
   _forumQuoteData = null;
-  const inlineView = document.getElementById('globalForumInlineThread');
-  if (inlineView) inlineView.style.display = 'none';
-  document.getElementById('globalForumThreadsList').style.display = '';
-  const loadMore = document.getElementById('globalForumLoadMore');
-  if (loadMore && !_globalForumAllLoaded) loadMore.style.display = 'block';
+  showAllViews('globalForum');
+  window.scrollTo(0, 0);
+}
+
+function gftOpenGame() {
+  const badge = document.getElementById('gftGameBadge');
+  if (badge && badge._gameId) openGameFromForum(badge._gameId, badge._gameName);
 }
 
 function openGameFromForum(gameId, gameName) {
