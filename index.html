@@ -2728,6 +2728,12 @@ input[type=range]::-webkit-slider-thumb {
     </div>
     <!-- TAB: Escribir -->
     <div id="gameWriteTab" class="modal-body" style="display:none">
+      <div id="reviewAlreadyDoneNotice" style="display:none;background:#fff8e8;border:1px solid var(--yellow);border-radius:6px;padding:0.7rem 1rem;margin-bottom:1rem;font-size:0.78rem;font-weight:600;color:var(--yellow-dark)">
+        ⚠️ Ya tienes una reseña publicada para este juego. Búscala en la pestaña <strong>Reseñas</strong> y usa el botón ✏️ Editar.
+      </div>
+      <div style="background:var(--gray-50);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.8rem;margin-bottom:0.9rem;font-size:0.7rem;color:var(--gray-500);display:flex;align-items:center;gap:0.4rem">
+        🛡️ <span>Una reseña por juego · Máximo 5 reseñas al día · Las cuentas que hagan spam serán baneadas</span>
+      </div>
       <div class="form-block">
         <div class="form-block-title">Gameplay</div>
         <div id="sliders-gameplay"></div>
@@ -2747,6 +2753,15 @@ input[type=range]::-webkit-slider-thumb {
       <div class="form-block">
         <div class="form-block-title">Valor</div>
         <div id="sliders-value"></div>
+      </div>
+      <!-- TOGGLE ONLINE -->
+      <div class="form-block" id="onlineToggleBlock">
+        <div class="form-block-title">Multijugador / Online</div>
+        <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;font-size:0.82rem;font-weight:600;padding:0.5rem 0.6rem;border:1px solid var(--border);border-radius:6px;background:var(--gray-50);user-select:none">
+          <input type="checkbox" id="hasOnline" onchange="toggleOnlineSlider(this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:var(--green-dark)">
+          <span id="onlineToggleLabel">Este juego tiene multijugador / online</span>
+        </label>
+        <div id="sliders-online" style="margin-top:0.5rem;display:none"></div>
       </div>
       <div class="overall-box">
         <div class="overall-number" id="modalOverallNum">70</div>
@@ -3159,6 +3174,10 @@ async function openGameModal(game) {
   document.getElementById('gameModal').classList.add('open');
   document.body.style.overflow = 'hidden';
   
+  // Limpiar formulario de escritura al abrir un juego nuevo
+  resetWriteForm();
+  initSliders();
+
   // Limpiar y cargar reseñas
   const container = document.getElementById('gameReviewsGrid');
   container.innerHTML = '<div class="review-hint">Cargando reseñas...</div>';
@@ -3308,7 +3327,36 @@ async function submitReview(){
   if(currentUser.is_banned){showToast('Cuenta suspendida',true); return;}
   if(!currentGame){showToast('No hay juego seleccionado',true); return;}
   const btn=document.getElementById('submitReviewBtn');
-  btn.disabled=true; btn.textContent='PUBLICANDO...';
+  btn.disabled=true; btn.textContent='COMPROBANDO...';
+
+  const sb=getSupabase();
+
+  if(sb){
+    // ── ANTITROLL 1: una sola reseña por juego ──
+    const {data:existing}=await sb.from('reviews')
+      .select('id')
+      .eq('player_id',currentUser.id)
+      .eq('game_id',String(currentGame.id))
+      .maybeSingle();
+    if(existing){
+      showToast('⚠️ Ya has reseñado este juego. Edita tu reseña existente.',true);
+      btn.disabled=false; btn.textContent='PUBLICAR RESEÑA';
+      return;
+    }
+
+    // ── ANTITROLL 2: máximo 5 reseñas en las últimas 24 horas ──
+    const {data:hoy}=await sb.from('reviews')
+      .select('created_at')
+      .eq('player_id',currentUser.id)
+      .gte('created_at',new Date(Date.now()-86400000).toISOString());
+    if(hoy && hoy.length>=5){
+      showToast('⚠️ Límite diario alcanzado. Máximo 5 reseñas cada 24 horas.',true);
+      btn.disabled=false; btn.textContent='PUBLICAR RESEÑA';
+      return;
+    }
+  }
+
+  btn.textContent='PUBLICANDO...';
   const vals=Object.values(sliderVals);
   const score=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10);
   const platform=['PC','PS5','Xbox','Switch'][['plt-pc','plt-ps5','plt-xbs','plt-sw'].findIndex(id=>document.getElementById(id)?.checked)]||'PC';
@@ -3317,6 +3365,7 @@ async function submitReview(){
   const title=document.getElementById('reviewTitle')?.value.trim()||'';
   const pros=document.getElementById('reviewPros')?.value.trim()||'';
   const cons=document.getElementById('reviewCons')?.value.trim()||'';
+  const hasOnline=document.getElementById('hasOnline')?.checked||false;
   const review={
     player_id:currentUser.id,
     username:currentUser.username,
@@ -3324,25 +3373,32 @@ async function submitReview(){
     game_id:String(currentGame.id),
     game_name:currentGame.name,
     game_image:currentGame.background_image||'',
-    score, platform, hours, title, pros, cons, recommend,
+    score, platform, hours, title, pros, cons, recommend, has_online:hasOnline,
     created_at:new Date().toISOString()
   };
-  const sb=getSupabase();
   if(!sb){
     showToast('✓ Demo: reseña guardada');
     if(currentGame) loadGameReviewsIntoModal(String(currentGame.id));
     switchGameTab('reviews');
-    btn.disabled=false; btn.textContent='PUBLICAR';
+    btn.disabled=false; btn.textContent='PUBLICAR RESEÑA';
+    resetWriteForm();
     return;
   }
   const {error}=await sb.from('reviews').insert(review);
-  if(error){showToast('Error: '+error.message,true);}
-  else{
+  if(error){
+    // Atrapar también el unique constraint de la BD si existe
+    if(error.code==='23505'){
+      showToast('⚠️ Ya has reseñado este juego.',true);
+    }else{
+      showToast('Error: '+error.message,true);
+    }
+  }else{
     showToast('✓ Reseña publicada');
     if(currentGame) await loadGameReviewsIntoModal(String(currentGame.id));
     switchGameTab('reviews');
+    resetWriteForm();
   }
-  btn.disabled=false; btn.textContent='PUBLICAR';
+  btn.disabled=false; btn.textContent='PUBLICAR RESEÑA';
 }
 
 async function loadReviews(){
@@ -3359,7 +3415,8 @@ const SLIDER_DEFS={
   design:[{key:'ia',label:'IA',val:7},{key:'jefes',label:'Jefes',val:7},{key:'niveles',label:'Niveles',val:7},{key:'dificultad',label:'Equilibrio',val:7}],
   tech:[{key:'graficos',label:'Gráficos',val:7},{key:'arte',label:'Arte',val:7},{key:'rendimiento',label:'Rendimiento',val:7},{key:'bugs',label:'Estabilidad',val:7}],
   audio:[{key:'musica',label:'Música',val:7},{key:'sfx',label:'FX',val:7},{key:'historia',label:'Historia',val:7},{key:'lore',label:'Lore',val:7}],
-  value:[{key:'duracion',label:'Duración',val:7},{key:'precio',label:'Precio',val:7},{key:'replay',label:'Rejugabilidad',val:7},{key:'multi',label:'Multijugador',val:7}]
+  value:[{key:'duracion',label:'Duración',val:7},{key:'precio',label:'Precio',val:7},{key:'replay',label:'Rejugabilidad',val:7}],
+  online:[{key:'multi',label:'Multijugador',val:7},{key:'servers',label:'Servidores',val:7},{key:'comunidad',label:'Comunidad',val:7}]
 };
 function buildSlider(def,containerId){
   sliderVals[def.key]=def.val;
@@ -3378,12 +3435,37 @@ function onSlider(el,key){
 }
 function updateOverall(){
   const vals=Object.values(sliderVals);
+  if(!vals.length) return;
   const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
   const score=Math.round(avg*10);
   const overallNum=document.getElementById('modalOverallNum');
   const overallFill=document.getElementById('modalOverallFill');
   if(overallNum) overallNum.textContent=score;
-  if(overallFill) overallFill.style.width=score+'%';
+  if(overallFill){
+    overallFill.style.width=score+'%';
+    overallFill.style.background=score>=75?'var(--green)':score>=50?'var(--yellow)':'var(--red)';
+  }
+}
+function toggleOnlineSlider(hasOnline){
+  const block=document.getElementById('sliders-online');
+  const lbl=document.getElementById('onlineToggleLabel');
+  if(hasOnline){
+    block.style.display='block';
+    if(lbl) lbl.textContent='✅ Tiene online — valora la experiencia:';
+    // Añadir sliders online si no existen aún
+    if(!block.children.length){
+      SLIDER_DEFS.online.forEach(def=>buildSlider(def,'sliders-online'));
+    } else {
+      // Restaurar valores al sliderVals
+      SLIDER_DEFS.online.forEach(def=>{ sliderVals[def.key]=def.val; });
+    }
+  }else{
+    block.style.display='none';
+    if(lbl) lbl.textContent='Este juego tiene multijugador / online';
+    // Eliminar del cálculo
+    SLIDER_DEFS.online.forEach(def=>delete sliderVals[def.key]);
+  }
+  updateOverall();
 }
 function initSliders(){
   ['gameplay','design','tech','audio','value'].forEach(group=>{
@@ -3391,16 +3473,36 @@ function initSliders(){
     if(container) container.innerHTML='';
     SLIDER_DEFS[group].forEach(def=>buildSlider(def,'sliders-'+group));
   });
+  // Online empieza desactivado
+  const onlineContainer=document.getElementById('sliders-online');
+  if(onlineContainer) onlineContainer.innerHTML='';
+  SLIDER_DEFS.online.forEach(def=>delete sliderVals[def.key]);
+  const cb=document.getElementById('hasOnline');
+  if(cb) cb.checked=false;
+  const lbl=document.getElementById('onlineToggleLabel');
+  if(lbl) lbl.textContent='Este juego tiene multijugador / online';
+  document.getElementById('sliders-online').style.display='none';
   updateOverall();
 }
 function resetWriteForm(){
-  Object.keys(sliderVals).forEach(key=>{
-    sliderVals[key]=7;
-    const slider=document.querySelector(`input[oninput*="${key}"]`);
-    if(slider) slider.value=7;
-    const lbl=document.getElementById('sv-'+key);
-    if(lbl) lbl.textContent='7/10';
+  // Resetear sliders base
+  ['gameplay','design','tech','audio','value'].forEach(group=>{
+    SLIDER_DEFS[group].forEach(def=>{
+      sliderVals[def.key]=7;
+      const slider=document.querySelector(`input[oninput*="'${def.key}'"]`);
+      if(slider) slider.value=7;
+      const lbl=document.getElementById('sv-'+def.key);
+      if(lbl) lbl.textContent='7/10';
+    });
   });
+  // Resetear online
+  SLIDER_DEFS.online.forEach(def=>delete sliderVals[def.key]);
+  const cb=document.getElementById('hasOnline');
+  if(cb) cb.checked=false;
+  const onlineBlock=document.getElementById('sliders-online');
+  if(onlineBlock){ onlineBlock.style.display='none'; onlineBlock.innerHTML=''; }
+  const lbl=document.getElementById('onlineToggleLabel');
+  if(lbl) lbl.textContent='Este juego tiene multijugador / online';
   updateOverall();
   document.getElementById('reviewTitle').value='';
   document.getElementById('reviewPros').value='';
@@ -3410,7 +3512,11 @@ function resetWriteForm(){
 function requireLoginOrOpenModal(){
   if(!currentUser) openAuthModal();
   else if(currentUser.is_banned) showToast('Cuenta suspendida',true);
-  else if(currentGame){switchGameTab('write'); openGameModal(currentGame);}
+  else if(currentGame){
+    resetWriteForm();
+    switchGameTab('write');
+    openGameModal(currentGame);
+  }
 }
 
 // ========== BANNER ==========
@@ -3840,8 +3946,9 @@ async function updateReviewFn(reviewId) {
   btn.disabled = true;
   btn.textContent = 'GUARDANDO...';
   
-  // Calcular la nueva puntuación basada en los sliders
+  // Calcular la nueva puntuación basada en los sliders activos
   const vals = Object.values(sliderVals);
+  if(!vals.length){ showToast('Sin valores de sliders',true); btn.disabled=false; btn.textContent='ACTUALIZAR RESEÑA'; return; }
   const score = Math.round(vals.reduce((a,b) => a+b, 0) / vals.length * 10);
   
   // Obtener valores del formulario
@@ -4009,6 +4116,28 @@ function switchGameTab(tab) {
     writeTab.style.display = 'block';
     tabs[2]?.classList.add('active');
     resetWriteForm();
+    checkAlreadyReviewed();
+  }
+}
+
+async function checkAlreadyReviewed() {
+  const notice = document.getElementById('reviewAlreadyDoneNotice');
+  const submitBtn = document.getElementById('submitReviewBtn');
+  if (!notice) return;
+  if (!currentUser || !currentGame) { notice.style.display = 'none'; if(submitBtn){submitBtn.disabled=false;submitBtn.style.opacity='';} return; }
+  const sb = getSupabase();
+  if (!sb) { notice.style.display = 'none'; return; }
+  const { data } = await sb.from('reviews')
+    .select('id')
+    .eq('player_id', currentUser.id)
+    .eq('game_id', String(currentGame.id))
+    .maybeSingle();
+  if (data) {
+    notice.style.display = 'block';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.4'; }
+  } else {
+    notice.style.display = 'none';
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = ''; }
   }
 }
 
