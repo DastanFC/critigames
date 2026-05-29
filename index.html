@@ -1729,99 +1729,88 @@ input[type=range]::-webkit-slider-thumb {
   white-space: nowrap;
 }
 
-/* Posts del hilo */
-/* ── POSTS DEL FORO (estilo Forocoches) ── */
+/* ── POSTS DEL FORO — layout fila (cabecera arriba, mensaje abajo) ── */
 .forum-posts-list { padding: 0; }
 .forum-post {
   display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  border-bottom: 2px solid var(--border);
   background: var(--white);
-  transition: background 0.1s;
 }
 .forum-post.is-op { background: #f7f9ff; }
-.forum-post-sidebar {
-  width: 88px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  padding: 1rem 0.6rem;
+/* Cabecera: avatar + nombre + badges + hora — todo en una fila */
+.forum-post-sidebar { display: none; }
+.forum-post-main {
   display: flex;
   flex-direction: column;
+  width: 100%;
+}
+.forum-post-header {
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.55rem;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--border);
   background: var(--gray-50);
+  flex-wrap: wrap;
 }
 .forum-post-avatar {
-  width: 52px;
-  height: 52px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--border);
   background: var(--gray-100);
   cursor: pointer;
+  flex-shrink: 0;
   transition: border-color 0.15s;
 }
 .forum-post-avatar:hover { border-color: var(--green); }
 .forum-post-author {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 800;
   cursor: pointer;
   color: var(--green-dark);
-  text-align: center;
-  word-break: break-all;
-  line-height: 1.2;
+  line-height: 1;
 }
 .forum-post-author:hover { text-decoration: underline; }
 .forum-post-author.is-admin { color: var(--admin); }
 .forum-post-author.is-mod { color: #8b5cf6; }
 .forum-post-op-badge {
-  font-size: 0.48rem;
+  font-size: 0.5rem;
   font-weight: 800;
   background: var(--green-dark);
   color: white;
-  padding: 0.1rem 0.35rem;
+  padding: 0.12rem 0.4rem;
   border-radius: 3px;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 .forum-post-role-badge {
-  font-size: 0.48rem;
+  font-size: 0.5rem;
   font-weight: 700;
-  padding: 0.1rem 0.35rem;
+  padding: 0.12rem 0.4rem;
   border-radius: 3px;
   text-transform: uppercase;
 }
 .forum-post-role-badge.admin { background: #fee2e2; color: var(--red-dark); }
 .forum-post-role-badge.mod   { background: #ede9fe; color: #7c3aed; }
-.forum-post-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.forum-post-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.55rem 0.9rem 0.4rem;
-  border-bottom: 1px solid var(--border);
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  background: var(--gray-50);
-}
 .forum-post-time {
   font-size: 0.62rem;
   color: var(--gray-500);
+  margin-left: auto;
 }
 .forum-post-num {
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   color: var(--gray-400);
   font-weight: 700;
 }
 .forum-post-edited { font-size: 0.55rem; color: var(--gray-400); font-style: italic; }
+/* Cuerpo del mensaje — ancho completo */
 .forum-post-content {
-  padding: 0.85rem 0.9rem 0.5rem;
-  flex: 1;
+  padding: 0.9rem 0.85rem 0.6rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 .forum-post-body {
   font-size: 0.85rem;
@@ -4012,15 +4001,13 @@ function _buildPostHTML(p, index, opts) {
   }
 
   return `<div class="forum-post${isOP ? ' is-op' : ''}" id="${opts.idPrefix}-${p.id}" data-index="${index}">
-    <div class="forum-post-sidebar">
-      <img class="forum-post-avatar" src="${avatarUrl}"
-        onerror="this.src='${avatarFallback}'"
-        onclick="showProfile('${authorId}')">
-      <span class="forum-post-author ${authorClass}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
-      ${roleBadge}
-    </div>
     <div class="forum-post-main">
       <div class="forum-post-header">
+        <img class="forum-post-avatar" src="${avatarUrl}"
+          onerror="this.src='${avatarFallback}'"
+          onclick="showProfile('${authorId}')">
+        <span class="forum-post-author ${authorClass}" onclick="showProfile('${authorId}')">${escapeHTML(authorUsername)}</span>
+        ${roleBadge}
         <span class="forum-post-time">${created}</span>
         <span class="forum-post-num">#${index + 1}</span>
       </div>
