@@ -2220,7 +2220,7 @@ input[type=range]::-webkit-slider-thumb {
   <a href="#" data-platform="playstation5">PS5</a>
   <a href="#" data-platform="xbox-series-x">Xbox Series</a>
   <a href="#" data-platform="nintendo-switch">Switch</a>
-  <a href="#" data-platform="ios">Móvil</a>
+  <a href="#" data-platform="android">Android</a>
 </div>
 
 <!-- VISTA GLOBAL FORO -->
@@ -2880,8 +2880,9 @@ async function loadGames(platform=null,genre=null){
   const grid=document.getElementById('gamesGrid');
   grid.innerHTML='<div class="skeleton"><div class="skeleton-img"></div></div>'.repeat(8);
   try{
+    const platformIds = { 'pc':'4', 'playstation5':'187', 'xbox-series-x':'186', 'nintendo-switch':'7', 'android':'21' };
     let url=`${RAWG_BASE}/games?key=${RAWG_KEY}&page_size=30&ordering=-metacritic`;
-    if(platform && platform!=='all') url+=`&platforms=${platform}`;
+    if(platform && platform!=='all') url+=`&platforms=${platformIds[platform]||platform}`;
     if(genre) url+=`&genres=${genre}`;
     const data=await fetchGames(url);
     const gamesWithImages=(data.results||[]).filter(g=>g.background_image && g.background_image.trim()!=='');
