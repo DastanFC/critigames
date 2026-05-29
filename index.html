@@ -598,25 +598,80 @@ footer strong { color: var(--green); }
   gap: 0.8rem;
 }
 .review-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  padding: 0.8rem;
-  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  font-family: system-ui, sans-serif;
+  position: relative;
 }
-.review-card-header {
+.review-card.hidden-card {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+.review-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(239,68,68,0.13);
+  border: 2px solid #ef4444;
+  border-radius: 12px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  z-index: 2;
+  pointer-events: all;
+  filter: none !important;
+}
+.review-card-overlay-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #b91c1c;
+  text-align: center;
+  padding: 0 1rem;
+}
+.review-card-top {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
+  gap: 12px;
 }
-.review-author-info {
+.review-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.review-card-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: #ef4444;
+}
+.review-card-game {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 2px 0 0;
+  line-height: 1.2;
+}
+.review-card-platform {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 2px 0 0;
+}
+.review-card-author-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
+  margin-top: 6px;
   flex-wrap: wrap;
 }
 .review-author-link {
@@ -631,65 +686,90 @@ footer strong { color: var(--green); }
 }
 .review-author-link:hover { background: var(--gray-50); }
 .review-author-avatar {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   object-fit: cover;
   border: 1.5px solid var(--border);
-  background: var(--gray-100);
   flex-shrink: 0;
 }
-.review-author-name {
-  font-weight: 800;
-  font-size: 0.8rem;
-}
+.review-author-name { font-weight: 700; font-size: 0.78rem; color: #111827; }
 .review-author-name.is-admin { color: var(--admin); }
-.review-date { font-size: 0.6rem; color: var(--gray-500); }
-.review-platform-badge {
-  font-family: monospace;
-  font-size: 0.5rem;
-  padding: 0.1rem 0.3rem;
-  background: var(--gray-50);
-  border: 1px solid var(--border);
+.review-date { font-size: 0.6rem; color: #9ca3af; }
+.review-recommend-badge {
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 20px;
 }
-.review-score-large {
+.review-recommend-badge.yes { background: #dcfce7; color: #16a34a; }
+.review-recommend-badge.no  { background: #fee2e2; color: #dc2626; }
+.review-score-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 800;
-  font-size: 1.5rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  font-size: 18px;
+  color: #fff;
+  flex-shrink: 0;
 }
-.review-score-large.green { background: var(--green); }
-.review-score-large.yellow { background: var(--yellow); }
-.review-score-large.red { background: var(--red); color: white; }
-.review-game-name {
-  font-size: 0.75rem;
+.review-score-circle.green  { background: #16a34a; }
+.review-score-circle.yellow { background: #d97706; }
+.review-score-circle.red    { background: #ef4444; }
+.review-card-body { padding: 16px 20px; }
+.review-card-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #111827;
+  margin-bottom: 12px;
+}
+.review-pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.review-pros-block h4, .review-cons-block h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   font-weight: 700;
-  margin-bottom: 0.3rem;
+  margin: 0 0 6px;
 }
-.review-title {
-  font-weight: 800;
-  font-size: 0.85rem;
-  margin: 0.3rem 0;
+.review-pros-block h4 { color: #16a34a; }
+.review-cons-block h4 { color: #dc2626; }
+.review-pros-block ul, .review-cons-block ul {
+  margin: 0; padding-left: 14px;
+  font-size: 13px; color: #374151; line-height: 1.6;
 }
-.review-pros {
-  background: #f0faf0;
-  padding: 0.4rem;
-  font-size: 0.7rem;
-  border-left: 3px solid var(--green-dark);
-  margin: 0.3rem 0;
+.review-verdict {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px 16px;
 }
-.review-cons {
-  background: #fdf0f0;
-  padding: 0.4rem;
-  font-size: 0.7rem;
-  border-left: 3px solid var(--red-dark);
-  margin: 0.3rem 0;
+.review-verdict h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b5563;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+.review-verdict p {
+  margin: 0;
+  font-size: 14px;
+  color: #111827;
+  line-height: 1.6;
 }
 .review-card-actions {
-  margin-top: 0.5rem;
+  margin-top: 12px;
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 .review-card-action {
   font-size: 0.65rem;
@@ -702,6 +782,10 @@ footer strong { color: var(--green); }
 }
 .review-card-action.edit { color: var(--blue-accent); }
 .review-card-action.delete { color: var(--red-dark); }
+.review-edited-info { font-size: 0.55rem; color: #9ca3af; margin-top: 4px; }
+@media(max-width:500px){
+  .review-pros-cons { grid-template-columns: 1fr; }
+}
 .no-reviews {
   text-align: center;
   padding: 2rem;
@@ -3112,72 +3196,94 @@ async function loadGameReviewsIntoModal(gameId){
 }
 
 function buildReviewCardHTML(r){
-  // Si la reseña está oculta por admin/moderador
+  // ── RESEÑA OCULTA ──
   if(r.is_hidden === true){
-    const hiddenBy = r.hidden_by || 'un administrador';
-    const hiddenRole = r.hidden_role === 'moderator' ? 'moderador' : 'administrador';
-    const date = r.hidden_at ? new Date(r.hidden_at).toLocaleDateString() : 'fecha desconocida';
-    
-    return `<div class="review-card" style="background: var(--gray-50); opacity: 0.8; border-left: 4px solid var(--red);" id="review-${r.id}">
-      <div class="review-card-header">
-        <div class="review-author-info">
-          <span class="review-author-name">⚠️ Reseña oculta</span>
-          <span class="review-date">${date}</span>
+    const prosItems = r.pros ? r.pros.split('\n').filter(Boolean) : [];
+    const consItems = r.cons ? r.cons.split('\n').filter(Boolean) : [];
+    const scoreClass = r.score >= 75 ? 'green' : (r.score >= 50 ? 'yellow' : 'red');
+    const avatarUrl = r.player_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48`;
+    return `<div style="position:relative;" id="review-${r.id}">
+      <div class="review-card hidden-card" aria-hidden="true">
+        <div class="review-card-top">
+          <div class="review-card-meta">
+            <span class="review-card-type">Videojuego</span>
+            <div class="review-card-game">${escapeHTML(r.game_name)}</div>
+            ${r.platform ? `<div class="review-card-platform">${escapeHTML(r.platform)}</div>` : ''}
+            <div class="review-card-author-row">
+              <img class="review-author-avatar" src="${avatarUrl}" alt="">
+              <span class="review-author-name">${escapeHTML(r.username)}</span>
+            </div>
+          </div>
+          <div class="review-score-circle ${scoreClass}">${r.score}</div>
+        </div>
+        <div class="review-card-body">
+          ${r.title ? `<div class="review-card-title">${escapeHTML(r.title)}</div>` : ''}
+          <div class="review-pros-cons">
+            <div class="review-pros-block"><h4>✓ Pros</h4><ul>${prosItems.map(p=>`<li>${escapeHTML(p)}</li>`).join('')}</ul></div>
+            <div class="review-cons-block"><h4>✗ Contras</h4><ul>${consItems.map(c=>`<li>${escapeHTML(c)}</li>`).join('')}</ul></div>
+          </div>
+          ${r.body ? `<div class="review-verdict"><h4>Veredicto</h4><p>${escapeHTML(r.body)}</p></div>` : ''}
         </div>
       </div>
-      <div style="padding: 0.5rem; background: #fff0f0; border-radius: 4px; margin-top: 0.3rem;">
-        <div style="font-size: 0.75rem; font-weight: 700; color: var(--red-dark);">🚫 Contenido retirado por incumplimiento de normas</div>
-        <div style="font-size: 0.7rem; color: var(--gray-700); margin-top: 0.3rem;">
-          Este comentario ha sido eliminado por ${hiddenRole === 'moderador' ? 'un moderador' : 'un administrador'} porque infringía las normas. 
-          Esto es solo un aviso. Si sigues incumpliendo las normas podrías ser expulsado.
-        </div>
-        ${r.hidden_by ? `<div style="font-size: 0.6rem; color: var(--gray-500); margin-top: 0.3rem;">🔒 Ocultado por: ${escapeHTML(r.hidden_by)}</div>` : ''}
+      <div class="review-card-overlay">
+        <span style="font-size:1.5rem;">🚫</span>
+        <span class="review-card-overlay-text">Esta reseña infringía las normas de la comunidad</span>
       </div>
     </div>`;
   }
-  
-  // Reseña normal (visible)
+
+  // ── RESEÑA NORMAL ──
   const scoreClass = r.score >= 75 ? 'green' : (r.score >= 50 ? 'yellow' : 'red');
   const date = new Date(r.created_at).toLocaleDateString();
-  
-  // Permisos: autor edita/borra, admin oculta, moderador solo oculta (con su firma)
-  const isAuthor = currentUser && currentUser.id === r.player_id;
-  const isAdmin = currentUser && currentUser.is_admin === true;
-  const isModerator = currentUser && currentUser.is_moderator === true;
+  const isAuthor   = currentUser && currentUser.id === r.player_id;
+  const isAdmin    = currentUser && currentUser.is_admin === true;
+  const isModerator= currentUser && currentUser.is_moderator === true;
+  const canEdit    = isAuthor;
+  const canDelete  = isAuthor;
+  const canHide    = isAdmin || isModerator;
+  const editedInfo = (r.edited_by && r.edited_at)
+    ? `<div class="review-edited-info">✏️ Editado por ${escapeHTML(r.edited_by)} el ${new Date(r.edited_at).toLocaleDateString()}</div>` : '';
+  const avatarUrl  = r.player_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48`;
 
-  const canEdit = currentUser && isAuthor;
-  const canDelete = isAuthor;
-  const canHide = isAdmin || isModerator;
-  
-  // Indicador de edición si la reseña fue editada
-  const editedInfo = (r.edited_by && r.edited_at) ? `<div style="font-size: 0.55rem; color: var(--gray-500); margin-top: 0.2rem;">✏️ Editado por ${escapeHTML(r.edited_by)} el ${new Date(r.edited_at).toLocaleDateString()}</div>` : '';
-  
-  const avatarUrl = r.player_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48`;
+  // Pros y contras como lista (separados por salto de línea)
+  const prosItems = r.pros ? r.pros.split('\n').filter(Boolean) : [];
+  const consItems = r.cons ? r.cons.split('\n').filter(Boolean) : [];
+  const hasProscons = prosItems.length > 0 || consItems.length > 0;
+
   return `<div class="review-card" id="review-${r.id}">
-    <div class="review-card-header">
-      <div class="review-author-info">
-        <span class="review-author-link" onclick="showProfile('${r.player_id}')" title="Ver perfil de ${escapeHTML(r.username)}">
-          <img class="review-author-avatar" src="${avatarUrl}" alt="${escapeHTML(r.username)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48'">
-          <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
-        </span>
-        <span class="review-date">${date}</span>
-        ${r.platform ? `<span class="review-platform-badge">${escapeHTML(r.platform)}</span>` : ''}
-        ${r.recommend ? '<span class="review-recommend yes" style="background: #e8f5e8; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.6rem;">✓ Recomienda</span>' : '<span class="review-recommend no" style="background: #ffe8e8; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.6rem;">✕ No recomienda</span>'}
+    <div class="review-card-top">
+      <div class="review-card-meta">
+        <span class="review-card-type">Videojuego</span>
+        <div class="review-card-game">${escapeHTML(r.game_name)}</div>
+        ${r.platform ? `<div class="review-card-platform">${escapeHTML(r.platform)}</div>` : ''}
+        <div class="review-card-author-row">
+          <span class="review-author-link" onclick="showProfile('${r.player_id}')">
+            <img class="review-author-avatar" src="${avatarUrl}" alt="${escapeHTML(r.username)}"
+              onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=1a1a18&color=6ac46a&size=48'">
+            <span class="review-author-name ${r.username === 'dastan' ? 'is-admin' : ''}">${escapeHTML(r.username)}</span>
+          </span>
+          <span class="review-date">${date}</span>
+          <span class="review-recommend-badge ${r.recommend ? 'yes' : 'no'}">${r.recommend ? '✓ Recomienda' : '✕ No recomienda'}</span>
+        </div>
       </div>
-      <div class="review-score-large ${scoreClass}">${r.score}</div>
+      <div class="review-score-circle ${scoreClass}">${r.score}</div>
     </div>
-    <div class="review-game-name">${escapeHTML(r.game_name)}</div>
-    ${r.title ? `<div class="review-title">${escapeHTML(r.title)}</div>` : ''}
-    ${r.pros ? `<div class="review-pros">➕ ${escapeHTML(r.pros)}</div>` : ''}
-    ${r.cons ? `<div class="review-cons">➖ ${escapeHTML(r.cons)}</div>` : ''}
-    ${editedInfo}
-    ${(canEdit || canDelete || canHide) ? `<div class="review-card-actions">
-      ${canEdit ? `<button class="review-card-action edit" onclick='editReviewFn("${r.id}")'>✏️ Editar</button>` : ''}
-      ${canDelete ? `<button class="review-card-action delete" onclick='permanentDeleteReviewFn("${r.id}")'>🗑️ Borrar</button>` : ''}
-      ${canHide ? `<button class="review-card-action" style="color: var(--red-dark);" onclick='hideReviewFn("${r.id}", "${escapeHTML(r.username)}")'>🚫 Ocultar (aviso)</button>` : ''}
-    </div>` : ''}
-    <button class="comments-toggle" id="comments-toggle-${r.id}" onclick="toggleComments('${r.id}')">💬 Ver comentarios</button>
-    ${buildCommentsHTML(r.id)}
+    <div class="review-card-body">
+      ${r.title ? `<div class="review-card-title">${escapeHTML(r.title)}</div>` : ''}
+      ${hasProscons ? `<div class="review-pros-cons">
+        <div class="review-pros-block"><h4>✓ Pros</h4><ul>${prosItems.length ? prosItems.map(p=>`<li>${escapeHTML(p)}</li>`).join('') : '<li style="color:#9ca3af;list-style:none">—</li>'}</ul></div>
+        <div class="review-cons-block"><h4>✗ Contras</h4><ul>${consItems.length ? consItems.map(c=>`<li>${escapeHTML(c)}</li>`).join('') : '<li style="color:#9ca3af;list-style:none">—</li>'}</ul></div>
+      </div>` : ''}
+      ${r.body ? `<div class="review-verdict"><h4>Veredicto</h4><p>${escapeHTML(r.body)}</p></div>` : ''}
+      ${editedInfo}
+      ${(canEdit || canDelete || canHide) ? `<div class="review-card-actions">
+        ${canEdit   ? `<button class="review-card-action edit"   onclick='editReviewFn("${r.id}")'>✏️ Editar</button>` : ''}
+        ${canDelete ? `<button class="review-card-action delete" onclick='permanentDeleteReviewFn("${r.id}")'>🗑️ Borrar</button>` : ''}
+        ${canHide   ? `<button class="review-card-action" style="color:var(--red-dark);" onclick='hideReviewFn("${r.id}","${escapeHTML(r.username)}")'>🚫 Ocultar (aviso)</button>` : ''}
+      </div>` : ''}
+      <button class="comments-toggle" id="comments-toggle-${r.id}" onclick="toggleComments('${r.id}')">💬 Ver comentarios</button>
+      ${buildCommentsHTML(r.id)}
+    </div>
   </div>`;
 }
 
