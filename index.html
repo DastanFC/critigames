@@ -3432,7 +3432,13 @@ document.querySelectorAll('.sub-nav a').forEach(link=>{
 loadSession();
 updateNavAuth();
 initSliders();
-loadGames();
+// Cargar juegos y después resolver la URL inicial
+loadGames().then(() => {
+  // Si hay un hash en la URL al cargar, navegar a él
+  if (location.hash && location.hash.length > 1) {
+    _router.dispatch();
+  }
+});
 loadReviews();
 loadBanner();
 
@@ -5127,6 +5133,204 @@ function openGameFromForum(gameId, gameName) {
 function reportPost(postId) {
   showToast('⚠️ Reporte enviado, gracias');
 }
+
+// ========== ROUTING (hash-based) ==========
+// Rutas soportadas:
+//   #home
+//   #forum
+//   #game/{gameId}
+//   #game/{gameId}/forum
+//   #game/{gameId}/thread/{threadId}
+//   #thread/{threadId}          ← hilo del foro global
+//   #profile/{userId}
+//   #admin
+
+const _router = {
+  // Escribe el hash sin disparar el evento hashchange
+  _silent: false,
+
+  push(hash) {
+    this._silent = false;
+    location.hash = hash;
+  },
+
+  replace(hash) {
+    this._silent = true;
+    history.replaceState(null, '', '#' + hash);
+    this._silent = false;
+  },
+
+  // Parsea el hash actual y navega
+  async dispatch() {
+    const raw = location.hash.replace(/^#\/?/, '');
+    const parts = raw.split('/');
+    const view = parts[0] || 'home';
+
+    if (view === 'home' || raw === '') {
+      showAllViews('home');
+      return;
+    }
+
+    if (view === 'forum') {
+      await showGlobalForum();
+      return;
+    }
+
+    if (view === 'admin') {
+      if (currentUser?.is_admin) showAdminPanel();
+      return;
+    }
+
+    if (view === 'profile') {
+      const userId = parts[1];
+      if (userId) await showProfile(userId);
+      return;
+    }
+
+    if (view === 'thread') {
+      // Hilo del foro global directo
+      const threadId = parts[1];
+      if (!threadId) return;
+      await showGlobalForum();
+      // Esperar a que carguen los hilos y abrir el correcto
+      await _router._openGlobalThread(threadId);
+      return;
+    }
+
+    if (view === 'game') {
+      const gameId = parts[1];
+      if (!gameId) return;
+
+      // Intentar encontrar en allGames; si no, cargarlo de RAWG
+      let game = allGames.find(g => String(g.id) === String(gameId));
+      if (!game) {
+        try {
+          const res = await fetchGames(`${RAWG_BASE}/games/${gameId}?key=${RAWG_KEY}`);
+          if (res && res.id) game = res;
+        } catch(e) {}
+      }
+      if (!game) { showToast('Juego no encontrado', true); return; }
+
+      // Abrir modal sin volver a pushear al historial
+      const subView = parts[2];
+      const threadId = parts[3];
+      currentGame = game;
+      const titleEl = document.getElementById('gameModalTitle');
+      if (titleEl) titleEl.textContent = game.name;
+      const infoDiv = document.getElementById('gameModalInfo');
+      infoDiv.innerHTML = `
+        <img class="modal-game-img" src="${game.background_image || ''}">
+        <div>
+          <div class="modal-game-title">${escapeHTML(game.name)}</div>
+          <div class="modal-game-meta">${game.released?.slice(0,4) || ''} · ${game.genres?.map(g=>g.name).slice(0,3).join(', ') || ''}</div>
+        </div>`;
+      document.getElementById('gameModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      await loadGameReviewsIntoModal(String(game.id));
+
+      if (subView === 'forum') {
+        switchGameTab('forum');
+        if (threadId) {
+          // Esperar carga y abrir hilo
+          await loadForumThreads(String(game.id));
+          const t = window._forumThreadsMap && window._forumThreadsMap[threadId];
+          if (t) openForumThread(t.id, t.title);
+        }
+      } else {
+        switchGameTab('reviews');
+      }
+      return;
+    }
+  },
+
+  async _openGlobalThread(threadId) {
+    // Buscar en el DOM o cargar el hilo directamente
+    const sb = getSupabase();
+    if (!sb) return;
+    const { data: thread } = await sb.from('forum_threads').select('*').eq('id', threadId).single();
+    if (!thread) { showToast('Hilo no encontrado', true); return; }
+    _forumGameId = thread.game_id;
+    await openGlobalForumThread(thread.id, thread.title, thread.game_id, thread.game_name || '');
+  }
+};
+
+// Interceptar las funciones de navegación para actualizar el hash
+
+const _origOpenGameModal = openGameModal;
+openGameModal = async function(game) {
+  await _origOpenGameModal(game);
+  if (game && game.id) _router.replace(`game/${game.id}`);
+};
+
+const _origCloseGameModal = closeGameModal;
+closeGameModal = function() {
+  _origCloseGameModal();
+  _router.replace('home');
+};
+
+const _origSwitchGameTab = switchGameTab;
+switchGameTab = function(tab) {
+  _origSwitchGameTab(tab);
+  if (currentGame && currentGame.id) {
+    if (tab === 'forum') _router.replace(`game/${currentGame.id}/forum`);
+    else _router.replace(`game/${currentGame.id}`);
+  }
+};
+
+const _origOpenForumThread = openForumThread;
+openForumThread = async function(threadId, threadTitle) {
+  await _origOpenForumThread(threadId, threadTitle);
+  if (currentGame && currentGame.id) {
+    _router.replace(`game/${currentGame.id}/thread/${threadId}`);
+  }
+};
+
+const _origCloseForumThread = closeForumThread;
+closeForumThread = function() {
+  _origCloseForumThread();
+  if (currentGame && currentGame.id) _router.replace(`game/${currentGame.id}/forum`);
+};
+
+const _origOpenGlobalForumThread = openGlobalForumThread;
+openGlobalForumThread = async function(threadId, threadTitle, gameId, gameName) {
+  await _origOpenGlobalForumThread(threadId, threadTitle, gameId, gameName);
+  _router.replace(`thread/${threadId}`);
+};
+
+const _origCloseGlobalForumThread = closeGlobalForumThread;
+closeGlobalForumThread = function() {
+  _origCloseGlobalForumThread();
+  _router.replace('forum');
+};
+
+const _origShowGlobalForum = showGlobalForum;
+showGlobalForum = async function() {
+  await _origShowGlobalForum();
+  _router.replace('forum');
+};
+
+const _origShowProfile = showProfile;
+showProfile = async function(userId) {
+  await _origShowProfile(userId);
+  _router.replace(`profile/${userId}`);
+};
+
+const _origShowAdminPanel = showAdminPanel;
+showAdminPanel = function() {
+  _origShowAdminPanel();
+  _router.replace('admin');
+};
+
+const _origShowHome = showHome;
+showHome = function() {
+  _origShowHome();
+  _router.replace('home');
+};
+
+// Escuchar cambios de hash (botón atrás/adelante)
+window.addEventListener('hashchange', () => {
+  if (!_router._silent) _router.dispatch();
+});
 
 </script>
 </body>
