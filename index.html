@@ -974,6 +974,35 @@ input[type=range]::-webkit-slider-thumb {
 }
 .admin-action.danger { color: var(--red-dark); }
 .admin-action.success { color: var(--green-dark); }
+
+@media (max-width: 640px) {
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+  .admin-table tr {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.6rem;
+    background: var(--white);
+  }
+  .admin-table td {
+    border: none;
+    padding: 0.2rem 0;
+    font-size: 0.8rem;
+  }
+  .admin-table td:before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    display: block;
+    margin-bottom: 0.1rem;
+  }
+  .admin-table td:last-child { padding-top: 0.4rem; }
+  .admin-table td > div { flex-direction: column; align-items: flex-start; }
+  .admin-action { font-size: 0.75rem; padding: 0.3rem 0.7rem; }
+}
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -2745,7 +2774,7 @@ async function doLogin() {
   btn.disabled = true; btn.textContent = 'Verificando...';
   const sb = getSupabase();
   if (!sb) {
-    if(username==='dastan' && code==='admin123') currentUser={id:'admin',username:'dastan',is_admin:true,is_banned:false};
+    if(username==='dastan' && code==='admin123') currentUser={id:'admin',username:'dastan',is_admin:true,is_banned:false,is_verified:true,avatar_url:''};
     else currentUser={id:'user_'+username,username,is_admin:false,is_banned:false};
     saveSession(currentUser); closeAuthModal(); updateNavAuth(); showToast('Bienvenido '+currentUser.username); loadReviews();
     btn.disabled=false; btn.textContent='ENTRAR'; return;
@@ -2755,7 +2784,7 @@ async function doLogin() {
     const {data,error} = await sb.from('players').select('*').eq('username',username).eq('code_hash',hash).single();
     if(error || !data) { showAuthError('Usuario o código incorrecto'); btn.disabled=false; btn.textContent='ENTRAR'; return; }
     if(data.is_banned) { showAuthError('Cuenta suspendida'); btn.disabled=false; return; }
-    currentUser = {id:data.id, username:data.username, is_admin:data.is_admin, is_banned:data.is_banned};
+    currentUser = {id:data.id, username:data.username, is_admin:data.is_admin, is_banned:data.is_banned, is_verified:data.is_verified, avatar_url:data.avatar_url||''};
     saveSession(currentUser); closeAuthModal(); updateNavAuth(); showToast('Bienvenido '+currentUser.username); loadReviews();
   } catch(e) { showAuthError('Error de conexión'); }
   btn.disabled=false; btn.textContent='ENTRAR';
@@ -3343,12 +3372,12 @@ async function loadAdminUsers(){
 function renderAdminUsers(users){
   const tbody=document.getElementById('adminUsersTbody');
   tbody.innerHTML=users.map(u=>`<tr>
-    <td><strong>${escapeHTML(u.username)}</strong>${u.is_admin?' 👑':''}</td>
-    <td><span class="admin-badge ${u.is_banned?'banned':'active'}">${u.is_banned?'Baneado':'Activo'}</span></td>
-    <td>${u.is_admin?'Admin':'Usuario'}</td>
-    <td style="text-align:center">${u.reviewCount}</td>
-    <td>${new Date(u.created_at).toLocaleDateString()}</td>
-<td>
+    <td data-label="Usuario"><strong>${escapeHTML(u.username)}</strong>${u.is_admin?' 👑':''}</td>
+    <td data-label="Estado"><span class="admin-badge ${u.is_banned?'banned':'active'}">${u.is_banned?'Baneado':'Activo'}</span></td>
+    <td data-label="Rol">${u.is_admin?'Admin':'Usuario'}</td>
+    <td data-label="Reseñas" style="text-align:center">${u.reviewCount}</td>
+    <td data-label="Registro">${new Date(u.created_at).toLocaleDateString()}</td>
+<td data-label="Acciones">
   ${!u.is_admin ? `
     <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
       ${u.is_banned
