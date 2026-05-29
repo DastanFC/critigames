@@ -4877,7 +4877,7 @@ function buildGlobalForumThreadHTML(t) {
     ? `<span class="global-thread-game-badge" onclick="event.stopPropagation(); openGameFromForum(${JSON.stringify(gameId)}, ${JSON.stringify(gameName)})" title="${escapeHTML(gameName)}">🎮 ${escapeHTML(gameName.length > 22 ? gameName.slice(0, 22) + '…' : gameName)}</span>`
     : '';
 
-  return `<div class="forum-thread-item${t.is_pinned ? ' pinned' : ''}" onclick="openGlobalForumThread('${t.id}', ${JSON.stringify(escapeHTML(t.title))}, ${JSON.stringify(gameId)}, ${JSON.stringify(gameName)})">
+  return `<div class="forum-thread-item${t.is_pinned ? ' pinned' : ''}" onclick="openGlobalForumThread('${t.id}', ${JSON.stringify(t.title)}, ${JSON.stringify(gameId)}, ${JSON.stringify(gameName)})">
     <img class="forum-thread-avatar" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.author_username)}&background=1a1a18&color=6ac46a&size=56'">
     <div class="forum-thread-body">
       <div class="forum-thread-title">
