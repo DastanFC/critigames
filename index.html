@@ -873,7 +873,7 @@ footer strong { color: var(--green); }
   font-size: 0.68rem;
   font-weight: 600;
   color: rgba(255,255,255,0.75);
-  width: 90px;
+  width: 80px;
   flex-shrink: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -894,9 +894,22 @@ footer strong { color: var(--green); }
 .rsp-val {
   font-size: 0.68rem;
   font-weight: 800;
-  width: 28px;
+  width: 90px;
   text-align: right;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+.rsp-tier-lbl {
+  font-size: 0.58rem;
+  font-weight: 600;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 72px;
 }
 .rsp-divider {
   height: 1px;
@@ -917,8 +930,9 @@ footer strong { color: var(--green); }
   margin-bottom: 0.5rem;
 }
 @media(max-width:480px){
-  .rsp-label { width: 72px; font-size: 0.62rem; }
-  .rsp-val { font-size: 0.62rem; width: 24px; }
+  .rsp-label { width: 62px; font-size: 0.62rem; }
+  .rsp-val { font-size: 0.62rem; width: 78px; }
+  .rsp-tier-lbl { max-width: 58px; font-size: 0.55rem; }
   .review-sliders-panel { padding: 0.7rem 0.75rem; }
 }
 
@@ -953,7 +967,9 @@ footer strong { color: var(--green); }
   margin-bottom: 0.2rem;
 }
 .slider-row-label { font-size: 0.75rem; font-weight: 600; }
-.slider-row-val { font-weight: 800; font-size: 0.8rem; }
+.slider-row-val { font-weight: 800; font-size: 0.8rem; display:flex; align-items:center; gap:0.35rem; }
+.sv-num { font-size:0.8rem; font-weight:800; min-width:14px; text-align:right; }
+.sv-tier { font-size:0.65rem; font-weight:700; color:var(--gray-500); white-space:nowrap; }
 input[type=range] {
   width: 100%;
   height: 4px;
@@ -2904,7 +2920,7 @@ input[type=range]::-webkit-slider-thumb {
         <div class="form-block-title">Multijugador / Online</div>
         <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;font-size:0.82rem;font-weight:600;padding:0.5rem 0.6rem;border:1px solid var(--border);border-radius:6px;background:var(--gray-50);user-select:none">
           <input type="checkbox" id="hasOnline" onchange="toggleOnlineSlider(this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:var(--green-dark)">
-          <span id="onlineToggleLabel">Este juego tiene multijugador / online</span>
+          <span id="onlineToggleLabel">🎮 Este juego tiene multijugador — puntuarlo</span>
         </label>
         <div id="sliders-online" style="margin-top:0.5rem;display:none"></div>
       </div>
@@ -3370,13 +3386,19 @@ function buildSliderBreakdownHTML(r) {
   if (!data || !Object.keys(data).length) return '';
 
   const GROUPS = [
-    { key: 'gameplay', label: '🎮 Gameplay',   keys: ['combate','controles','curva','variedad'], labels: ['Mecánicas','Controles','Dificultad','Variedad'] },
-    { key: 'design',   label: '🎨 Diseño',     keys: ['ia','jefes','niveles','dificultad'],     labels: ['IA','Jefes','Niveles','Equilibrio'] },
-    { key: 'tech',     label: '⚙️ Técnico',    keys: ['graficos','arte','rendimiento','bugs'],   labels: ['Gráficos','Arte','Rendimiento','Estabilidad'] },
-    { key: 'audio',    label: '🎵 Audio/Historia', keys: ['musica','sfx','historia','lore'],     labels: ['Música','FX','Historia','Lore'] },
-    { key: 'value',    label: '💰 Valor',      keys: ['duracion','precio','replay'],             labels: ['Duración','Precio','Rejugabilidad'] },
+    { key: 'gameplay', label: '🎮 Gameplay',      keys: ['combate','controles','curva','variedad'],   labels: ['Mecánicas','Controles','Dificultad','Variedad'],
+      tiers: [['Aburridas','Simples','Cumplen','Pulidas','Revolucionarias'],['Toscos','Imprecisos','Correctos','Fluidos','Perfectos'],['Injusta','Desequilibrada','Desafiante','Justa','Magistral'],['Monótono','Repetitivo','Entretenido','Muy variado','Inagotable']] },
+    { key: 'design',   label: '🎨 Diseño',         keys: ['ia','jefes','niveles','dificultad'],        labels: ['IA','Jefes','Niveles','Equilibrio'],
+      tiers: [['Absurda','Predecible','Competente','Astuta','Humana'],['Olvidables','Genéricos','Interesantes','Épicos','Memorables'],['Pasilleros','Planos','Bien pensados','Laberínticos','Obras de arte'],['Roto','Injusto','Aceptable','Muy pulido','Impecable']] },
+    { key: 'tech',     label: '⚙️ Técnico',        keys: ['graficos','arte','rendimiento','bugs'],      labels: ['Gráficos','Arte','Rendimiento','Estabilidad'],
+      tiers: [['Anticuados','Modestos','Bonitos','Espectaculares','Vanguardistas'],['Sin alma','Genérico','Atractivo','Precioso','Obra maestra'],['Injugable','A rascadas','Estable','Muy fluido','Ultra optimizado'],['Roto','Con bugs','Soportable','Limpio','Perfecto']] },
+    { key: 'audio',    label: '🎵 Audio / Historia',keys: ['musica','sfx','historia','lore'],           labels: ['Música','FX','Historia','Lore'],
+      tiers: [['Molesta','Genérica','Acompaña bien','Temazos','BSO del año'],['Enlatados','Simples','Convincentes','Inmersivos','Realistas'],['Inexistente','Tópica','Interesante','Atrapante','Obra maestra'],['Vacío','Superficial','Interesante','Profundo','Fascinante']] },
+    { key: 'value',    label: '💰 Valor',           keys: ['duracion','precio','replay'],               labels: ['Duración','Precio','Rejugabilidad'],
+      tiers: [['Suspiro','Corto','Adecuado','Generoso','Eterno'],['Caro','Algo caro','Justo','Ganga','Regalado'],['Una vez y ya','Poca','Entretenido repetir','Muy rejugable','Infinito']] },
   ];
-  const ONLINE_GROUP = { key: 'online', label: '🌐 Online',  keys: ['multi','servers','comunidad'], labels: ['Multijugador','Servidores','Comunidad'] };
+  const ONLINE_GROUP = { key: 'online', label: '🌐 Online', keys: ['multi','servers','comunidad','progresion','crossplay'], labels: ['Modos','Servidores','Comunidad','Progresión','Crossplay'],
+    tiers: [['Sin modos','1-2 modos','Variedad decente','Abundantes','Completísimo'],['Injugable','Laggy','Estables','Rápidos','Perfectos'],['Tóxica','Dividida','Normal','Amigable','Increíble'],['Vacía','Básica','Interesante','Satisfactoria','Adictiva'],['Sin crossplay','Parcial','Completo','Completo','Completo']] };
 
   function barColor(v) {
     if (v >= 8) return 'var(--green)';
@@ -3388,15 +3410,24 @@ function buildSliderBreakdownHTML(r) {
     if (v >= 5) return '#ffbe00';
     return '#e84040';
   }
+  function tierText(tiers, v) {
+    if (!tiers) return '';
+    if (v <= 2) return tiers[0];
+    if (v <= 4) return tiers[1];
+    if (v <= 6) return tiers[2];
+    if (v <= 8) return tiers[3];
+    return tiers[4];
+  }
 
   function renderGroup(g) {
     const rows = g.keys.map((k, i) => {
       if (data[k] === undefined) return '';
       const v = data[k];
+      const tier = g.tiers ? tierText(g.tiers[i], v) : '';
       return `<div class="rsp-row">
         <span class="rsp-label">${g.labels[i]}</span>
         <div class="rsp-bar-wrap"><div class="rsp-bar-fill" style="width:${v*10}%;background:${barColor(v)}"></div></div>
-        <span class="rsp-val" style="color:${valColor(v)}">${v}/10</span>
+        <span class="rsp-val" style="color:${valColor(v)}" title="${tier}">${v}<span class="rsp-tier-lbl">${tier}</span></span>
       </div>`;
     }).join('');
     if (!rows.replace(/\s/g,'')) return '';
@@ -3644,27 +3675,78 @@ async function loadReviews(){
 function renderReviewsList(reviews){}
 
 // ========== SLIDERS ==========
+// Cada def tiene: key, label, val, y tiers[5] (valores para 1-2, 3-4, 5-6, 7-8, 9-10)
 const SLIDER_DEFS={
-  gameplay:[{key:'combate',label:'Mecánicas',val:7},{key:'controles',label:'Controles',val:7},{key:'curva',label:'Dificultad',val:7},{key:'variedad',label:'Variedad',val:7}],
-  design:[{key:'ia',label:'IA',val:7},{key:'jefes',label:'Jefes',val:7},{key:'niveles',label:'Niveles',val:7},{key:'dificultad',label:'Equilibrio',val:7}],
-  tech:[{key:'graficos',label:'Gráficos',val:7},{key:'arte',label:'Arte',val:7},{key:'rendimiento',label:'Rendimiento',val:7},{key:'bugs',label:'Estabilidad',val:7}],
-  audio:[{key:'musica',label:'Música',val:7},{key:'sfx',label:'FX',val:7},{key:'historia',label:'Historia',val:7},{key:'lore',label:'Lore',val:7}],
-  value:[{key:'duracion',label:'Duración',val:7},{key:'precio',label:'Precio',val:7},{key:'replay',label:'Rejugabilidad',val:7}],
-  online:[{key:'multi',label:'Multijugador',val:7},{key:'servers',label:'Servidores',val:7},{key:'comunidad',label:'Comunidad',val:7}]
+  gameplay:[
+    {key:'combate',   label:'Mecánicas', val:7, tiers:['Aburridas','Simples','Cumplen','Pulidas','Revolucionarias']},
+    {key:'controles', label:'Controles', val:7, tiers:['Toscos','Imprecisos','Correctos','Fluidos','Perfectos']},
+    {key:'curva',     label:'Dificultad',val:7, tiers:['Injusta','Desequilibrada','Desafiante','Justa','Magistral']},
+    {key:'variedad',  label:'Variedad',  val:7, tiers:['Monótono','Repetitivo','Entretenido','Muy variado','Inagotable']}
+  ],
+  design:[
+    {key:'ia',        label:'IA',        val:7, tiers:['Absurda','Predecible','Competente','Astuta','Humana']},
+    {key:'jefes',     label:'Jefes',     val:7, tiers:['Olvidables','Genéricos','Interesantes','Épicos','Memorables']},
+    {key:'niveles',   label:'Niveles',   val:7, tiers:['Pasilleros','Planos','Bien pensados','Laberínticos','Obras de arte']},
+    {key:'dificultad',label:'Equilibrio',val:7, tiers:['Roto','Injusto','Aceptable','Muy pulido','Impecable']}
+  ],
+  tech:[
+    {key:'graficos',    label:'Gráficos',   val:7, tiers:['Anticuados','Modestos','Bonitos','Espectaculares','Vanguardistas']},
+    {key:'arte',        label:'Arte',       val:7, tiers:['Sin alma','Genérico','Atractivo','Precioso','Obra maestra']},
+    {key:'rendimiento', label:'Rendimiento',val:7, tiers:['Injugable','A rascadas','Estable','Muy fluido','Ultra optimizado']},
+    {key:'bugs',        label:'Estabilidad',val:7, tiers:['Roto','Con bugs','Soportable','Limpio','Perfecto']}
+  ],
+  audio:[
+    {key:'musica',   label:'Música',  val:7, tiers:['Molesta','Genérica','Acompaña bien','Temazos','BSO del año']},
+    {key:'sfx',      label:'FX',      val:7, tiers:['Enlatados','Simples','Convincentes','Inmersivos','Realistas']},
+    {key:'historia', label:'Historia',val:7, tiers:['Inexistente','Tópica','Interesante','Atrapante','Obra maestra']},
+    {key:'lore',     label:'Lore',    val:7, tiers:['Vacío','Superficial','Interesante','Profundo','Fascinante']}
+  ],
+  value:[
+    {key:'duracion', label:'Duración',      val:7, tiers:['Suspiro','Corto','Adecuado','Generoso','Eterno']},
+    {key:'precio',   label:'Precio',        val:7, tiers:['Caro','Algo caro','Justo','Ganga','Regalado']},
+    {key:'replay',   label:'Rejugabilidad', val:7, tiers:['Una vez y ya','Poca','Entretenido repetir','Muy rejugable','Infinito']}
+  ],
+  online:[
+    {key:'multi',       label:'Modos',       val:7, tiers:['Sin modos','1-2 modos','Variedad decente','Abundantes','Completísimo']},
+    {key:'servers',     label:'Servidores',  val:7, tiers:['Injugable','Laggy','Estables','Rápidos','Perfectos']},
+    {key:'comunidad',   label:'Comunidad',   val:7, tiers:['Tóxica','Dividida','Normal','Amigable','Increíble']},
+    {key:'progresion',  label:'Progresión',  val:7, tiers:['Vacía','Básica','Interesante','Satisfactoria','Adictiva']},
+    {key:'crossplay',   label:'Crossplay',   val:5, tiers:['Sin crossplay','Parcial','Completo','Completo','Completo']}
+  ]
 };
+
+function getSliderTier(tiers, val) {
+  // val 1-10 → tier index 0-4
+  if (val <= 2) return tiers[0];
+  if (val <= 4) return tiers[1];
+  if (val <= 6) return tiers[2];
+  if (val <= 8) return tiers[3];
+  return tiers[4];
+}
 function buildSlider(def,containerId){
   sliderVals[def.key]=def.val;
   const wrap=document.getElementById(containerId);
   if(!wrap) return;
   const row=document.createElement('div');
   row.className='slider-row';
-  row.innerHTML=`<div class="slider-row-top"><span class="slider-row-label">${def.label}</span><span class="slider-row-val" id="sv-${def.key}">${def.val}/10</span></div><input type="range" min="1" max="10" value="${def.val}" oninput="onSlider(this,'${def.key}')">`;
+  const tierLabel = def.tiers ? getSliderTier(def.tiers, def.val) : (def.val+'/10');
+  const tiersAttr = def.tiers ? `data-tiers='${JSON.stringify(def.tiers)}'` : '';
+  row.innerHTML=`<div class="slider-row-top"><span class="slider-row-label">${def.label}</span><span class="slider-row-val" id="sv-${def.key}"><span class="sv-num">${def.val}</span><span class="sv-tier">${tierLabel}</span></span></div><input type="range" min="1" max="10" value="${def.val}" ${tiersAttr} oninput="onSlider(this,'${def.key}')">`;
   wrap.appendChild(row);
 }
 function onSlider(el,key){
   sliderVals[key]=parseInt(el.value);
   const lbl=document.getElementById('sv-'+key);
-  if(lbl) lbl.textContent=el.value+'/10';
+  if(lbl){
+    const numEl=lbl.querySelector('.sv-num');
+    const tierEl=lbl.querySelector('.sv-tier');
+    if(numEl) numEl.textContent=el.value;
+    if(tierEl){
+      let tiers=null;
+      try{ tiers=JSON.parse(el.dataset.tiers||'null'); }catch(e){}
+      tierEl.textContent=tiers?getSliderTier(tiers,parseInt(el.value)):'';
+    }
+  }
   updateOverall();
 }
 function updateOverall(){
@@ -3695,7 +3777,7 @@ function toggleOnlineSlider(hasOnline){
     }
   }else{
     block.style.display='none';
-    if(lbl) lbl.textContent='Este juego tiene multijugador / online';
+    if(lbl) lbl.textContent='🎮 Este juego tiene multijugador — puntuarlo';
     // Eliminar del cálculo
     SLIDER_DEFS.online.forEach(def=>delete sliderVals[def.key]);
   }
@@ -3714,7 +3796,7 @@ function initSliders(){
   const cb=document.getElementById('hasOnline');
   if(cb) cb.checked=false;
   const lbl=document.getElementById('onlineToggleLabel');
-  if(lbl) lbl.textContent='Este juego tiene multijugador / online';
+  if(lbl) lbl.textContent='🎮 Este juego tiene multijugador — puntuarlo';
   document.getElementById('sliders-online').style.display='none';
   updateOverall();
 }
@@ -3726,7 +3808,10 @@ function resetWriteForm(){
       const slider=document.querySelector(`input[oninput*="'${def.key}'"]`);
       if(slider) slider.value=7;
       const lbl=document.getElementById('sv-'+def.key);
-      if(lbl) lbl.textContent='7/10';
+      if(lbl){
+        const numEl=lbl.querySelector('.sv-num'); if(numEl) numEl.textContent='7';
+        const tierEl=lbl.querySelector('.sv-tier'); if(tierEl) tierEl.textContent=def.tiers?getSliderTier(def.tiers,7):'';
+      }
     });
   });
   // Resetear online
@@ -3736,7 +3821,7 @@ function resetWriteForm(){
   const onlineBlock=document.getElementById('sliders-online');
   if(onlineBlock){ onlineBlock.style.display='none'; onlineBlock.innerHTML=''; }
   const lbl=document.getElementById('onlineToggleLabel');
-  if(lbl) lbl.textContent='Este juego tiene multijugador / online';
+  if(lbl) lbl.textContent='🎮 Este juego tiene multijugador — puntuarlo';
   updateOverall();
   document.getElementById('reviewTitle').value='';
   document.getElementById('reviewPros').value='';
