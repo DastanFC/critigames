@@ -283,6 +283,9 @@ nav {
   transition: box-shadow 0.15s;
 }
 .game-card:hover { box-shadow: inset 0 0 0 2px var(--gray-900); }
+.game-card:active { background: var(--gray-50); transform: scale(0.98); transition: transform 0.1s; }
+.featured-card:active { opacity: 0.75; transition: opacity 0.1s; }
+.list-item:active { background: var(--gray-50); }
 .game-card-img {
   width: 100%;
   aspect-ratio: 16/9;
@@ -502,15 +505,22 @@ footer strong { color: var(--green); }
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.6);
   z-index: 300;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
-  padding: 0.75rem;
+  transition: opacity 0.25s ease;
+  padding: 0;
+}
+@media(min-width:600px){
+  .modal-overlay {
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.7);
+  }
 }
 .modal-overlay.open {
   opacity: 1;
@@ -520,15 +530,40 @@ footer strong { color: var(--green); }
   background: var(--white);
   width: 100%;
   max-width: 900px;
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
-  border-radius: 8px;
-  transform: translateY(20px);
-  transition: transform 0.2s;
+  border-radius: 12px 12px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+@media(min-width:600px){
+  .modal {
+    border-radius: 10px;
+    max-height: 90vh;
+    transform: translateY(24px) scale(0.98);
+    transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.2s ease;
+    opacity: 0;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 .modal-overlay.open .modal {
   transform: translateY(0);
 }
+/* Tirador visual en móvil */
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--gray-200);
+  border-radius: 2px;
+  margin: 8px auto 0;
+  display: block;
+}
+@media(min-width:600px){ .modal-handle { display: none; } }
 .modal-top {
   background: var(--gray-900);
   padding: 0.7rem 1rem;
@@ -2744,8 +2779,9 @@ input[type=range]::-webkit-slider-thumb {
 <footer><strong>CritiGames</strong> — La nota la pones tú.<br>Datos vía RAWG</footer>
 
 <!-- MODAL JUEGO -->
-<div class="modal-overlay" id="gameModal">
+<div class="modal-overlay" id="gameModal" onclick="handleModalOverlayClick(event)">
   <div class="modal">
+    <span class="modal-handle"></span>
     <div class="modal-top">
       <h2 id="gameModalTitle">Juego</h2>
       <button class="modal-close" onclick="closeGameModal()">✕</button>
@@ -4037,16 +4073,17 @@ updateNavAuth();
 initSliders();
 // Cargar juegos y después resolver la URL inicial
 loadGames().then(() => {
-  // Si hay un hash en la URL al cargar, navegar a él
-  if (location.hash && location.hash.length > 1) {
+  // Asegurar que hay un estado base en el historial (para que back() desde el primer modal funcione)
+  if (!location.hash || location.hash.length <= 1) {
+    history.replaceState({ hash: 'home' }, '', '#home');
+  } else {
     _router.dispatch();
   }
 });
 loadReviews();
 loadBanner();
 
-// Cerrar modales al hacer click fuera
-document.getElementById('gameModal')?.addEventListener('click',e=>{if(e.target===document.getElementById('gameModal')) closeGameModal();});
+// authModal cerrar al click fuera
 document.getElementById('authModal')?.addEventListener('click',e=>{if(e.target===document.getElementById('authModal')) closeAuthModal();});
 
 // Géneros
@@ -5775,65 +5812,66 @@ function reportPost(postId) {
   showToast('⚠️ Reporte enviado, gracias');
 }
 
-// ========== ROUTING (hash-based) ==========
+// ========== ROUTING (history API) ==========
 // Rutas soportadas:
-//   #home
-//   #forum
-//   #game/{gameId}
-//   #game/{gameId}/forum
-//   #game/{gameId}/thread/{threadId}
-//   #thread/{threadId}          ← hilo del foro global
-//   #profile/{userId}
+//   /         → home
+//   #forum    → foro global
+//   #game/ID  → modal juego
+//   #game/ID/forum
+//   #game/ID/thread/TID
+//   #thread/TID
+//   #profile/UID
 //   #admin
 
 const _router = {
-  // Escribe el hash sin disparar el evento hashchange
   _silent: false,
 
+  // Navegar HACIA ADELANTE — crea entrada en el historial (botón atrás funciona)
   push(hash) {
-    this._silent = false;
-    location.hash = hash;
+    history.pushState({ hash }, '', '#' + hash);
+    // No disparamos dispatch aquí; ya lo hace quien llama
   },
 
+  // Reemplazar sin crear entrada (redirecciones internas silenciosas)
   replace(hash) {
-    this._silent = true;
-    history.replaceState(null, '', '#' + hash);
-    this._silent = false;
+    history.replaceState({ hash }, '', '#' + hash);
   },
 
-  // Parsea el hash actual y navega
   async dispatch() {
     const raw = location.hash.replace(/^#\/?/, '');
     const parts = raw.split('/');
     const view = parts[0] || 'home';
 
     if (view === 'home' || raw === '') {
+      // Cerrar modal si estaba abierto
+      const modal = document.getElementById('gameModal');
+      if (modal && modal.classList.contains('open')) {
+        _origCloseGameModal();
+      }
       showAllViews('home');
       return;
     }
 
     if (view === 'forum') {
-      await showGlobalForum();
+      await _origShowGlobalForum();
       return;
     }
 
     if (view === 'admin') {
-      if (currentUser?.is_admin) showAdminPanel();
+      if (currentUser?.is_admin) _origShowAdminPanel();
       return;
     }
 
     if (view === 'profile') {
       const userId = parts[1];
-      if (userId) await showProfile(userId);
+      if (userId) await _origShowProfile(userId);
       return;
     }
 
     if (view === 'thread') {
-      // Hilo del foro global directo
       const threadId = parts[1];
       if (!threadId) return;
-      await showGlobalForum();
-      // Esperar a que carguen los hilos y abrir el correcto
+      await _origShowGlobalForum();
       await _router._openGlobalThread(threadId);
       return;
     }
@@ -5842,7 +5880,6 @@ const _router = {
       const gameId = parts[1];
       if (!gameId) return;
 
-      // Intentar encontrar en allGames; si no, cargarlo de RAWG
       let game = allGames.find(g => String(g.id) === String(gameId));
       if (!game) {
         try {
@@ -5852,7 +5889,6 @@ const _router = {
       }
       if (!game) { showToast('Juego no encontrado', true); return; }
 
-      // Abrir modal sin volver a pushear al historial
       const subView = parts[2];
       const threadId = parts[3];
       currentGame = game;
@@ -5865,27 +5901,27 @@ const _router = {
           <div class="modal-game-title">${escapeHTML(game.name)}</div>
           <div class="modal-game-meta">${game.released?.slice(0,4) || ''} · ${game.genres?.map(g=>g.name).slice(0,3).join(', ') || ''}</div>
         </div>`;
+      resetWriteForm();
+      initSliders();
       document.getElementById('gameModal').classList.add('open');
       document.body.style.overflow = 'hidden';
       await loadGameReviewsIntoModal(String(game.id));
 
       if (subView === 'forum') {
-        switchGameTab('forum');
+        _origSwitchGameTab('forum');
         if (threadId) {
-          // Esperar carga y abrir hilo
           await loadForumThreads(String(game.id));
           const t = window._forumThreadsMap && window._forumThreadsMap[threadId];
           if (t) openForumThread(t.id, t.title);
         }
       } else {
-        switchGameTab('reviews');
+        _origSwitchGameTab('reviews');
       }
       return;
     }
   },
 
   async _openGlobalThread(threadId) {
-    // Buscar en el DOM o cargar el hilo directamente
     const sb = getSupabase();
     if (!sb) return;
     const { data: thread } = await sb.from('forum_threads').select('*').eq('id', threadId).single();
@@ -5895,21 +5931,33 @@ const _router = {
   }
 };
 
-// Interceptar las funciones de navegación para actualizar el hash
+// ── Guardar referencias a las funciones originales ANTES de interceptar ──
+const _origOpenGameModal   = openGameModal;
+const _origCloseGameModal  = closeGameModal;
+const _origSwitchGameTab   = switchGameTab;
+const _origShowGlobalForum = showGlobalForum;
+const _origShowProfile     = showProfile;
+const _origShowAdminPanel  = showAdminPanel;
+const _origShowHome        = showHome;
 
-const _origOpenGameModal = openGameModal;
+// Interceptar openGameModal → push al historial
 openGameModal = async function(game) {
   await _origOpenGameModal(game);
-  if (game && game.id) _router.replace(`game/${game.id}`);
+  if (game && game.id) _router.push(`game/${game.id}`);
 };
 
-const _origCloseGameModal = closeGameModal;
+// Interceptar closeGameModal → volver atrás en historial si es posible
 closeGameModal = function() {
   _origCloseGameModal();
-  _router.replace('home');
+  // Ir atrás en el historial en vez de reemplazar
+  if (history.length > 1) {
+    history.back();
+  } else {
+    _router.replace('home');
+  }
 };
 
-const _origSwitchGameTab = switchGameTab;
+// Interceptar switchGameTab → reemplazar (no es navegación nueva)
 switchGameTab = function(tab) {
   _origSwitchGameTab(tab);
   if (currentGame && currentGame.id) {
@@ -5918,6 +5966,7 @@ switchGameTab = function(tab) {
   }
 };
 
+// openForumThread → reemplazar (estamos dentro del modal)
 const _origOpenForumThread = openForumThread;
 openForumThread = async function(threadId, threadTitle) {
   await _origOpenForumThread(threadId, threadTitle);
@@ -5932,31 +5981,62 @@ closeForumThread = function() {
   if (currentGame && currentGame.id) _router.replace(`game/${currentGame.id}/forum`);
 };
 
-// openGlobalForumThread y closeGlobalForumThread ya actualizan la URL internamente
-
-const _origShowGlobalForum = showGlobalForum;
+// showGlobalForum → push
 showGlobalForum = async function() {
   await _origShowGlobalForum();
-  _router.replace('forum');
+  _router.push('forum');
 };
 
-const _origShowProfile = showProfile;
+// showProfile → push
 showProfile = async function(userId) {
   await _origShowProfile(userId);
-  _router.replace(`profile/${userId}`);
+  _router.push(`profile/${userId}`);
 };
 
-const _origShowAdminPanel = showAdminPanel;
+// showAdminPanel → push
 showAdminPanel = function() {
   _origShowAdminPanel();
-  _router.replace('admin');
+  _router.push('admin');
 };
 
-const _origShowHome = showHome;
+// showHome → replace (no es navegación hacia adelante)
 showHome = function() {
   _origShowHome();
   _router.replace('home');
 };
+
+// ── Cerrar modal al pulsar el overlay (fuera del modal) ──
+function handleModalOverlayClick(e) {
+  if (e.target === document.getElementById('gameModal')) {
+    closeGameModal();
+  }
+}
+
+// ── Cerrar modal con Escape ──
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('gameModal');
+    if (modal && modal.classList.contains('open')) closeGameModal();
+  }
+});
+
+// ── Botón atrás del navegador / gesto atrás en móvil ──
+window.addEventListener('popstate', (e) => {
+  _router.dispatch();
+});
+
+// ── Debounce para el buscador principal ──
+let _searchDebounceTimer = null;
+const _origDoSearch = doSearch;
+doSearch = function() {
+  clearTimeout(_searchDebounceTimer);
+  _searchDebounceTimer = setTimeout(() => _origDoSearch(), 350);
+};
+// Conectar al input también (no solo al Enter)
+document.addEventListener('DOMContentLoaded', () => {
+  const si = document.getElementById('searchInput');
+  if (si) si.addEventListener('input', () => doSearch());
+});
 
 // Escuchar cambios de hash (botón atrás/adelante)
 // ========== BUSCADOR FORO GLOBAL ==========
@@ -6031,9 +6111,7 @@ function clearGlobalForumSearch() {
   if (inp) { inp.value = ''; filterGlobalForumThreads(''); inp.focus(); }
 }
 
-window.addEventListener('hashchange', () => {
-  if (!_router._silent) _router.dispatch();
-});
+// popstate se maneja arriba junto con los interceptores
 
 </script>
 </body>
