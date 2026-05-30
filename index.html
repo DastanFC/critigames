@@ -5943,7 +5943,9 @@ const _origShowHome        = showHome;
 // Interceptar openGameModal → push al historial
 openGameModal = async function(game) {
   await _origOpenGameModal(game);
-  if (game && game.id) _router.push(`game/${game.id}`);
+  if (game && game.id) _router.replace(`game/${game.id}`);
+  // Push UNA SOLA VEZ después de que todo esté listo
+  history.pushState({ hash: `game/${game.id}` }, '', `#game/${game.id}`);
 };
 
 // Interceptar closeGameModal → volver atrás en historial si es posible
