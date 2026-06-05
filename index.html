@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CritiGames · Pausa temporal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            color: #e0e0e0;
+        }
+
+        /* Fondo con sutiles motivos gaming */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path fill="none" stroke="%23a855f7" stroke-width="0.6" d="M20,30 L30,20 L40,30 L30,40 Z M70,70 L80,60 L90,70 L80,80 Z M45,45 L55,35 L65,45 L55,55 Z"/><circle cx="80" cy="25" r="4" fill="%23a855f7"/><circle cx="20" cy="75" r="3" fill="%23a855f7"/><rect x="50" y="10" width="6" height="6" fill="%23a855f7"/><rect x="10" y="50" width="5" height="5" fill="%23a855f7"/></svg>');
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(168,85,247,0.1) inset;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            filter: drop-shadow(0 0 8px #a855f7);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .status {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #c084fc;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        p {
+            color: #b0b0c0;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .reason {
+            background: rgba(0,0,0,0.4);
+            border-left: 3px solid #a855f7;
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .reason p {
+            margin-bottom: 0.5rem;
+        }
+
+        .reason strong {
+            color: #c084fc;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #6a6a7a;
+            border-top: 1px solid rgba(168,85,247,0.2);
+            padding-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: rgba(168,85,247,0.1);
+            border: 1px solid rgba(168,85,247,0.4);
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: rgba(168,85,247,0.25);
+            border-color: #a855f7;
+            color: white;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 1.8rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🎮</div>
+        <h1>CritiGames</h1>
+        <div class="status">⚠️ SUSPENSIÓN TEMPORAL</div>
+
+        <p>La web se encuentra actualmente en pausa mientras revisamos su funcionamiento y planteamos nuevos objetivos.</p>
+        
+        <div class="reason">
+            <strong>📌 ¿Qué está pasando?</strong>
+            <p>No es un adiós, sino una reflexión. Queremos que CritiGames sea realmente útil para la comunidad, y para eso necesitamos replantear algunos aspectos. Durante este tiempo no se aceptarán nuevas valoraciones ni comentarios.</p>
+            <strong>⚙️ ¿Volverá?</strong>
+            <p>Sí, muy probablemente con un enfoque mejorado. Agradecemos a los pocos pero valientes usuarios que participaron. Vuestro apoyo no ha sido en vano.</p>
+        </div>
+
+        <p>Si quieres recibir noticias sobre la reapertura o colaborar con ideas, contáctame directamente.</p>
+        
+        <a href="https://forocoches.com/foro/member.php?u=545278" class="btn" target="_blank">📢 Contactar con el administrador</a>
+
+        <div class="footer">
+            CritiGames · Una idea de la comunidad, para la comunidad.<br>
+            © 2025 · Todos los derechos mantenidos.
+        </div>
+    </div>
+</body>
+</html>
